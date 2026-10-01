@@ -1,10 +1,11 @@
 // Musiques des statuts : la bibliothèque dans laquelle les utilisateurs de l'application
 // choisissent une chanson pour accompagner un statut. Seules les musiques ajoutées ici sont proposées.
+// Réservé au PDG : chaque ajout, masquage ou suppression demande le code de sécurité du PDG.
 import { useRef, useState } from "react";
 import { supabase, q } from "../lib/supabase";
 import { useAdmin, useLoad, Loading } from "../lib/admin";
 import { dateOnly } from "../lib/format";
-import { Empty, Note, ScreenTitle } from "../components/common";
+import { Empty, Note, ScreenTitle, SecurityGate } from "../components/common";
 
 const AUDIO_TYPES = "audio/mpeg,audio/mp3,audio/mp4,audio/x-m4a,audio/aac,audio/ogg,audio/wav,audio/webm,.mp3,.m4a,.aac,.ogg,.wav";
 
@@ -30,7 +31,8 @@ async function upload(file, folder) {
 const fmtDur = (s) => (s ? `${Math.floor(s / 60)}:${String(Math.round(s % 60)).padStart(2, "0")}` : "—");
 
 export default function Music() {
-  const { can, deny, act } = useAdmin();
+  const { me, deny, act } = useAdmin();
+  const [gate, setGate] = useState(null); // { title, run }
   const [form, setForm] = useState({ title: "", artist: "", audio: null, cover: null });
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -39,13 +41,17 @@ export default function Music() {
 
   const { data, error } = useLoad(() => q(supabase.from("music_tracks").select("*").order("created_at", { ascending: false })));
   const tracks = data || [];
-  const allowed = can("music.manage");
+  const allowed = !!me?.isPdg;
+  const protect = (title, run) => (allowed ? setGate({ title, run: async () => { setGate(null); await run(); } }) : deny("PDG"));
 
-  const add = async () => {
-    if (!allowed) return deny("music.manage");
+  const add = () => {
+    if (!allowed) return deny("PDG");
     if (!form.title.trim() || !form.artist.trim() || !form.audio) {
       return act(async () => { throw new Error("Indiquez le titre, l'artiste et choisissez le fichier audio."); });
     }
+    protect(`Ajouter « ${form.title.trim()} »`, doAdd);
+  };
+  const doAdd = async () => {
     setBusy(true);
     const ok = await act(async () => {
       const duration = await audioDuration(form.audio);
@@ -57,25 +63,22 @@ export default function Music() {
     if (ok) { setForm({ title: "", artist: "", audio: null, cover: null }); setOpen(false); }
   };
 
-  const toggle = (t) => (allowed
-    ? act(() => q(supabase.from("music_tracks").update({ active: !t.active }).eq("id", t.id)), t.active ? "Musique masquée dans l'application." : "Musique de nouveau proposée.")
-    : deny("music.manage"));
+  const toggle = (t) => protect(t.active ? `Masquer « ${t.title} »` : `Proposer de nouveau « ${t.title} »`,
+    () => act(() => q(supabase.from("music_tracks").update({ active: !t.active }).eq("id", t.id)), t.active ? "Musique masquée dans l'application." : "Musique de nouveau proposée."));
 
   const remove = (t) => {
-    if (!allowed) return deny("music.manage");
-    if (!window.confirm(`Supprimer définitivement « ${t.title} » ? Les statuts qui l'utilisent n'auront plus de musique.`)) return;
-    act(async () => {
+    protect(`Supprimer définitivement « ${t.title} »`, () => act(async () => {
       await q(supabase.from("music_tracks").delete().eq("id", t.id));
       const paths = [t.audio_url, t.cover_url].filter(Boolean).map((u) => decodeURIComponent(u.split("/music/")[1] || "")).filter(Boolean);
       if (paths.length) await supabase.storage.from("music").remove(paths);
-    }, "🗑️ Musique supprimée.");
+    }, "🗑️ Musique supprimée."));
   };
 
   return (<>
     <ScreenTitle eyebrow="CONTENU" title="Musiques des statuts">
-      <button className="primary-button" onClick={() => (allowed ? setOpen(!open) : deny("music.manage"))}>＋ Ajouter une musique</button>
+      <button className="primary-button" onClick={() => (allowed ? setOpen(!open) : deny("PDG"))}>＋ Ajouter une musique</button>
     </ScreenTitle>
-    <Note icon="🎵">Les utilisateurs choisissent une de ces musiques pour accompagner un statut (photo ou texte). Ajoutez seulement des morceaux que vous avez le droit de diffuser. « Masquer » retire une musique de la liste sans la supprimer.</Note>
+    <Note icon="🎵">Les utilisateurs choisissent une de ces musiques pour accompagner un statut (photo ou texte). Ajoutez seulement des morceaux que vous avez le droit de diffuser. « Masquer » retire une musique de la liste sans la supprimer. 🔐 Réservé au PDG : chaque modification demande votre code de sécurité.</Note>
 
     {open && (
       <div className="ver-form">
@@ -115,5 +118,6 @@ export default function Music() {
         </div>
       ))}
     </div>
+    {gate && <SecurityGate title={gate.title} onConfirm={gate.run} onCancel={() => setGate(null)} />}
   </>);
 }

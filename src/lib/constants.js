@@ -19,7 +19,7 @@ export const NAV_ITEMS = [
 
 // Permission nécessaire pour voir chaque écran (null = tout le monde, "PDG" = PDG seulement)
 export const SECTION_PERMS = {
-  overview: null, users: "users.list", calls: "calls.view", marketplace: "market.manage", music: "music.manage", support: "support.inbox",
+  overview: null, users: "users.list", calls: "calls.view", marketplace: "market.manage", music: "PDG", support: "support.inbox",
   reports: "mod.view", stats: "stats.view", documents: "docs.prepare", admins: "admins.manage", versions: "ver.prepare",
   security: "PDG", settings: "settings.modules", requests: null,
 };
@@ -63,7 +63,6 @@ export const PERMISSION_GROUPS = [
     { key: "users.list", label: "Voir la liste des comptes" },
     { key: "users.detail", label: "Voir la fiche détaillée d'un utilisateur" }] },
   { title: "Marketplace", items: [{ key: "market.manage", label: "Gérer les boutiques et les produits" }] },
-  { title: "Musiques des statuts", items: [{ key: "music.manage", label: "Ajouter et retirer les musiques des statuts" }] },
   { title: "Statistiques", items: [{ key: "stats.view", label: "Voir les statistiques (lecture seule)" }] },
   { title: "Documents publics", items: [
     { key: "docs.prepare", label: "Préparer une modification (brouillon)" },
