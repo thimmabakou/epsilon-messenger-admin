@@ -25,7 +25,7 @@ function audioDuration(file) {
 async function upload(file) {
   const ext = (file.name.match(/\.(\w{2,4})$/)?.[1] || "bin").toLowerCase();
   const path = `ringtones/${Date.now()}-${Math.random().toString(36).slice(2, 7)}.${ext}`;
-  const { error } = await supabase.storage.from("music").upload(path, file, { contentType: file.type || undefined });
+  const { error } = await supabase.storage.from("music").upload(path, file, { cacheControl: "31536000", contentType: file.type || undefined });
   if (error) throw new Error(/mime|type/i.test(error.message) ? "Format de fichier non accepté." : /size|large/i.test(error.message) ? "Fichier trop lourd (20 Mo maximum)." : error.message);
   return supabase.storage.from("music").getPublicUrl(path).data.publicUrl;
 }
