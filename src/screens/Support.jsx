@@ -4,6 +4,8 @@ import { supabase, q, rpc } from "../lib/supabase";
 import { useAdmin, useLoad, Loading } from "../lib/admin";
 import { dateTime, fullName, initials } from "../lib/format";
 import { Empty, Note, Pills, ScreenTitle } from "../components/common";
+import { callUser, notifyUser } from "../lib/supportLine";
+import SupportStatus from "../components/SupportStatus";
 
 export default function Support({ nav, goto }) {
   const { can, deny, act } = useAdmin();
@@ -12,7 +14,7 @@ export default function Support({ nav, goto }) {
   const [reply, setReply] = useState("");
   const msgBox = useRef();
 
-  const { data, error } = useLoad(async () => {
+  const { data, error, reload } = useLoad(async () => {
     const convs = await q(supabase.from("support_conversations")
       .select("*, user:profiles!support_conversations_user_id_fkey(id,first_name,last_name,status)")
       .order("updated_at", { ascending: false }).limit(300));
@@ -40,6 +42,14 @@ export default function Support({ nav, goto }) {
     if (conv?.unread_for_team) await supabase.rpc("support_mark_read", { p_conversation: selId });
     return m;
   }, [selId]);
+  // Mise à jour toute seule : message d'un utilisateur reçu (instantané) + vérification toutes les 10 s
+  useEffect(() => {
+    const again = () => { reload?.(); msgs.reload?.(); };
+    window.addEventListener("epsilon-support-new", again);
+    const t = setInterval(() => { if (document.visibilityState === "visible") again(); }, 10000);
+    return () => { window.removeEventListener("epsilon-support-new", again); clearInterval(t); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selId]);
   useEffect(() => { if (msgBox.current) msgBox.current.scrollTop = msgBox.current.scrollHeight; }, [msgs.data]);
 
   const newUser = useLoad(async () => newFor ? q(supabase.from("profiles").select("id,first_name,last_name").eq("id", newFor).maybeSingle()) : null, [newFor]);
@@ -54,8 +64,11 @@ export default function Support({ nav, goto }) {
     const body = reply.trim();
     if (newFor) {
       const id = await act(() => rpc("support_start", { p_user: newFor, p_body: body }), "Message envoyé.");
-      if (id) { setReply(""); setNewFor(null); setSelId(id); }
-    } else if (await act(() => rpc("support_reply", { p_conversation: selId, p_body: body }))) setReply("");
+      if (id) { notifyUser(newFor, body); setReply(""); setNewFor(null); setSelId(id); reload?.(); }
+    } else if (await act(() => rpc("support_reply", { p_conversation: selId, p_body: body }))) {
+      notifyUser(conv.user_id, body); // l'application de la personne affiche la réponse aussitôt (+ notification)
+      setReply(""); msgs.reload?.(); reload?.();
+    }
   };
 
   const lift = async () => {
@@ -79,7 +92,8 @@ export default function Support({ nav, goto }) {
     const u = newUser.data;
     thread = (<>
       <div className="conv-thread-header"><div><span className="conv-tag support">Nouveau</span><h2>{u ? fullName(u) : "…"}</h2></div>
-        <button className="icon-button" onClick={() => setNewFor(null)}>✕</button></div>
+        <div className="mp-actions">{u && <button className="action-button ok" onClick={() => callUser({ id: newFor, first_name: u.first_name, last_name: u.last_name })}>📞 Appeler</button>}
+        <button className="icon-button" onClick={() => setNewFor(null)}>✕</button></div></div>
       <Note icon="💬">Cette personne n'a encore jamais écrit au Service client. Votre message ouvrira la conversation dans son application.</Note>
       {replyBox("Écrire un premier message…")}
     </>);
@@ -90,6 +104,7 @@ export default function Support({ nav, goto }) {
       <div className="conv-thread-header">
         <div><span className={"conv-tag " + conv.tag}>{conv.tag === "support" ? "Support" : "Contestation"}</span><h2>{fullName(conv.user)}</h2></div>
         <div className="mp-actions">
+          {conv.user && <button className="action-button ok" onClick={() => callUser({ id: conv.user_id, first_name: conv.user.first_name, last_name: conv.user.last_name })}>📞 Appeler</button>}
           {conv.user && can("users.list") && <button className="action-button neutral" onClick={() => goto("users", { userId: conv.user_id })}>👤 Fiche</button>}
           <button className="icon-button" onClick={() => setSelId(null)}>✕</button>
         </div>
@@ -110,6 +125,7 @@ export default function Support({ nav, goto }) {
 
   return (<>
     <ScreenTitle eyebrow="SERVICE CLIENT" title="Boîte de réception" />
+    <SupportStatus />
     <section className="users-summary">
       <div className="u-sum"><span>Conversations</span><strong>{convs.length}</strong></div>
       <div className="u-sum bad"><span>Messages non lus</span><strong>{unreadTotal}</strong></div>

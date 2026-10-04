@@ -14,6 +14,7 @@ import Music from "../screens/Music";
 import Ringtones from "../screens/Ringtones";
 import Channels from "../screens/Channels";
 import Ads from "../screens/Ads";
+import SupportPhone from "../components/SupportPhone";
 import Support from "../screens/Support";
 import Reports from "../screens/Reports";
 import Stats from "../screens/Stats";
@@ -58,6 +59,7 @@ function Shell({ me, section, nav, goto, onLogout, reloadMe }) {
 
   return (
     <div className="site-root">
+      {(me.isPdg || me.perms.includes("support.reply") || me.perms.includes("calls.view")) && <SupportPhone me={me} />}
       <TopSwitcher page="admin" floating />
       <div className="admin-app">
         <header className="admin-header">

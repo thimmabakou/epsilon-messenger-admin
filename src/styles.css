@@ -585,3 +585,16 @@ button, input, textarea { font-family: inherit; }
 .music-cover { width: 64px; height: 64px; border-radius: 12px; object-fit: cover; flex-shrink: 0; background: var(--rose-soft); display: flex; align-items: center; justify-content: center; font-size: 26px; }
 .music-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 @media (max-width: 640px) { .music-row { flex-wrap: wrap; } .music-row .mp-actions { flex-direction: row !important; width: 100%; } }
+
+/* ===== Téléphone du Service client ===== */
+.support-phone { position: fixed; right: 16px; bottom: 16px; left: auto; z-index: 90; max-width: calc(100vw - 32px); width: 380px; display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 18px; background: var(--white); color: var(--ink); border: 1px solid var(--border); box-shadow: 0 12px 40px rgba(31,19,48,.25); }
+.support-phone.ringing { border-color: var(--rose); animation: sp-pulse 1.2s ease-in-out infinite; }
+@keyframes sp-pulse { 0%,100% { box-shadow: 0 12px 40px rgba(230,33,122,.25); } 50% { box-shadow: 0 12px 40px rgba(230,33,122,.6); } }
+.sp-avatar { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, var(--rose), var(--violet)); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.sp-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.sp-main strong { font-size: 14.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sp-main span { font-size: 12.5px; color: var(--ink-soft); }
+.sp-actions { display: flex; flex-direction: column; gap: 6px; }
+.sp-btn { border: 1px solid var(--border); background: var(--bg); color: var(--ink); border-radius: 10px; padding: 7px 12px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.sp-btn.ok { background: #1e8a4c; border-color: #1e8a4c; color: #fff; }
+.sp-btn.bad { background: var(--danger); border-color: var(--danger); color: #fff; }
