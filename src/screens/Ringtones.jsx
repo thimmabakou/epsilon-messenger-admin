@@ -2,6 +2,7 @@
 // La sonnerie « par défaut » est celle de tout le monde ; chaque utilisateur peut en choisir une autre
 // parmi celles proposées ici (Paramètres de l'application).
 // Réservé au PDG : chaque ajout, changement ou suppression demande le code de sécurité du PDG.
+import { uploadMusicFile, removeMusicFiles } from "../lib/files";
 import { useEffect, useRef, useState } from "react";
 import { supabase, q } from "../lib/supabase";
 import { useAdmin, useLoad, Loading } from "../lib/admin";
@@ -22,13 +23,7 @@ function audioDuration(file) {
   });
 }
 
-async function upload(file) {
-  const ext = (file.name.match(/\.(\w{2,4})$/)?.[1] || "bin").toLowerCase();
-  const path = `ringtones/${Date.now()}-${Math.random().toString(36).slice(2, 7)}.${ext}`;
-  const { error } = await supabase.storage.from("music").upload(path, file, { cacheControl: "31536000", contentType: file.type || undefined });
-  if (error) throw new Error(/mime|type/i.test(error.message) ? "Format de fichier non accepté." : /size|large/i.test(error.message) ? "Fichier trop lourd (20 Mo maximum)." : error.message);
-  return supabase.storage.from("music").getPublicUrl(path).data.publicUrl;
-}
+const upload = (file) => uploadMusicFile(file, "ringtones");
 
 // ---------- Découpage d'un extrait (pour faire une sonnerie à partir d'une chanson entière) ----------
 const LENGTHS = [15, 20, 30];
@@ -159,8 +154,7 @@ export default function Ringtones() {
 
   const remove = (t) => protect(`Supprimer définitivement « ${t.title} »`, () => act(async () => {
     await q(supabase.from("ringtones").delete().eq("id", t.id));
-    const path = decodeURIComponent(t.audio_url.split("/music/")[1] || "");
-    if (path) await supabase.storage.from("music").remove([path]);
+    await removeMusicFiles([t.audio_url]);
   }, "🗑️ Sonnerie supprimée."));
 
   return (<>

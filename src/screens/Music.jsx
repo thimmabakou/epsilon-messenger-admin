@@ -1,6 +1,7 @@
 // Musiques des statuts : la bibliothèque dans laquelle les utilisateurs de l'application
 // choisissent une chanson pour accompagner un statut. Seules les musiques ajoutées ici sont proposées.
 // Réservé au PDG : chaque ajout, masquage ou suppression demande le code de sécurité du PDG.
+import { uploadMusicFile, removeMusicFiles } from "../lib/files";
 import { useRef, useState } from "react";
 import { supabase, q } from "../lib/supabase";
 import { useAdmin, useLoad, Loading } from "../lib/admin";
@@ -20,13 +21,7 @@ function audioDuration(file) {
   });
 }
 
-async function upload(file, folder) {
-  const ext = (file.name.match(/\.(\w{2,4})$/)?.[1] || "bin").toLowerCase();
-  const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2, 7)}.${ext}`;
-  const { error } = await supabase.storage.from("music").upload(path, file, { cacheControl: "31536000", contentType: file.type || undefined });
-  if (error) throw new Error(/mime|type/i.test(error.message) ? "Format de fichier non accepté." : /size|large/i.test(error.message) ? "Fichier trop lourd (20 Mo maximum)." : error.message);
-  return supabase.storage.from("music").getPublicUrl(path).data.publicUrl;
-}
+const upload = (file, folder) => uploadMusicFile(file, folder);
 
 const fmtDur = (s) => (s ? `${Math.floor(s / 60)}:${String(Math.round(s % 60)).padStart(2, "0")}` : "—");
 
@@ -69,8 +64,7 @@ export default function Music() {
   const remove = (t) => {
     protect(`Supprimer définitivement « ${t.title} »`, () => act(async () => {
       await q(supabase.from("music_tracks").delete().eq("id", t.id));
-      const paths = [t.audio_url, t.cover_url].filter(Boolean).map((u) => decodeURIComponent(u.split("/music/")[1] || "")).filter(Boolean);
-      if (paths.length) await supabase.storage.from("music").remove(paths);
+      await removeMusicFiles([t.audio_url, t.cover_url]);
     }, "🗑️ Musique supprimée."));
   };
 
