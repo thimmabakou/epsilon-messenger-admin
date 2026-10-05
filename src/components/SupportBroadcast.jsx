@@ -29,10 +29,10 @@ export default function SupportBroadcast() {
     let offset = 0, sent = 0, guard = 0;
     while (offset != null && guard++ < 500) {
       const r = await fetch(`${APP}/api/push`, { method: "POST", headers: { authorization: `Bearer ${token}`, "content-type": "application/json" }, body: JSON.stringify({ kind: "broadcast", preview, offset }) });
-      if (!r.ok) break;
+      if (!r.ok) { setProgress(`Notifications : erreur ${r.status} ${(await r.text()).slice(0, 120)}`); break; }
       const j = await r.json();
       sent += j.sent || 0;
-      setProgress(`Notifications envoyées : ${sent}${j.total ? ` / ${j.total}` : ""}`);
+      setProgress(`Notifications envoyées : ${sent}${j.total ? ` / ${j.total}` : ""}${j.error ? ` — erreur : ${j.error}` : ""}${j.reason ? ` — ${j.reason}` : ""}`);
       offset = j.next;
     }
     return sent;
@@ -54,7 +54,7 @@ export default function SupportBroadcast() {
       await notifyAll(text.trim() || (file ? KIND[kindOf(file)] : ""));
       setText(""); setFile(null); setOpen(false); reload?.();
     }, "📢 Annonce envoyée : elle est dans la discussion « Service client Epsilon » de tous les utilisateurs.");
-    setTimeout(() => setProgress(null), 6000);
+    setTimeout(() => setProgress(null), 60000);
   };
   const remove = (b) => act(async () => { await q(supabase.from("support_broadcasts").delete().eq("id", b.id)); reload?.(); }, "Annonce retirée des discussions.");
 
