@@ -50,7 +50,19 @@ export default function Support({ nav, goto }) {
     return () => { window.removeEventListener("epsilon-support-new", again); clearInterval(t); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selId]);
-  useEffect(() => { if (msgBox.current) msgBox.current.scrollTop = msgBox.current.scrollHeight; }, [msgs.data]);
+  // Défilement libre : en bas à l'ouverture d'une conversation ou à l'arrivée d'un nouveau message
+  // (seulement si on est déjà en bas) ; si on lit plus haut, la vérification automatique ne bouge rien.
+  const lastSeen = useRef({ conv: null, id: null });
+  const atBottom = useRef(true);
+  useEffect(() => {
+    const b = msgBox.current; const list = msgs.data;
+    if (!b || !list) return;
+    const last = list[list.length - 1]?.id ?? null;
+    const opened = lastSeen.current.conv !== selId;
+    const changed = last !== lastSeen.current.id;
+    lastSeen.current = { conv: selId, id: last };
+    if (opened || (changed && atBottom.current)) b.scrollTop = b.scrollHeight;
+  }, [msgs.data, selId]);
 
   const newUser = useLoad(async () => newFor ? q(supabase.from("profiles").select("id,first_name,last_name").eq("id", newFor).maybeSingle()) : null, [newFor]);
 
@@ -110,7 +122,7 @@ export default function Support({ nav, goto }) {
         </div>
       </div>
       {conv.tag === "contestation" && <Note icon="⚖️" style={{ marginBottom: 10 }}>Contestation d'une sanction. Vous pouvez dialoguer librement ; annuler ou modifier la sanction demande la permission « Annuler ou modifier une sanction ».</Note>}
-      <div className="conv-messages" ref={msgBox}>
+      <div className="conv-messages" ref={msgBox} onScroll={(e) => { const b = e.currentTarget; atBottom.current = b.scrollHeight - b.scrollTop - b.clientHeight < 120; }}>
         {(msgs.data || []).map((m) => (
           <div key={m.id} className={"conv-msg " + (m.sender === "user" ? "user" : m.sender === "system" ? "system" : "team")}>{m.body}
             <span className="conv-msg-when">{m.sender === "team" ? "Équipe Epsilon · " : ""}{dateTime(m.created_at)}</span></div>
