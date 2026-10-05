@@ -6,6 +6,7 @@ import { dateTime, fullName, initials } from "../lib/format";
 import { Empty, Note, Pills, ScreenTitle } from "../components/common";
 import { callUser, notifyUser } from "../lib/supportLine";
 import SupportStatus from "../components/SupportStatus";
+import SupportBroadcast from "../components/SupportBroadcast";
 
 export default function Support({ nav, goto }) {
   const { can, deny, act } = useAdmin();
@@ -137,6 +138,7 @@ export default function Support({ nav, goto }) {
 
   return (<>
     <ScreenTitle eyebrow="SERVICE CLIENT" title="Boîte de réception" />
+    <SupportBroadcast />
     <SupportStatus />
     <section className="users-summary">
       <div className="u-sum"><span>Conversations</span><strong>{convs.length}</strong></div>
