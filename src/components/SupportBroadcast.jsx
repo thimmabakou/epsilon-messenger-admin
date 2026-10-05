@@ -21,7 +21,7 @@ export default function SupportBroadcast() {
   const [progress, setProgress] = useState(null); // « Notifications : 80 / 240 »
   const pick = useRef(null);
   const allowed = me?.isPdg || can("support.reply");
-  const { data, reload } = useLoad(() => q(supabase.from("support_broadcasts").select("*").order("created_at", { ascending: false }).limit(10)));
+  const { data, reload } = useLoad(() => q(supabase.from("support_broadcasts").select("*").eq("archived", false).order("created_at", { ascending: false }).limit(10)));
 
   async function notifyAll(preview) {
     const { data: s } = await supabase.auth.getSession();
@@ -56,7 +56,14 @@ export default function SupportBroadcast() {
     }, "📢 Annonce envoyée : elle est dans la discussion « Service client Epsilon » de tous les utilisateurs.");
     setTimeout(() => setProgress(null), 60000);
   };
-  const remove = (b) => act(async () => { await q(supabase.from("support_broadcasts").delete().eq("id", b.id)); reload?.(); }, "Annonce retirée des discussions.");
+  // Deux façons de retirer : seulement de cette liste, ou de la discussion de TOUS les utilisateurs
+  const [delAsk, setDelAsk] = useState(null);
+  const removeFor = (b, forAll) => act(async () => {
+    const { data: n, error: e } = await supabase.rpc("eg_broadcast_remove", { p_id: b.id, p_for_all: forAll });
+    if (e) throw new Error(/function|schema cache/i.test(e.message) ? "Exécutez d'abord le fichier SQL 27 (retirer les annonces) dans Supabase." : e.message);
+    if (!n) throw new Error("Rien n'a été retiré (annonce introuvable ou droits insuffisants).");
+    setDelAsk(null); reload?.();
+  }, forAll ? "🗑️ Annonce supprimée de la discussion de tous les utilisateurs." : "Annonce masquée de cette liste (les utilisateurs la gardent).");
 
   return (
     <div className="ver-form" style={{ marginBottom: 16 }}>
@@ -78,9 +85,13 @@ export default function SupportBroadcast() {
       {(data || []).map((b) => (
         <div key={b.id} className="field-hint" style={{ display: "flex", alignItems: "center", gap: 8, borderTop: "1px solid var(--border)", paddingTop: 6 }}>
           <span style={{ flex: 1 }}>{KIND[b.kind]} · {b.body ? b.body.slice(0, 80) : b.file_name || ""} · {dateTime(b.created_at)}</span>
-          <button className="action-button danger" onClick={() => remove(b)}>Retirer</button>
+          <div className="mp-actions" style={{ flexDirection: "column", alignItems: "stretch" }}>
+            <button className="action-button neutral" onClick={() => removeFor(b, false)}>Masquer du site</button>
+            <button className="action-button danger" onClick={() => setDelAsk(b)}>🗑️ Supprimer pour tous</button>
+          </div>
         </div>
       ))}
+      {delAsk && <SecurityGate title={`Supprimer cette annonce de la discussion de TOUS les utilisateurs`} onConfirm={() => removeFor(delAsk, true)} onCancel={() => setDelAsk(null)} />}
       {gate && <SecurityGate title={`Envoyer cette annonce à TOUS les utilisateurs d'Epsilon`} onConfirm={send} onCancel={() => setGate(false)} />}
     </div>
   );

@@ -28,7 +28,12 @@ export default function SupportStatus() {
       setText(""); setPhoto(null); setOpen(false); reload?.();
     }, "📢 Statut publié : il s'affiche en tête chez tous les utilisateurs pendant 24 h.");
   };
-  const remove = (s) => act(async () => { await q(supabase.from("support_statuses").delete().eq("id", s.id)); reload?.(); }, "Statut retiré.");
+  const remove = (s) => act(async () => {
+    const { data: n, error: e } = await supabase.rpc("eg_support_status_remove", { p_id: s.id });
+    if (e) throw new Error(/function|schema cache/i.test(e.message) ? "Exécutez d'abord le fichier SQL 27 (retirer les annonces) dans Supabase." : e.message);
+    if (!n) throw new Error("Rien n'a été retiré (statut introuvable ou droits insuffisants).");
+    reload?.();
+  }, "Statut retiré : il disparaît chez tous les utilisateurs.");
 
   return (
     <div className="ver-form" style={{ marginBottom: 16 }}>
@@ -53,7 +58,7 @@ export default function SupportStatus() {
         <div key={s.id} className="field-hint" style={{ display: "flex", alignItems: "center", gap: 8, borderTop: "1px solid var(--border)", paddingTop: 6 }}>
           <span style={{ width: 12, height: 12, borderRadius: "50%", background: s.bg_color || "#7A3B8C", flexShrink: 0 }} />
           <span style={{ flex: 1 }}>{s.kind === "photo" ? "🖼️ " : ""}{s.body || "(photo)"} · jusqu'au {dateTime(s.expires_at)}</span>
-          <button className="action-button danger" onClick={() => remove(s)}>Retirer</button>
+          <button className="action-button danger" onClick={() => remove(s)}>🗑️ Retirer pour tous</button>
         </div>
       ))}
     </div>
