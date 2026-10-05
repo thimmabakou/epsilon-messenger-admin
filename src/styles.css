@@ -321,7 +321,7 @@ button, input, textarea { font-family: inherit; }
 .conv-row.active { background: var(--rose-soft); }
 .conv-main { flex: 1; min-width: 0; }
 .conv-top { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
-.conv-top strong { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.conv-top strong { color: var(--ink); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .conv-preview { font-size: 12px; color: var(--ink-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
 .conv-tag { font-size: 10px; padding: 2px 8px; border-radius: 999px; font-weight: 700; white-space: nowrap; }
 .conv-tag.support { background: #e6f0fd; color: #1d5fd6; }
