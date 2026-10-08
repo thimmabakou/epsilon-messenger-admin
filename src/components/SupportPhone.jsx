@@ -1,7 +1,7 @@
 // Téléphone du Service client, visible sur toutes les pages du site :
 // appel entrant (sonnerie + Décrocher / Ignorer), appel en cours (durée, Micro, Raccrocher).
 import { useEffect, useState } from "react";
-import { onLine, startLine, acceptLine, ignoreLine, hangUpLine, toggleLineMute } from "../lib/supportLine";
+import { onLine, startLine, acceptLine, ignoreLine, hangUpLine, toggleLineMute, restartMic } from "../lib/supportLine";
 
 const name = (u) => [u?.first_name, u?.last_name].filter(Boolean).join(" ") || "Utilisateur Epsilon";
 const mmss = (s) => `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
@@ -32,6 +32,18 @@ export default function SupportPhone({ me }) {
       <div className="sp-main">
         <strong>{name(s.user)}</strong>
         <span>{label}</span>
+        {s.phase === "active" && (
+          <div className="sp-mic" title="Son capté par votre micro">
+            <span>🎙️</span><div className="sp-meter"><i style={{ width: `${Math.round((s.micLevel || 0) * 100)}%` }} /></div>
+          </div>
+        )}
+        {s.phase === "active" && (s.micSilent || s.micError) && (
+          <div className="sp-warn">
+            {s.micError === "permission" ? "Micro refusé par le navigateur : autorisez-le (cadenas à gauche de l'adresse)."
+              : "Votre micro ne capte aucun son : l'utilisateur ne vous entend pas. Fermez les autres applis qui utilisent le micro (WhatsApp, appel…) et gardez cette page ouverte."}
+            <button className="sp-btn" onClick={restartMic}>🔄 Rebrancher le micro</button>
+          </div>
+        )}
       </div>
       <div className="sp-actions">
         {s.phase === "incoming" && <>

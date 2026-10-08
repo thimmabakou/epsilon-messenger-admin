@@ -66,7 +66,7 @@ async function iceServers() {
 let ac = null, toneTimer = null;
 function beep(freq, ms, vol = 0.18) {
   try {
-    ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+    audioCtx();
     const o = ac.createOscillator(), g = ac.createGain();
     o.frequency.value = freq; g.gain.value = vol; o.connect(g); g.connect(ac.destination);
     o.start(); o.stop(ac.currentTime + ms / 1000);
@@ -79,6 +79,78 @@ function playTone(kind) {
   toneTimer = setInterval(once, kind === "ring" ? 2200 : 3500);
 }
 function stopTone() { clearInterval(toneTimer); toneTimer = null; }
+
+// ---------- Micro de l'équipe ----------
+// Le micro peut être autorisé mais n'envoyer que du silence (autre application qui le tient — WhatsApp,
+// appel téléphonique —, page passée en arrière-plan sur un téléphone, mauvais micro choisi…).
+// On mesure donc le son capté pendant l'appel : barre de niveau + alerte si rien n'est capté,
+// et on rebranche le micro automatiquement s'il s'arrête.
+const MIC = { echoCancellation: true, noiseSuppression: true, autoGainControl: true };
+const getMic = () => navigator.mediaDevices.getUserMedia({ audio: MIC, video: false });
+let meter = null; // { src, an, timer }
+function audioCtx() {
+  ac = ac || new (window.AudioContext || window.webkitAudioContext)();
+  if (ac.state === "suspended") ac.resume().catch(() => {});
+  return ac;
+}
+function stopMeter() {
+  if (!meter) return;
+  clearInterval(meter.timer);
+  try { meter.src.disconnect(); } catch { /* déjà débranché */ }
+  meter = null;
+}
+function watchMic() {
+  stopMeter();
+  const track = local?.getAudioTracks()[0];
+  if (!track) return;
+  track.onended = () => { if (["connecting", "active"].includes(state.phase)) restartMic(); };
+  try {
+    const ctx = audioCtx();
+    const src = ctx.createMediaStreamSource(new MediaStream([track]));
+    const an = ctx.createAnalyser(); an.fftSize = 512;
+    src.connect(an);
+    const buf = new Uint8Array(an.fftSize);
+    let silentMs = 0;
+    const timer = setInterval(() => {
+      if (ctx.state === "suspended") ctx.resume().catch(() => {});
+      an.getByteTimeDomainData(buf);
+      let peak = 0;
+      for (let i = 0; i < buf.length; i++) peak = Math.max(peak, Math.abs(buf[i] - 128));
+      const level = Math.min(1, peak / 50);
+      const live = track.readyState === "live" && !track.muted;
+      if (state.muted || state.phase !== "active") silentMs = 0;
+      else silentMs = level > 0.03 && live ? 0 : silentMs + 250;
+      set({ micLevel: state.muted ? 0 : level, micSilent: silentMs >= 8000 });
+    }, 250);
+    meter = { src, an, timer };
+  } catch { /* mesure impossible : l'appel continue */ }
+}
+// Rebrancher le micro (bouton du site, ou automatiquement s'il s'arrête) sans couper l'appel
+export async function restartMic() {
+  if (!pc) return;
+  try {
+    const fresh = await getMic();
+    const track = fresh.getAudioTracks()[0];
+    const sender = pc.getSenders().find((x) => x.track?.kind === "audio" || x.track === null);
+    if (sender) await sender.replaceTrack(track);
+    local?.getTracks().forEach((t) => { t.onended = null; t.stop(); });
+    local = fresh;
+    track.enabled = !state.muted;
+    watchMic();
+    set({ micSilent: false });
+  } catch (e) {
+    set({ micError: e?.name === "NotAllowedError" ? "permission" : "error" });
+  }
+}
+if (typeof document !== "undefined") {
+  // Page revenue au premier plan : si le téléphone a coupé le micro entre-temps, on le rebranche
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState !== "visible" || !["connecting", "active"].includes(state.phase)) return;
+    const t = local?.getAudioTracks()[0];
+    if (!t || t.readyState !== "live") restartMic();
+    else audioCtx();
+  });
+}
 
 // ---------- Connexion ----------
 async function makePeer() {
@@ -104,10 +176,10 @@ function gathered(conn) {
   });
 }
 function cleanup() {
-  clearTimers(); stopTone();
+  clearTimers(); stopTone(); stopMeter();
   try { pc?.close(); } catch { /* déjà fermé */ }
   pc = null;
-  local?.getTracks().forEach((t) => t.stop()); local = null;
+  local?.getTracks().forEach((t) => { t.onended = null; t.stop(); }); local = null;
   if (audioEl) audioEl.srcObject = null;
   pending = null;
 }
@@ -142,11 +214,13 @@ export function startLine(me) {
 export async function callUser(user) {
   if (state.phase !== "idle") return;
   const callId = newId();
-  set({ phase: "outgoing", direction: "out", callId, user, ringing: false, muted: false, startedAt: null, reason: null });
+  set({ phase: "outgoing", direction: "out", callId, user, ringing: false, muted: false, startedAt: null, reason: null, micLevel: 0, micSilent: false, micError: null });
+  audioCtx(); // créé au moment du clic (sinon le téléphone peut bloquer le son)
   try {
-    local = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true }, video: false });
+    local = await getMic();
     pc = await makePeer();
     local.getTracks().forEach((t) => pc.addTrack(t, local));
+    watchMic();
     await pc.setLocalDescription(await pc.createOffer());
     await gathered(pc);
     if (state.callId !== callId) return;
@@ -169,12 +243,14 @@ export async function acceptLine() {
   if (state.phase !== "incoming" || !pending) return;
   const offer = pending;
   stopTone(); clearTimers();
-  set({ phase: "connecting" });
+  set({ phase: "connecting", micLevel: 0, micSilent: false, micError: null });
+  audioCtx();
   boxSend(LINE, "call", { type: "taken", callId: offer.callId, by: agent?.name || "" }); // les collègues arrêtent de sonner
   try {
-    local = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true }, video: false });
+    local = await getMic();
     pc = await makePeer();
     local.getTracks().forEach((t) => pc.addTrack(t, local));
+    watchMic();
     await pc.setRemoteDescription({ type: "offer", sdp: offer.sdp });
     await pc.setLocalDescription(await pc.createAnswer());
     await gathered(pc);

@@ -598,3 +598,8 @@ button, input, textarea { font-family: inherit; }
 .sp-btn { border: 1px solid var(--border); background: var(--bg); color: var(--ink); border-radius: 10px; padding: 7px 12px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
 .sp-btn.ok { background: #1e8a4c; border-color: #1e8a4c; color: #fff; }
 .sp-btn.bad { background: var(--danger); border-color: var(--danger); color: #fff; }
+
+.sp-mic { display: flex; align-items: center; gap: 6px; margin-top: 4px; font-size: 12px; }
+.sp-meter { flex: 1; max-width: 120px; height: 6px; border-radius: 3px; background: var(--border); overflow: hidden; }
+.sp-meter i { display: block; height: 100%; background: linear-gradient(90deg, var(--rose), var(--violet)); transition: width .15s; }
+.sp-warn { margin-top: 6px; font-size: 12px; line-height: 1.35; color: var(--danger); display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
