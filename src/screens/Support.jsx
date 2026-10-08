@@ -7,13 +7,25 @@ import { Empty, Note, Pills, ScreenTitle } from "../components/common";
 import { callUser, notifyUser } from "../lib/supportLine";
 import SupportStatus from "../components/SupportStatus";
 import SupportBroadcast from "../components/SupportBroadcast";
+import { startVoice, uploadVoice, fmtSecs } from "../lib/voice";
 
 export default function Support({ nav, goto }) {
-  const { can, deny, act } = useAdmin();
+  const { can, deny, act, toast, me } = useAdmin();
   const [filter, setFilter] = useState("Tous");
   const [selId, setSelId] = useState(null);
   const [reply, setReply] = useState("");
   const msgBox = useRef();
+  const [editing, setEditing] = useState(null); // ma réponse en cours de correction
+  const [rec, setRec] = useState(null);         // enregistrement vocal en cours
+  const [recSecs, setRecSecs] = useState(0);
+  const [voiceBusy, setVoiceBusy] = useState(false);
+  useEffect(() => {
+    if (!rec) return undefined;
+    const t = setInterval(() => setRecSecs(Math.round((Date.now() - rec.started) / 1000)), 500);
+    return () => clearInterval(t);
+  }, [rec]);
+  // Changer de conversation : on abandonne une correction ou un vocal en cours
+  useEffect(() => { setEditing(null); rec?.cancel(); setRec(null); }, [selId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const { data, error, reload } = useLoad(async () => {
     const convs = await q(supabase.from("support_conversations")
@@ -75,6 +87,13 @@ export default function Support({ nav, goto }) {
     if (!reply.trim()) return;
     if (!can("support.reply")) return deny("support.reply");
     const body = reply.trim();
+    if (editing) {
+      if (body !== editing.body && await act(() => rpc("eg_support_team_edit", { p_id: editing.id, p_body: body }), "✏️ Réponse corrigée.")) {
+        notifyUser(conv.user_id, body); msgs.reload?.(); reload?.();
+      }
+      setEditing(null); setReply("");
+      return;
+    }
     if (newFor) {
       const id = await act(() => rpc("support_start", { p_user: newFor, p_body: body }), "Message envoyé.");
       if (id) { notifyUser(newFor, body); setReply(""); setNewFor(null); setSelId(id); reload?.(); }
@@ -82,6 +101,31 @@ export default function Support({ nav, goto }) {
       notifyUser(conv.user_id, body); // l'application de la personne affiche la réponse aussitôt (+ notification)
       setReply(""); msgs.reload?.(); reload?.();
     }
+  };
+
+  // ——— Corriger une de mes réponses ———
+  const startEdit = (m) => { setEditing(m); setReply(m.body || ""); };
+  const cancelEdit = () => { setEditing(null); setReply(""); };
+
+  // ——— Message vocal ———
+  const recordVoice = async () => {
+    if (!can("support.reply")) return deny("support.reply");
+    try { const r = await startVoice(); setRecSecs(0); setRec(r); }
+    catch (e) { toast(e?.name === "NotAllowedError" ? "🎙️ Micro refusé par le navigateur : autorisez-le (cadenas à gauche de l'adresse)." : "🎙️ Micro introuvable sur cet appareil."); }
+  };
+  const cancelVoice = () => { rec?.cancel(); setRec(null); };
+  const sendVoice = async () => {
+    const r = rec; setRec(null);
+    if (!r) return;
+    const v = await r.stop();
+    if (v.duration < 1 || !v.blob.size) return toast("Vocal trop court.");
+    setVoiceBusy(true);
+    const ok = await act(async () => {
+      const url = await uploadVoice(v);
+      return rpc("eg_support_team_voice", { p_conversation: selId, p_media_url: url, p_duration: v.duration });
+    }, "🎤 Vocal envoyé.");
+    setVoiceBusy(false);
+    if (ok) { notifyUser(conv.user_id, "🎤 Message vocal"); msgs.reload?.(); reload?.(); }
   };
 
   const lift = async () => {
@@ -93,12 +137,27 @@ export default function Support({ nav, goto }) {
     }, "↩️ Sanction levée. La personne a reçu un message.");
   };
 
-  const replyBox = (placeholder) => (
-    <div className="conv-reply">
-      <input placeholder={placeholder} value={reply} autoComplete="off" onChange={(e) => setReply(e.target.value)} onKeyDown={(e) => e.key === "Enter" && send()} />
-      <button className="primary-button" onClick={send} style={{ padding: "10px 16px" }}>Envoyer</button>
-    </div>
-  );
+  const replyBox = (placeholder, withVoice) => (<>
+    {editing && (
+      <div className="conv-editing">✏️ <span>Correction de votre réponse</span>
+        <button className="icon-button" onClick={cancelEdit} aria-label="Annuler">✕</button></div>
+    )}
+    {rec ? (
+      <div className="conv-reply conv-rec">
+        <button className="icon-button" onClick={cancelVoice} aria-label="Annuler">🗑️</button>
+        <span className="rec-dot" /> <strong>{fmtSecs(recSecs)}</strong> <span className="conv-rec-note">Enregistrement…</span>
+        <button className="primary-button" onClick={sendVoice} style={{ padding: "10px 16px", marginLeft: "auto" }}>Envoyer le vocal</button>
+      </div>
+    ) : (
+      <div className="conv-reply">
+        <input placeholder={editing ? "Corriger votre réponse…" : placeholder} value={reply} autoComplete="off" onChange={(e) => setReply(e.target.value)} onKeyDown={(e) => e.key === "Enter" && send()} />
+        {withVoice && !editing && !reply.trim() && (
+          <button className="icon-button conv-mic" onClick={recordVoice} disabled={voiceBusy} aria-label="Message vocal" title="Message vocal">{voiceBusy ? "…" : "🎤"}</button>
+        )}
+        <button className="primary-button" onClick={send} style={{ padding: "10px 16px" }}>{editing ? "Corriger" : "Envoyer"}</button>
+      </div>
+    )}
+  </>);
 
   let thread;
   if (newFor && !conv) {
@@ -125,14 +184,20 @@ export default function Support({ nav, goto }) {
       {conv.tag === "contestation" && <Note icon="⚖️" style={{ marginBottom: 10 }}>Contestation d'une sanction. Vous pouvez dialoguer librement ; annuler ou modifier la sanction demande la permission « Annuler ou modifier une sanction ».</Note>}
       <div className="conv-messages" ref={msgBox} onScroll={(e) => { const b = e.currentTarget; atBottom.current = b.scrollHeight - b.scrollTop - b.clientHeight < 120; }}>
         {(msgs.data || []).map((m) => (
-          <div key={m.id} className={"conv-msg " + (m.sender === "user" ? "user" : m.sender === "system" ? "system" : "team")}>{m.body}
-            <span className="conv-msg-when">{m.sender === "team" ? "Équipe Epsilon · " : ""}{dateTime(m.created_at)}</span></div>
+          <div key={m.id} className={"conv-msg " + (m.sender === "user" ? "user" : m.sender === "system" ? "system" : "team")}>
+            {m.kind === "voice" && m.media_url ? <audio className="conv-audio" src={m.media_url} controls preload="none" /> : m.body}
+            <span className="conv-msg-when">
+              {m.sender === "team" ? "Équipe Epsilon · " : ""}{dateTime(m.created_at)}{m.edited_at ? " · modifié" : ""}
+              {m.sender === "team" && (m.kind || "text") === "text" && (!m.author_id || m.author_id === me?.id || me?.isPdg) && (
+                <button className="conv-edit" onClick={() => startEdit(m)} title="Corriger cette réponse">✏️ Modifier</button>
+              )}
+            </span></div>
         ))}
       </div>
       {conv.tag === "contestation" && (status === "suspendu" || status === "averti") && (
         <div className="mp-actions" style={{ marginTop: 10 }}><button className="action-button ok" onClick={lift}>↩️ Lever la sanction</button></div>
       )}
-      {replyBox("Écrire une réponse au client…")}
+      {replyBox("Écrire une réponse au client…", true)}
     </>);
   }
 
