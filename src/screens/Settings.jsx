@@ -5,6 +5,7 @@ import { supabase, q, rpc } from "../lib/supabase";
 import { useAdmin, useLoad, Loading } from "../lib/admin";
 import { FEATURE_LIST, KIND_LABEL } from "../lib/constants";
 import { ScreenTitle, SecurityGate } from "../components/common";
+import StorageMove from "../components/StorageMove";
 
 const FILE_SIZES = [["100 Mo", 100], ["200 Mo", 200], ["500 Mo", 500], ["1 Go", 1024]];
 
@@ -88,6 +89,7 @@ export default function Settings({ goto }) {
       {test && <div className="settings-field"><div className="settings-field-main"><strong>Version en test</strong><span>{KIND_LABEL[test.kind]} · {test.notes[0] || ""}</span></div><span className="sec-badge" style={{ background: "#fff0e0", color: "#b5650a" }}>{test.version}</span></div>}
       <div className="settings-field"><div className="settings-field-main"><strong>Sauvegardes</strong><span>{s.backup || "—"}</span></div><span className="field-hint">Gérées par Supabase</span></div>
     </div>
+    <StorageMove />
     <p className="field-hint">Le code de l'application se modifie dans votre environnement de développement (React / Bolt), jamais ici. Ce site sert uniquement à piloter et publier les versions.</p>
   </>);
 
