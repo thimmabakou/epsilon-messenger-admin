@@ -617,3 +617,19 @@ button, input, textarea { font-family: inherit; }
 /* Messagerie de l'équipe */
 .team-sub { font-size: 12px; color: var(--ink-soft); margin-top: 2px; }
 .conv-row.pinned { border-color: var(--violet); }
+
+/* Petits écrans : rien ne déborde à droite (boutons « Appeler », lecteurs vocaux, longs noms) */
+.admin-main { min-width: 0; }
+.support-layout > *, .reports-layout > *, .users-layout > * { min-width: 0; }
+.conv-thread { min-width: 0; }
+.conv-thread-header { flex-wrap: wrap; gap: 8px; }
+.conv-thread-header > div:first-child { min-width: 0; flex: 1 1 160px; }
+.conv-thread-header h2 { overflow-wrap: anywhere; }
+.conv-reply input { min-width: 0; }
+.conv-msg { overflow-wrap: anywhere; min-width: 0; }
+.conv-msg audio, .conv-audio { max-width: 100%; }
+@media (max-width: 600px) {
+  .conv-msg { max-width: 92%; }
+  .conv-audio { width: 210px; }
+  .conv-reply .primary-button { padding: 10px 12px !important; }
+}
