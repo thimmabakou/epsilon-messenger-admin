@@ -50,6 +50,7 @@ export default function Admins() {
       <button className={"action-button " + (a.active ? "danger" : "ok")} onClick={setActive}>{a.active ? "⏸ Désactiver" : "▶ Réactiver"}</button>
       <button className="action-button neutral" onClick={clear}>🧹 Retirer toutes les permissions</button>
     </div>
+    {me.isPdg && <JobTitle key={a.user_id} admin={a} />}
     <span className="field-hint">Appliquer un profil type (vous pourrez ensuite ajuster case par case)</span>
     <div className="pill-group" style={{ margin: "6px 0 14px" }}>
       {[...Object.keys(PROFILE_PRESETS), "Personnalisé"].map((pn) => <button key={pn} className={"pill" + (a.profile_label === pn ? " active" : "")} onClick={() => profile(pn)}>{pn}</button>)}
@@ -97,4 +98,20 @@ export default function Admins() {
       <div className="report-detail">{detail}</div>
     </div>
   </>);
+}
+
+// Poste de l'administrateur : c'est le nom sous lequel il apparaît dans la messagerie de l'équipe
+function JobTitle({ admin }) {
+  const { act } = useAdmin();
+  const [v, setV] = useState(admin.job_title || "");
+  const save = () => act(() => rpc("eg_team_set_title", { p_admin: admin.user_id, p_title: v }), "Poste enregistré.");
+  return (
+    <div style={{ marginBottom: 14 }}>
+      <span className="field-hint">Poste (nom affiché dans la messagerie de l'équipe, ex. « Administrateur commercial »)</span>
+      <div className="conv-reply" style={{ marginTop: 6 }}>
+        <input value={v} maxLength={60} placeholder="Ex. Administrateur commercial" onChange={(e) => setV(e.target.value)} onKeyDown={(e) => e.key === "Enter" && save()} />
+        <button className="primary-button" onClick={save} style={{ padding: "10px 16px" }}>Enregistrer</button>
+      </div>
+    </div>
+  );
 }

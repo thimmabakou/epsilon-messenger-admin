@@ -2,6 +2,7 @@
 
 export const NAV_ITEMS = [
   { key: "overview", label: "Vue d'ensemble", icon: "📋" },
+  { key: "team", label: "Messagerie équipe", icon: "💬" },
   { key: "users", label: "Utilisateurs", icon: "👥" },
   { key: "calls", label: "Appels", icon: "📞" },
   { key: "marketplace", label: "Marketplace", icon: "🛍️" },
@@ -24,7 +25,7 @@ export const NAV_ITEMS = [
 export const SECTION_PERMS = {
   overview: null, users: "users.list", calls: "calls.view", marketplace: "market.manage", music: "PDG", ringtones: "PDG", channels: "PDG", ads: "PDG", support: "support.inbox",
   reports: "mod.view", stats: "stats.view", documents: "docs.prepare", admins: "admins.manage", versions: "ver.prepare",
-  security: "PDG", settings: "settings.modules", requests: null,
+  security: "PDG", settings: "settings.modules", requests: null, team: null,
 };
 
 export const FEATURES = [

@@ -7,10 +7,10 @@ const name = (u) => [u?.first_name, u?.last_name].filter(Boolean).join(" ") || "
 const mmss = (s) => `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
 const REASONS = { declined: "Appel refusé", busy: "Occupé", missed: "Pas de réponse", failed: "Connexion impossible", permission: "Micro refusé par le navigateur", error: "Erreur", cancelled: "Appel annulé", ended: "Appel terminé" };
 
-export default function SupportPhone({ me }) {
+export default function SupportPhone({ me, support = true }) {
   const [s, setS] = useState({ phase: "idle" });
   const [, tick] = useState(0);
-  useEffect(() => startLine(me), [me]);
+  useEffect(() => startLine(me, { support }), [me, support]);
   useEffect(() => onLine(setS), []);
   useEffect(() => {
     if (s.phase !== "active") return undefined;
@@ -20,7 +20,7 @@ export default function SupportPhone({ me }) {
 
   if (s.phase === "idle") return null;
   const secs = s.startedAt ? Math.floor((Date.now() - s.startedAt) / 1000) : 0;
-  const label = s.phase === "incoming" ? "📞 Appel entrant — Service client"
+  const label = s.phase === "incoming" ? (s.team ? "📞 Appel de l'équipe" : "📞 Appel entrant — Service client")
     : s.phase === "outgoing" ? (s.ringing ? "Ça sonne…" : "Appel en cours…")
     : s.phase === "connecting" ? "Connexion…"
     : s.phase === "active" ? `En communication · ${mmss(secs)}`
@@ -28,7 +28,7 @@ export default function SupportPhone({ me }) {
 
   return (
     <div className={"support-phone" + (s.phase === "incoming" ? " ringing" : "")}>
-      <div className="sp-avatar">🎧</div>
+      <div className="sp-avatar">{s.team ? "💬" : "🎧"}</div>
       <div className="sp-main">
         <strong>{name(s.user)}</strong>
         <span>{label}</span>

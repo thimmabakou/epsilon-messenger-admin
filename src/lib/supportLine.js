@@ -4,6 +4,8 @@
 // • L'équipe peut appeler un utilisateur : l'appel arrive dans son application comme un appel normal,
 //   affiché « Service client Epsilon ».
 // • Même langage que les appels de l'application (offer / answer / ringing / end…), voir src/lib/calls.js de l'app.
+// • Appels entre membres de l'équipe (messagerie de l'équipe) : même ligne, mais par la boîte personnelle
+//   « user:<administrateur> » avec l'événement « teamcall » (l'application Epsilon ne le voit pas).
 import { supabase } from "./supabase";
 
 const APP = "https://epsilon-messenger-app.pages.dev";
@@ -15,6 +17,7 @@ const PRIVATE = { config: { private: true, broadcast: { self: false, ack: false 
 
 let agent = null;          // membre de l'équipe connecté
 let line = null;           // abonnement à « user:support »
+let own = null;            // abonnement à ma boîte personnelle (appels et messages de l'équipe)
 let pc = null, local = null, audioEl = null;
 let pending = null;        // appel entrant en attente
 let timers = [];
@@ -39,7 +42,13 @@ function boxSend(userId, event, payload) {
     return ch.send({ type: "broadcast", event, payload });
   } catch { return null; }
 }
-const toUser = (userId, payload) => boxSend(userId, "call", { ...payload, callId: payload.callId || state.callId, fromId: LINE });
+const toUser = (userId, payload) => boxSend(userId, state.team ? "teamcall" : "call",
+  { ...payload, callId: payload.callId || state.callId, fromId: state.team ? agent?.id : LINE });
+export const sendBox = boxSend; // messagerie de l'équipe : prévenir un collègue
+const myCard = () => {
+  const [first, ...rest] = String(agent?.name || "Équipe").split(" ");
+  return { id: agent?.id, first_name: first, last_name: rest.join(" ") };
+};
 
 // Prévenir l'application d'un utilisateur : nouveau message du Service client (+ notification si l'app est fermée)
 export async function notifyUser(userId, preview) {
@@ -184,7 +193,7 @@ function cleanup() {
   pending = null;
 }
 function logCall() {
-  if (!state.user?.id || !state.startedAt) return;
+  if (state.team || !state.user?.id || !state.startedAt) return;
   supabase.rpc("eg_support_call_log", {
     p_user: state.user.id, p_started: new Date(state.startedAt).toISOString(),
     p_duration: Math.round((Date.now() - state.startedAt) / 1000), p_missed: false,
@@ -196,25 +205,40 @@ function finish(reason, notify) {
   logCall();
   cleanup();
   set({ phase: "ended", reason });
-  setTimeout(() => { if (state.phase === "ended") set({ phase: "idle", user: null, callId: null, reason: null, startedAt: null }); }, 2000);
+  setTimeout(() => { if (state.phase === "ended") set({ phase: "idle", user: null, callId: null, reason: null, startedAt: null, team: false }); }, 2000);
 }
 
 // ---------- Actions de l'équipe ----------
-export function startLine(me) {
-  if (line && agent?.id === me.id) return () => {};
+export function startLine(me, { support = true } = {}) {
+  if (own && agent?.id === me.id) return () => {};
   agent = me;
-  line = supabase.channel(`user:${LINE}`, PRIVATE)
-    .on("broadcast", { event: "call" }, ({ payload }) => onSignal(payload))
-    .on("broadcast", { event: "new" }, () => window.dispatchEvent(new Event("epsilon-support-new")))
+  // Ligne du Service client : seulement pour l'équipe qui répond aux utilisateurs
+  if (support) {
+    line = supabase.channel(`user:${LINE}`, PRIVATE)
+      .on("broadcast", { event: "call" }, ({ payload }) => onSignal(payload))
+      .on("broadcast", { event: "new" }, () => window.dispatchEvent(new Event("epsilon-support-new")))
+      .subscribe();
+  }
+  // Ma boîte personnelle : appels et messages de mes collègues
+  own = supabase.channel(`user:${me.id}`, PRIVATE)
+    .on("broadcast", { event: "teamcall" }, ({ payload }) => onSignal({ ...payload, team: true }))
+    .on("broadcast", { event: "team" }, ({ payload }) => window.dispatchEvent(new CustomEvent("epsilon-team-new", { detail: payload })))
     .subscribe();
-  return () => { if (line) supabase.removeChannel(line); line = null; };
+  return () => {
+    if (line) supabase.removeChannel(line);
+    if (own) supabase.removeChannel(own);
+    line = null; own = null;
+  };
 }
 
+// Appeler un collègue de l'équipe depuis la messagerie de l'équipe
+export const callAdmin = (admin) => callUser(admin, true);
+
 // Appeler un utilisateur depuis le site
-export async function callUser(user) {
+export async function callUser(user, team = false) {
   if (state.phase !== "idle") return;
   const callId = newId();
-  set({ phase: "outgoing", direction: "out", callId, user, ringing: false, muted: false, startedAt: null, reason: null, micLevel: 0, micSilent: false, micError: null });
+  set({ phase: "outgoing", direction: "out", team, callId, user, ringing: false, muted: false, startedAt: null, reason: null, micLevel: 0, micSilent: false, micError: null });
   audioCtx(); // créé au moment du clic (sinon le téléphone peut bloquer le son)
   try {
     local = await getMic();
@@ -225,9 +249,9 @@ export async function callUser(user) {
     await gathered(pc);
     if (state.callId !== callId) return;
     playTone("back");
-    const offer = { type: "offer", callId, video: false, sdp: pc.localDescription.sdp, from: ME_CARD };
+    const offer = { type: "offer", callId, video: false, sdp: pc.localDescription.sdp, from: team ? myCard() : ME_CARD };
     toUser(user.id, offer);
-    push({ kind: "support_call", to: user.id, callId });
+    if (!team) push({ kind: "support_call", to: user.id, callId });
     const again = setInterval(() => {
       if (state.callId !== callId || state.phase !== "outgoing") { clearInterval(again); return; }
       if (!state.ringing) toUser(user.id, offer);
@@ -245,7 +269,7 @@ export async function acceptLine() {
   stopTone(); clearTimers();
   set({ phase: "connecting", micLevel: 0, micSilent: false, micError: null });
   audioCtx();
-  boxSend(LINE, "call", { type: "taken", callId: offer.callId, by: agent?.name || "" }); // les collègues arrêtent de sonner
+  if (!state.team) boxSend(LINE, "call", { type: "taken", callId: offer.callId, by: agent?.name || "" }); // les collègues arrêtent de sonner
   try {
     local = await getMic();
     pc = await makePeer();
@@ -264,8 +288,9 @@ export async function acceptLine() {
 // Ne pas répondre (les collègues peuvent encore décrocher)
 export function ignoreLine() {
   if (state.phase !== "incoming") return;
+  if (state.team && state.user?.id) toUser(state.user.id, { type: "decline" }); // collègue : il sait que je ne réponds pas
   cleanup();
-  set({ phase: "idle", user: null, callId: null, ignored: state.callId });
+  set({ phase: "idle", user: null, callId: null, ignored: state.callId, team: false });
 }
 
 export function hangUpLine() {
@@ -283,7 +308,7 @@ export function toggleLineMute() {
 async function onSignal(p) {
   if (!p || !p.type) return;
   if (p.type === "taken") {
-    if (state.phase === "incoming" && p.callId === state.callId) { cleanup(); set({ phase: "idle", user: null, callId: null, takenBy: p.by }); }
+    if (state.phase === "incoming" && !state.team && p.callId === state.callId) { cleanup(); set({ phase: "idle", user: null, callId: null, takenBy: p.by }); }
     return;
   }
   if (p.type === "offer") {
@@ -291,13 +316,16 @@ async function onSignal(p) {
       if (state.phase === "incoming") toUser(p.fromId, { type: "ringing", callId: p.callId });
       return;
     }
-    if (state.phase !== "idle") return; // occupé : un collègue peut répondre
+    if (state.phase !== "idle") { // occupé : sur la ligne support, un collègue peut répondre ; un collègue qui m'appelle est prévenu
+      if (p.team) boxSend(p.fromId, "teamcall", { type: "busy", callId: p.callId, fromId: agent?.id });
+      return;
+    }
     pending = p;
     const u = p.from || { id: p.fromId };
-    set({ phase: "incoming", direction: "in", callId: p.callId, user: { id: p.fromId, first_name: u.first_name, last_name: u.last_name, phone: u.phone }, muted: false, startedAt: null, reason: null });
+    set({ phase: "incoming", direction: "in", team: !!p.team, callId: p.callId, user: { id: p.fromId, first_name: u.first_name, last_name: u.last_name, phone: u.phone }, muted: false, startedAt: null, reason: null });
     toUser(p.fromId, { type: "ringing", callId: p.callId });
     playTone("ring");
-    later(() => { if (state.phase === "incoming" && state.callId === p.callId) { cleanup(); set({ phase: "idle", user: null, callId: null }); } }, RING_TIMEOUT + 5000);
+    later(() => { if (state.phase === "incoming" && state.callId === p.callId) { cleanup(); set({ phase: "idle", user: null, callId: null, team: false }); } }, RING_TIMEOUT + 5000);
     return;
   }
   if (p.callId !== state.callId) return;
@@ -313,7 +341,7 @@ async function onSignal(p) {
     case "decline": finish("declined", false); break;
     case "busy": finish("busy", false); break;
     case "end":
-      if (state.phase === "incoming") { cleanup(); set({ phase: "idle", user: null, callId: null }); }
+      if (state.phase === "incoming") { cleanup(); set({ phase: "idle", user: null, callId: null, team: false }); }
       else finish("ended", false);
       break;
     default: break;

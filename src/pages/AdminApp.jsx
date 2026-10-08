@@ -24,8 +24,10 @@ import Versions from "../screens/Versions";
 import Requests from "../screens/Requests";
 import Security from "../screens/Security";
 import Settings from "../screens/Settings";
+import Team from "../screens/Team";
+import { teamUnread } from "../lib/team";
 
-const SCREENS = { overview: Overview, users: Users, calls: Calls, marketplace: Marketplace, music: Music, ringtones: Ringtones, channels: Channels, ads: Ads, support: Support, reports: Reports, stats: Stats, documents: Documents, admins: Admins, versions: Versions, requests: Requests, security: Security, settings: Settings };
+const SCREENS = { overview: Overview, users: Users, calls: Calls, marketplace: Marketplace, music: Music, ringtones: Ringtones, channels: Channels, ads: Ads, support: Support, reports: Reports, stats: Stats, documents: Documents, admins: Admins, versions: Versions, requests: Requests, security: Security, settings: Settings, team: Team };
 
 export default function AdminApp({ me, onLogout, reloadMe }) {
   const [section, setSection] = useState("overview");
@@ -39,8 +41,8 @@ export default function AdminApp({ me, onLogout, reloadMe }) {
 }
 
 function Shell({ me, section, nav, goto, onLogout, reloadMe }) {
-  const { canSee, version } = useAdmin();
-  const [flags, setFlags] = useState({ frozen: false, maintenance: false, reqUnread: 0 });
+  const { canSee, version, refresh, toast } = useAdmin();
+  const [flags, setFlags] = useState({ frozen: false, maintenance: false, reqUnread: 0, teamUnread: 0 });
 
   useEffect(() => {
     (async () => {
@@ -48,18 +50,27 @@ function Shell({ me, section, nav, goto, onLogout, reloadMe }) {
       const get = (k) => (st || []).find((x) => x.key === k)?.value === true;
       const { data: reqs } = await supabase.from("perm_requests").select("admin_id,unread_pdg,unread_admin");
       const reqUnread = (reqs || []).reduce((n, r) => n + (me.isPdg ? r.unread_pdg : (r.admin_id === me.id ? r.unread_admin : 0)), 0);
-      setFlags({ frozen: get("frozen"), maintenance: get("maintenance"), reqUnread });
+      const tu = Number(await teamUnread()) || 0;
+      setFlags({ frozen: get("frozen"), maintenance: get("maintenance"), reqUnread, teamUnread: tu });
     })();
     reloadMe(); // les permissions ont pu changer (accordées par le PDG)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [version, section]);
+
+  // Message d'un collègue : la pastille « Messagerie équipe » se met à jour (et un petit avis hors de l'écran)
+  useEffect(() => {
+    const onTeam = () => { refresh(); if (section !== "team") toast("💬 Nouveau message de l'équipe", { label: "Ouvrir", run: () => goto("team") }); };
+    window.addEventListener("epsilon-team-new", onTeam);
+    return () => window.removeEventListener("epsilon-team-new", onTeam);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [section]);
 
   const current = canSee(section) ? section : "overview";
   const Screen = SCREENS[current];
 
   return (
     <div className="site-root">
-      {(me.isPdg || me.perms.includes("support.reply") || me.perms.includes("calls.view")) && <SupportPhone me={me} />}
+      <SupportPhone me={me} support={me.isPdg || me.perms.includes("support.reply") || me.perms.includes("calls.view")} />
       <TopSwitcher page="admin" floating />
       <div className="admin-app">
         <header className="admin-header">
@@ -77,7 +88,7 @@ function Shell({ me, section, nav, goto, onLogout, reloadMe }) {
         <div className="admin-body">
           <aside className="admin-sidebar">
             {NAV_ITEMS.filter((it) => canSee(it.key)).map((it) => {
-              const badge = it.key === "requests" ? flags.reqUnread : 0;
+              const badge = it.key === "requests" ? flags.reqUnread : it.key === "team" ? flags.teamUnread : 0;
               const label = it.key === "requests" ? (me.isPdg ? "Demandes de l'équipe" : "Écrire au PDG") : it.label;
               return (
                 <button key={it.key} className={"sidebar-item" + (current === it.key ? " active" : "")} onClick={() => goto(it.key)}>
