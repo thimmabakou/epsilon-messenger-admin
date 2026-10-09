@@ -67,7 +67,7 @@ export default function Ads() {
         <strong style={{ fontSize: 14 }}>📱 Numéros de paiement d'Epsilon (affichés aux commerçants)</strong>
         <input placeholder="Numéro MTN Mobile Money" value={pay.momo} inputMode="tel" onChange={(e) => setPay({ ...pay, momo: e.target.value })} autoComplete="off" />
         <input placeholder="Numéro Airtel Money (facultatif)" value={pay.airtel} inputMode="tel" onChange={(e) => setPay({ ...pay, airtel: e.target.value })} autoComplete="off" />
-        <input placeholder="Au nom de (ex. Epsilon Messenger)" value={pay.name} onChange={(e) => setPay({ ...pay, name: e.target.value })} autoComplete="off" />
+        <input placeholder="Nom exact du titulaire des comptes Mobile Money (tel qu’affiché à celui qui paie)" value={pay.name} onChange={(e) => setPay({ ...pay, name: e.target.value })} autoComplete="off" />
         <div className="mp-actions"><button className="action-button primary" onClick={savePay}>💾 Enregistrer (code PDG)</button></div>
       </div>
     )}
