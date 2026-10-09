@@ -19,6 +19,14 @@ function snapshotText(r) {
   return s.text || s.description || s.caption || JSON.stringify(s);
 }
 
+// Dossier de la discussion signalée (accepte aussi un texte JSON, selon la façon dont la colonne a été créée)
+function evidenceOf(r) {
+  const e = r?.evidence;
+  if (!e) return null;
+  if (typeof e === "string") { try { return JSON.parse(e); } catch { return null; } }
+  return e;
+}
+
 export default function Reports() {
   const { can, deny, act } = useAdmin();
   const [filter, setFilter] = useState("en_attente");
@@ -60,8 +68,8 @@ export default function Reports() {
         <div><span className="label">Date</span><strong>{dateTime(sel.created_at)}</strong></div>
         <div><span className="label">Statut</span><strong>{sel.status === "en_attente" ? "En attente" : "Traité"}</strong></div>
       </div>
-      {sel.evidence?.items?.length
-        ? <ReportedChat report={sel} />
+      {evidenceOf(sel)?.items?.length
+        ? <ReportedChat report={{ ...sel, evidence: evidenceOf(sel) }} />
         : <div className="report-content-box"><span className="label">Contenu signalé (remonté automatiquement)</span><p>{snapshotText(sel)}</p></div>}
       <div className="report-content-box"><span className="label">Motif choisi et arguments du signaleur</span><p><strong>{sel.reason}</strong>{sel.details ? ` — « ${sel.details} »` : ""}</p></div>
       <div className="report-actions">
