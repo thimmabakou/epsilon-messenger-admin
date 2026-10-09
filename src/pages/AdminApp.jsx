@@ -14,6 +14,7 @@ import Music from "../screens/Music";
 import Ringtones from "../screens/Ringtones";
 import Channels from "../screens/Channels";
 import Ads from "../screens/Ads";
+import ShopPayments from "../screens/ShopPayments";
 import SupportPhone from "../components/SupportPhone";
 import Support from "../screens/Support";
 import Reports from "../screens/Reports";
@@ -27,7 +28,7 @@ import Settings from "../screens/Settings";
 import Team from "../screens/Team";
 import { teamUnread } from "../lib/team";
 
-const SCREENS = { overview: Overview, users: Users, calls: Calls, marketplace: Marketplace, music: Music, ringtones: Ringtones, channels: Channels, ads: Ads, support: Support, reports: Reports, stats: Stats, documents: Documents, admins: Admins, versions: Versions, requests: Requests, security: Security, settings: Settings, team: Team };
+const SCREENS = { overview: Overview, users: Users, calls: Calls, marketplace: Marketplace, shoppay: ShopPayments, music: Music, ringtones: Ringtones, channels: Channels, ads: Ads, support: Support, reports: Reports, stats: Stats, documents: Documents, admins: Admins, versions: Versions, requests: Requests, security: Security, settings: Settings, team: Team };
 
 export default function AdminApp({ me, onLogout, reloadMe }) {
   const [section, setSection] = useState("overview");
