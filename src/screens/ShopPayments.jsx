@@ -17,6 +17,7 @@ export default function ShopPayments() {
   const allowed = can("shops.pay");
   const [tab, setTab] = useState("en_attente");
   const [reject, setReject] = useState(null);
+  const [check, setCheck] = useState(null); // { p, ref, error } : validation avec la référence lue dans le SMS d'Epsilon
 
   const { data, error } = useLoad(async () => {
     const pays = await q(supabase.from("shop_payments").select("*").order("created_at", { ascending: false }).limit(400));
@@ -34,10 +35,16 @@ export default function ShopPayments() {
   const count = (k) => (data || []).filter((p) => p.status === k).length;
   const rpc = async (args) => { const { error: e } = await supabase.rpc("eg_shop_pay_decide", args); if (e) throw new Error(e.message); };
 
-  const approve = (p) => {
-    if (!allowed) return deny("shops.pay");
-    if (!window.confirm(`Valider ${fmt(p.amount_fcfa)} FCFA de « ${p.shop?.name || "?"} » (réf. ${p.pay_ref}) ?\n\nVérifiez d'abord que ce paiement figure bien dans les SMS d'Epsilon.`)) return;
-    act(() => rpc({ p_payment: p.id, p_ok: true }), "✅ Paiement validé : la boutique est visible 30 jours de plus.");
+  // Valider : on recopie la référence du SMS reçu sur le téléphone d'Epsilon ; elle doit être identique
+  // à celle donnée par le commerçant (majuscules, espaces et tirets ignorés), sinon rien n'est validé.
+  const norm = (s) => String(s || "").toUpperCase().replace(/[\s\-_.:]/g, "");
+  const approve = (p) => (allowed ? setCheck({ p, ref: "", error: "" }) : deny("shops.pay"));
+  const confirmApprove = async () => {
+    const { p, ref } = check;
+    if (!ref.trim()) return setCheck({ ...check, error: "Recopiez la référence reçue dans le SMS de paiement." });
+    if (norm(ref) !== norm(p.pay_ref)) return setCheck({ ...check, error: "❌ Les références ne correspondent pas. Ne validez pas : vérifiez le SMS, ou refusez ce paiement." });
+    const ok = await act(() => rpc({ p_payment: p.id, p_ok: true }), "✅ Références identiques : paiement validé, la boutique est visible 30 jours de plus.");
+    if (ok) setCheck(null);
   };
   const confirmReject = () => act(async () => { await rpc({ p_payment: reject.p.id, p_ok: false, p_reason: reject.reason || null }); setReject(null); }, "❌ Paiement refusé. Le commerçant voit le motif dans sa boutique.");
 
@@ -68,6 +75,22 @@ export default function ShopPayments() {
         </div>
       ))}
     </div>
+    {check && (
+      <div onClick={() => setCheck(null)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.45)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50, padding: 16 }}>
+        <div className="ver-form" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 440, width: "100%", background: "var(--card, #fff)" }}>
+          <strong style={{ fontSize: 15 }}>Valider — {check.p.shop?.name}</strong>
+          <span className="field-hint">Montant attendu : <b>{fmt(check.p.amount_fcfa)} FCFA</b>. Ouvrez le SMS de paiement reçu sur le téléphone d'Epsilon et recopiez ici sa référence (le code de la transaction).</span>
+          <input placeholder="Référence lue dans votre SMS" value={check.ref} maxLength={40} autoFocus autoComplete="off"
+            onChange={(e) => setCheck({ ...check, ref: e.target.value, error: "" })} onKeyDown={(e) => e.key === "Enter" && confirmApprove()} />
+          {check.error && <span className="field-hint" style={{ color: "var(--danger)", fontWeight: 600 }}>{check.error}</span>}
+          <span className="field-hint">La validation ne se fait que si votre référence est identique à celle donnée par le commerçant. Vérifiez aussi que le montant du SMS est le bon.</span>
+          <div className="mp-actions">
+            <button className="action-button primary" onClick={confirmApprove}>✅ Comparer et valider</button>
+            <button className="action-button neutral" onClick={() => setCheck(null)}>Annuler</button>
+          </div>
+        </div>
+      </div>
+    )}
     {reject && (
       <div onClick={() => setReject(null)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.45)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50, padding: 16 }}>
         <div className="ver-form" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 440, width: "100%", background: "var(--card, #fff)" }}>
