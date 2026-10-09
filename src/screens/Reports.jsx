@@ -6,6 +6,7 @@ import { CONTENT_TYPES } from "../lib/constants";
 import { dateTime, fullName, shortId } from "../lib/format";
 import { Empty, History, Pills, ScreenTitle } from "../components/common";
 import SanctionPanel from "../components/SanctionPanel";
+import ReportedChat from "../components/ReportedChat";
 
 const KIND_LABEL = { avertissement: "Avertissement envoyé", suspension: "Compte suspendu", retrait_contenu: "Contenu retiré", retrait_produit: "Produit retiré" };
 const MODE_PERM = { warn: "mod.warn", suspend: "mod.suspend", remove: "mod.remove" };
@@ -59,7 +60,9 @@ export default function Reports() {
         <div><span className="label">Date</span><strong>{dateTime(sel.created_at)}</strong></div>
         <div><span className="label">Statut</span><strong>{sel.status === "en_attente" ? "En attente" : "Traité"}</strong></div>
       </div>
-      <div className="report-content-box"><span className="label">Contenu signalé (remonté automatiquement)</span><p>{snapshotText(sel)}</p></div>
+      {sel.evidence?.items?.length
+        ? <ReportedChat report={sel} />
+        : <div className="report-content-box"><span className="label">Contenu signalé (remonté automatiquement)</span><p>{snapshotText(sel)}</p></div>}
       <div className="report-content-box"><span className="label">Motif choisi et arguments du signaleur</span><p><strong>{sel.reason}</strong>{sel.details ? ` — « ${sel.details} »` : ""}</p></div>
       <div className="report-actions">
         <button className="action-button danger" onClick={() => open("remove")}>🗑️ Retirer le contenu</button>

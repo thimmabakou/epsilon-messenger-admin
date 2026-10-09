@@ -633,3 +633,20 @@ button, input, textarea { font-family: inherit; }
   .conv-audio { width: 210px; }
   .conv-reply .primary-button { padding: 10px 12px !important; }
 }
+
+/* Discussion signalée (messages chiffrés envoyés par le téléphone du signaleur) */
+.rc-verdict { font-size: 12.5px; border-radius: 10px; padding: 9px 12px; margin: 4px 0 12px; line-height: 1.45; }
+.rc-verdict.ok { background: rgba(34, 160, 90, .12); color: #1d7a47; }
+.rc-verdict.bad { background: rgba(230, 69, 69, .12); color: var(--danger); }
+.rc-verdict.plain { background: var(--rose-soft); color: var(--ink-soft); }
+.rc-thread { display: flex; flex-direction: column; gap: 8px; max-height: 420px; overflow-y: auto; }
+.rc-msg { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 8px 12px; opacity: .72; }
+.rc-msg.target { border-left: 3px solid var(--violet); }
+.rc-msg.reported { opacity: 1; border: 2px solid var(--danger); background: rgba(230, 69, 69, .06); }
+.rc-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 12px; margin-bottom: 3px; }
+.rc-head span { color: var(--ink-soft); }
+.rc-badge { font-size: 10.5px; font-weight: 600; border-radius: 999px; padding: 2px 8px; }
+.rc-badge.ok { background: rgba(34, 160, 90, .14); color: #1d7a47 !important; }
+.rc-badge.bad { background: rgba(230, 69, 69, .14); color: var(--danger) !important; }
+.rc-body { font-size: 13.5px; white-space: pre-wrap; word-break: break-word; color: var(--ink); }
+.rc-kind { display: inline-block; font-size: 12px; color: var(--ink-soft); margin-right: 6px; }
