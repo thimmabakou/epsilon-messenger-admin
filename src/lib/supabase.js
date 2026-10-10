@@ -9,6 +9,19 @@ export const supabase = createClient(
   import.meta.env.VITE_SUPABASE_ANON_KEY,
 );
 
+// Lien « choisir mon mot de passe » (invitation ou mot de passe oublié) : on le repère dès le chargement,
+// même si Supabase a ramené la personne sur la page d'accueil du site au lieu de l'espace administration.
+export const authLink = {
+  recovery: /type=(recovery|invite)/.test(initialHash) || (typeof window !== "undefined" && /[?&]type=(recovery|invite)/.test(window.location.search)),
+  invite: /type=invite/.test(initialHash),
+};
+supabase.auth.onAuthStateChange((event) => {
+  if (event === "PASSWORD_RECOVERY") {
+    authLink.recovery = true;
+    if (!/^#\/admin/.test(window.location.hash)) window.location.hash = "/admin";
+  }
+});
+
 // Lance une requête et renvoie ses données, ou lève une erreur lisible en français
 export async function q(promise) {
   const { data, error } = await promise;

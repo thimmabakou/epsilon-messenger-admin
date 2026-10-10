@@ -1,7 +1,7 @@
 // Entrée de l'espace administration : connexion (mot de passe + code SMS), puis tableau de bord
 import { useCallback, useEffect, useRef, useState } from "react";
 import logo from "../assets/logo.png";
-import { supabase, q, initialHash } from "../lib/supabase";
+import { supabase, q, initialHash, authLink } from "../lib/supabase";
 import { adminLogin, adminLogout, adminResendCode, adminVerifyCode, sendPasswordReset, sessionIsAdmin } from "../lib/adminAuth";
 import { PwInput } from "../components/common";
 import { SiteHeader, TopSwitcher } from "../App";
@@ -41,7 +41,7 @@ export default function AdminEntry() {
       if (event === "PASSWORD_RECOVERY") { setStep("recovery"); setChecking(false); }
     });
     (async () => {
-      if (/type=(recovery|invite)/.test(initialHash)) { setInvited(/type=invite/.test(initialHash)); setStep("recovery"); setChecking(false); return; }
+      if (/type=(recovery|invite)/.test(initialHash) || authLink.recovery) { setInvited(authLink.invite); setStep("recovery"); setChecking(false); return; }
       if (/error_description=/.test(initialHash)) setError("Ce lien a expiré ou a déjà été utilisé. Demandez un nouveau lien.");
       try { if (await sessionIsAdmin()) await enter(); } catch { /* pas connecté */ }
       setChecking(false);

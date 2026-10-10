@@ -6,11 +6,11 @@ import DocPage from "./pages/DocPage";
 import HelpPage from "./pages/HelpPage";
 import AdminEntry from "./pages/AdminEntry";
 import { go } from "./lib/nav";
-import { initialHash } from "./lib/supabase";
+import { initialHash, authLink } from "./lib/supabase";
 
 function readRoute(first) {
   const h = (first ? initialHash : window.location.hash).replace(/^#/, "");
-  if (/access_token=|type=(recovery|invite)|error_description=/.test(h)) return { page: "admin" };
+  if (/access_token=|type=(recovery|invite)|error_description=/.test(h) || authLink.recovery) return { page: "admin" };
   const parts = h.split("/").filter(Boolean);
   if (parts[0] === "admin") return { page: "admin" };
   if (parts[0] === "aide") return { page: "help" };
