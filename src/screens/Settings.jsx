@@ -21,7 +21,8 @@ export default function Settings({ goto }) {
   const [gate, setGate] = useState(null); // { title, run(code) }
   const [maint, setMaint] = useState(null); // fenêtre « couper une partie » : { target, when, start, end, announce }
   const [pushInfo, setPushInfo] = useState(null);
-  const plans = useLoad(async () => q(supabase.from("maintenance_plans").select("*").eq("status", "prevue").order("starts_at")));
+  const plans = useLoad(async () => (await q(supabase.from("maintenance_plans").select("*").eq("status", "prevue").order("starts_at")))
+    .filter((p) => !p.ends_at || new Date(p.ends_at) > new Date())); // celles dont l'heure de fin est passée sont terminées
 
   const { data, error } = useLoad(async () => {
     const [settings, versions] = await Promise.all([
