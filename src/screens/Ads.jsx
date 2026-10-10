@@ -7,6 +7,7 @@ import { supabase, q } from "../lib/supabase";
 import { useAdmin, useLoad, Loading } from "../lib/admin";
 import { dateOnly, fmt, fullName } from "../lib/format";
 import { Empty, Note, ScreenTitle, SecurityGate, Pills } from "../components/common";
+import PayCodeCheck from "../components/PayCodeCheck";
 
 const TABS = [["pending", "En attente"], ["active", "En ligne"], ["ended", "Terminées"], ["rejected", "Refusées"]];
 const stateOf = (a) => (a.status === "active" ? (new Date(a.ends_at) > new Date() ? "active" : "ended") : a.status);
@@ -18,6 +19,7 @@ export default function Ads() {
   const [gate, setGate] = useState(null);
   const [reject, setReject] = useState(null);   // { a, reason }
   const [pay, setPay] = useState(null);         // formulaire des numéros de paiement
+  const [check, setCheck] = useState(null);     // publicité en cours de vérification (deux codes)
 
   const { data, error, reload } = useLoad(async () => {
     const [ads, settings] = await Promise.all([
@@ -46,8 +48,14 @@ export default function Ads() {
   const protect = (title, run) => (allowed ? setGate({ title, run: async () => { setGate(null); await run(); reload?.(); } }) : deny("PDG"));
   const rpc = async (name, args) => { const { error: e } = await supabase.rpc(name, args); if (e) throw new Error(e.message); };
 
-  const approve = (a) => protect(`Valider la publicité de « ${a.shop?.name || "?"} » — ${a.days} jours, ${fmt(a.price_fcfa)} FCFA (réf. ${a.pay_ref})`,
-    () => act(() => rpc("eg_ad_decide", { p_ad: a.id, p_ok: true }), "✅ Publicité en ligne dans Epsilon Market."));
+  // Valider : d'abord les deux codes identiques (case verte), puis le code de sécurité du PDG
+  const approve = (a) => (allowed ? setCheck(a) : deny("PDG"));
+  const confirmApprove = async (adminRef) => {
+    const a = check;
+    setCheck(null);
+    protect(`Valider la publicité de « ${a.shop?.name || "?"} » — ${a.days} jours, ${fmt(a.price_fcfa)} FCFA (code ${a.pay_ref})`,
+      () => act(() => rpc("eg_ad_decide", { p_ad: a.id, p_ok: true, p_admin_ref: adminRef }), "✅ Codes identiques : publicité en ligne dans Epsilon Market."));
+  };
   const confirmReject = () => {
     const { a, reason } = reject;
     protect(`Refuser la publicité de « ${a.shop?.name || "?"} »`,
@@ -60,7 +68,7 @@ export default function Ads() {
 
   return (<>
     <ScreenTitle eyebrow="CONTENU" title="Publicités — Epsilon Market" />
-    <Note icon="📣">Prix : <b>2 jours 500 FCFA</b> · <b>5 jours 1 000 FCFA</b> · <b>1 semaine 1 500 FCFA</b>. Avant de valider, <b>comparez la référence</b> donnée par le commerçant avec le SMS reçu sur le téléphone d'Epsilon, et vérifiez que le montant est le bon. La publicité démarre à la validation et s'arrête seule à la fin. 🔐 Réservé au PDG.</Note>
+    <Note icon="📣">Prix : <b>2 jours 500 FCFA</b> · <b>5 jours 1 000 FCFA</b> · <b>1 semaine 1 500 FCFA</b>. Pour valider, <b>recopiez le code reçu dans le SMS</b> du téléphone d'Epsilon : il doit être identique au code du commerçant (la case devient verte), et vérifiez le montant. Un code validé ne peut plus jamais resservir. La publicité démarre à la validation et s'arrête seule à la fin. 🔐 Réservé au PDG.</Note>
 
     {pay && (
       <div className="ver-form" style={{ marginBottom: 16 }}>
@@ -86,7 +94,7 @@ export default function Ads() {
           <div className="music-main">
             <strong>{a.shop?.name || "Boutique inconnue"}{a.product ? ` — ${a.product.name}` : " — toute la boutique"}</strong>
             <span className="field-hint">Commerçant : {a.owner ? `${fullName(a.owner)} (${a.owner.phone || "—"})` : "—"}</span>
-            <span className="field-hint">{a.days} jours · <b>{fmt(a.price_fcfa)} FCFA</b> · référence <b>{a.pay_ref}</b> · demandé le {dateOnly(a.created_at)}</span>
+            <span className="field-hint">{a.days} jours · <b>{fmt(a.price_fcfa)} FCFA</b> · code du commerçant <b>{a.pay_ref}</b> · demandé le {dateOnly(a.created_at)}</span>
             {a.caption && <span className="field-hint">Texte : « {a.caption} »</span>}
             {a.status === "active" && <span className="field-hint">{tab === "active" ? `En ligne jusqu'au ${dateOnly(a.ends_at)}` : `Terminée le ${dateOnly(a.ends_at)}`} · {fmt(a.views)} vues · {fmt(a.clicks)} touches</span>}
             {a.status === "rejected" && a.reject_reason && <span className="field-hint">Motif : {a.reject_reason}</span>}
@@ -114,6 +122,12 @@ export default function Ads() {
           </div>
         </div>
       </div>
+    )}
+    {check && (
+      <PayCodeCheck title={`Vérifier le paiement — publicité de ${check.shop?.name || "?"}`} sellerRef={check.pay_ref}
+        amount={`${fmt(check.price_fcfa)} FCFA`} details={`${check.days} jours · demandé le ${dateOnly(check.created_at)}`}
+        validateLabel="✅ Valider (code PDG)" onValidate={confirmApprove} onCancel={() => setCheck(null)}
+        onRefuse={() => { const a = check; setCheck(null); setReject({ a, reason: "" }); }} />
     )}
     {gate && <SecurityGate title={gate.title} onConfirm={gate.run} onCancel={() => setGate(null)} />}
   </>);

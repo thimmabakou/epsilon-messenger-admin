@@ -7,6 +7,7 @@ import { supabase, q } from "../lib/supabase";
 import { useAdmin, useLoad, Loading } from "../lib/admin";
 import { dateOnly, dateTime, fmt, fullName } from "../lib/format";
 import { Empty, Note, Pills, ScreenTitle } from "../components/common";
+import PayCodeCheck from "../components/PayCodeCheck";
 
 const TABS = [["en_attente", "En attente"], ["validee", "Validés"], ["refusee", "Refusés"]];
 const KIND = { ouverture: "Ouverture", mensuel: "Mois" };
@@ -17,7 +18,7 @@ export default function ShopPayments() {
   const allowed = can("shops.pay");
   const [tab, setTab] = useState("en_attente");
   const [reject, setReject] = useState(null);
-  const [check, setCheck] = useState(null); // { p, ref, error } : validation avec la référence lue dans le SMS d'Epsilon
+  const [check, setCheck] = useState(null); // paiement en cours de vérification (deux codes)
 
   const { data, error } = useLoad(async () => {
     const pays = await q(supabase.from("shop_payments").select("*").order("created_at", { ascending: false }).limit(400));
@@ -35,22 +36,19 @@ export default function ShopPayments() {
   const count = (k) => (data || []).filter((p) => p.status === k).length;
   const rpc = async (args) => { const { error: e } = await supabase.rpc("eg_shop_pay_decide", args); if (e) throw new Error(e.message); };
 
-  // Valider : on recopie la référence du SMS reçu sur le téléphone d'Epsilon ; elle doit être identique
-  // à celle donnée par le commerçant (majuscules, espaces et tirets ignorés), sinon rien n'est validé.
-  const norm = (s) => String(s || "").toUpperCase().replace(/[\s\-_.:]/g, "");
-  const approve = (p) => (allowed ? setCheck({ p, ref: "", error: "" }) : deny("shops.pay"));
-  const confirmApprove = async () => {
-    const { p, ref } = check;
-    if (!ref.trim()) return setCheck({ ...check, error: "Recopiez la référence reçue dans le SMS de paiement." });
-    if (norm(ref) !== norm(p.pay_ref)) return setCheck({ ...check, error: "❌ Les références ne correspondent pas. Ne validez pas : vérifiez le SMS, ou refusez ce paiement." });
-    const ok = await act(() => rpc({ p_payment: p.id, p_ok: true }), "✅ Références identiques : paiement validé, la boutique est visible 30 jours de plus.");
+  // Valider : deux cases — le code du commerçant (verrouillé) et celui reçu dans le SMS d'Epsilon.
+  // « Valider » ne s'active que s'ils sont identiques ; la base refait la vérification et refuse un code déjà consommé.
+  const approve = (p) => (allowed ? setCheck(p) : deny("shops.pay"));
+  const confirmApprove = async (adminRef) => {
+    const p = check;
+    const ok = await act(() => rpc({ p_payment: p.id, p_ok: true, p_admin_ref: adminRef }), "✅ Codes identiques : paiement validé, la boutique est visible 30 jours de plus.");
     if (ok) setCheck(null);
   };
   const confirmReject = () => act(async () => { await rpc({ p_payment: reject.p.id, p_ok: false, p_reason: reject.reason || null }); setReject(null); }, "❌ Paiement refusé. Le commerçant voit le motif dans sa boutique.");
 
   return (<>
     <ScreenTitle eyebrow="COMMERCE" title="Paiements des boutiques" />
-    <Note icon="💳">Ouverture <b>500 FCFA</b> (1er mois) · puis chaque mois <b>500 FCFA</b> (Standard) ou <b>2 000 FCFA</b> (Pro, plus de visibilité). Avant de valider, <b>comparez la référence</b> avec le SMS reçu sur le téléphone d'Epsilon et vérifiez le <b>montant</b>. Chaque décision est inscrite au journal de sécurité.</Note>
+    <Note icon="💳">Ouverture <b>500 FCFA</b> (1er mois) · puis chaque mois <b>500 FCFA</b> (Standard) ou <b>2 000 FCFA</b> (Pro, plus de visibilité). Pour valider, <b>recopiez le code reçu dans le SMS</b> du téléphone d'Epsilon : il doit être identique au code du commerçant (la case devient verte). Vérifiez aussi le <b>montant</b>. Un code validé ne peut plus jamais resservir. Chaque décision est inscrite au journal de sécurité.</Note>
     <Pills options={TABS.map(([k, l]) => [k, `${l} (${count(k)})`])} value={tab} onChange={setTab} />
     {!data && <Loading error={error} />}
     {data && list.length === 0 && <Empty icon="💳" text="Aucun paiement ici." />}
@@ -61,7 +59,7 @@ export default function ShopPayments() {
             <strong>{p.shop?.name || "Boutique supprimée"}{p.shop?.city ? ` · ${p.shop.city}` : ""}</strong>
             <span className="field-hint">Commerçant : {p.owner ? `${fullName(p.owner)} (${p.owner.phone || "—"})` : "—"}</span>
             <span className="field-hint">{KIND[p.kind] || p.kind} · formule {PLAN[p.plan] || p.plan} · <b>{fmt(p.amount_fcfa)} FCFA</b></span>
-            <span className="field-hint">Référence : <b style={{ fontSize: 15 }}>{p.pay_ref}</b> · déclaré le {dateTime(p.created_at)}</span>
+            <span className="field-hint">Code du commerçant : <b style={{ fontSize: 15 }}>{p.pay_ref}</b> · déclaré le {dateTime(p.created_at)}</span>
             {p.shop?.paid_until && <span className="field-hint">Abonnement actuel jusqu'au {dateOnly(p.shop.paid_until)}</span>}
             {p.status === "refusee" && p.reject_reason && <span className="field-hint">Motif : {p.reject_reason}</span>}
             {p.decided_at && <span className="field-hint">Décision le {dateTime(p.decided_at)}</span>}
@@ -76,20 +74,10 @@ export default function ShopPayments() {
       ))}
     </div>
     {check && (
-      <div onClick={() => setCheck(null)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.45)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50, padding: 16 }}>
-        <div className="ver-form" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 440, width: "100%", background: "var(--card, #fff)" }}>
-          <strong style={{ fontSize: 15 }}>Valider — {check.p.shop?.name}</strong>
-          <span className="field-hint">Montant attendu : <b>{fmt(check.p.amount_fcfa)} FCFA</b>. Ouvrez le SMS de paiement reçu sur le téléphone d'Epsilon et recopiez ici sa référence (le code de la transaction).</span>
-          <input placeholder="Référence lue dans votre SMS" value={check.ref} maxLength={40} autoFocus autoComplete="off"
-            onChange={(e) => setCheck({ ...check, ref: e.target.value, error: "" })} onKeyDown={(e) => e.key === "Enter" && confirmApprove()} />
-          {check.error && <span className="field-hint" style={{ color: "var(--danger)", fontWeight: 600 }}>{check.error}</span>}
-          <span className="field-hint">La validation ne se fait que si votre référence est identique à celle donnée par le commerçant. Vérifiez aussi que le montant du SMS est le bon.</span>
-          <div className="mp-actions">
-            <button className="action-button primary" onClick={confirmApprove}>✅ Comparer et valider</button>
-            <button className="action-button neutral" onClick={() => setCheck(null)}>Annuler</button>
-          </div>
-        </div>
-      </div>
+      <PayCodeCheck title={`Vérifier le paiement — ${check.shop?.name || "boutique"}`} sellerRef={check.pay_ref}
+        amount={`${fmt(check.amount_fcfa)} FCFA`} details={`${KIND[check.kind] || check.kind} · formule ${PLAN[check.plan] || check.plan} · déclaré le ${dateTime(check.created_at)}`}
+        onValidate={confirmApprove} onCancel={() => setCheck(null)}
+        onRefuse={() => { const p = check; setCheck(null); setReject({ p, reason: "" }); }} />
     )}
     {reject && (
       <div onClick={() => setReject(null)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.45)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50, padding: 16 }}>

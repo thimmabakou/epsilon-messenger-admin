@@ -650,3 +650,17 @@ button, input, textarea { font-family: inherit; }
 .rc-badge.bad { background: rgba(230, 69, 69, .14); color: var(--danger) !important; }
 .rc-body { font-size: 13.5px; white-space: pre-wrap; word-break: break-word; color: var(--ink); }
 .rc-kind { display: inline-block; font-size: 12px; color: var(--ink-soft); margin-right: 6px; }
+
+/* ——— Double vérification du code de paiement ——— */
+.pcc-back { position: fixed; inset: 0; background: rgba(0,0,0,.45); display: flex; align-items: center; justify-content: center; z-index: 50; padding: 16px; }
+.pcc { max-width: 460px; width: 100%; background: var(--card, #fff); }
+.pcc-label { font-size: 13px; font-weight: 700; margin-top: 6px; display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.pcc-label span { font-weight: 500; opacity: .6; font-size: 12px; }
+.pcc-input { font-size: 17px !important; font-weight: 700; letter-spacing: .5px; border: 2px solid var(--line, #ddd) !important; transition: border-color .15s, background .15s; }
+.pcc-input.locked { background: #f3f1f5 !important; color: #333; cursor: not-allowed; user-select: none; }
+.pcc-input.ok { border-color: #1E8E3E !important; background: #EDF8F0 !important; }
+.pcc-input.bad { border-color: #D93025 !important; background: #FDECEA !important; }
+.pcc-verdict { font-size: 13.5px; font-weight: 700; padding: 9px 11px; border-radius: 10px; background: #f3f1f5; color: #555; }
+.pcc-verdict.ok { background: #EDF8F0; color: #145C2A; }
+.pcc-verdict.bad { background: #FDECEA; color: #A1271C; }
+.action-button:disabled { opacity: .45; cursor: not-allowed; }

@@ -72,8 +72,8 @@ export default function Channels() {
   // ---------- Activer / renouveler / recharger ----------
   const startPay = (c, kind) => {
     if (!allowed) return deny("PDG");
-    if (kind === "recharge") setPay({ c, kind, minutes: 10000, amount: 12000, note: "" });
-    else setPay({ c, kind, plan: c.plan || "bronze", months: 1, amount: PLANS[c.plan || "bronze"].price, minutes: 1000000, note: "" });
+    if (kind === "recharge") setPay({ c, kind, minutes: 10000, amount: 12000, note: "", ref: "", cash: false });
+    else setPay({ c, kind, plan: c.plan || "bronze", months: 1, amount: PLANS[c.plan || "bronze"].price, minutes: 1000000, note: "", ref: "", cash: false });
   };
   const setPlan = (plan) => setPay((p) => ({ ...p, plan, amount: plan === "sur_mesure" ? p.minutes : PLANS[plan].price * p.months }));
   const setMonths = (months) => setPay((p) => ({ ...p, months, amount: p.plan === "sur_mesure" ? p.amount : PLANS[p.plan].price * months }));
@@ -81,10 +81,13 @@ export default function Channels() {
     const p = pay;
     const amount = Number(digits(p.amount)) || 0;
     const minutes = Number(digits(p.minutes)) || 0;
+    // Code de la transaction Mobile Money obligatoire (inscrit au registre : il ne pourra plus resservir)
+    if (!p.cash && String(p.ref || "").replace(/[\s\-_.:/]/g, "").length < 4) return act(async () => { throw new Error("Recopiez le code de la transaction Mobile Money reçu par SMS (ou cochez « Payé en espèces »)."); });
+    const refArgs = { p_ref: p.cash ? null : p.ref.trim(), p_cash: !!p.cash };
     if (p.kind === "recharge") {
       if (!minutes) return act(async () => { throw new Error("Indiquez le nombre de minutes."); });
       return protect(`Recharger « ${p.c.name} » de ${fmt(minutes)} minutes (${fmt(amount)} FCFA reçus)`, () => act(async () => {
-        const { error: e } = await supabase.rpc("eg_tv_recharge", { p_channel: p.c.id, p_minutes: minutes, p_amount: amount, p_note: p.note || null });
+        const { error: e } = await supabase.rpc("eg_tv_recharge", { p_channel: p.c.id, p_minutes: minutes, p_amount: amount, p_note: p.note || null, ...refArgs });
         if (e) throw new Error(e.message);
         setPay(null);
       }, "➕ Minutes ajoutées à la chaîne."));
@@ -93,7 +96,7 @@ export default function Channels() {
     protect(`Activer « ${p.c.name} » — ${PLANS[p.plan].label}, ${p.months} mois (${fmt(amount)} FCFA reçus)`, () => act(async () => {
       const { error: e } = await supabase.rpc("eg_tv_activate", {
         p_channel: p.c.id, p_plan: p.plan, p_months: p.months, p_amount: amount,
-        p_minutes: p.plan === "sur_mesure" ? minutes : null, p_note: p.note || null,
+        p_minutes: p.plan === "sur_mesure" ? minutes : null, p_note: p.note || null, ...refArgs,
       });
       if (e) throw new Error(e.message);
       setPay(null);
@@ -159,7 +162,7 @@ export default function Channels() {
                 {!payments.data ? <Loading error={payments.error} /> : payments.data.length === 0 ? <span className="field-hint">Aucun paiement enregistré.</span> : (
                   payments.data.map((p) => (
                     <div key={p.id} className="field-hint" style={{ padding: "4px 0", borderTop: "1px solid var(--line, #eee)" }}>
-                      {dateOnly(p.created_at)} · {p.kind === "recharge" ? "Recharge" : `${PLANS[p.plan]?.label || p.plan} ${p.months} mois`} · {fmt(p.minutes)} min · <b>{fmt(p.amount_fcfa)} FCFA</b>{p.note ? ` · ${p.note}` : ""}
+                      {dateOnly(p.created_at)} · {p.kind === "recharge" ? "Recharge" : `${PLANS[p.plan]?.label || p.plan} ${p.months} mois`} · {fmt(p.minutes)} min · <b>{fmt(p.amount_fcfa)} FCFA</b>{p.pay_ref ? ` · code ${p.pay_ref}` : ""}{p.note ? ` · ${p.note}` : ""}
                     </div>
                   ))
                 )}
@@ -191,7 +194,15 @@ export default function Channels() {
           </>)}
           <span className="field-hint">Montant reçu (FCFA)</span>
           <input inputMode="numeric" value={pay.amount} onChange={(e) => setPay({ ...pay, amount: digits(e.target.value) })} />
-          <input placeholder="Note (ex. MoMo réf. 123456, payé par…)" value={pay.note} onChange={(e) => setPay({ ...pay, note: e.target.value })} />
+          <span className="field-hint">Code de la transaction Mobile Money (reçu par SMS)</span>
+          <input placeholder="Code reçu dans votre SMS" value={pay.ref} disabled={pay.cash} maxLength={40} autoComplete="off"
+            onChange={(e) => setPay({ ...pay, ref: e.target.value })} style={{ fontWeight: 700, letterSpacing: ".5px" }} />
+          <label className="field-hint" style={{ display: "flex", gap: 8, alignItems: "center", cursor: "pointer" }}>
+            <input type="checkbox" checked={!!pay.cash} onChange={(e) => setPay({ ...pay, cash: e.target.checked, ref: e.target.checked ? "" : pay.ref })} style={{ width: "auto" }} />
+            Payé en espèces (pas de code)
+          </label>
+          <span className="field-hint">Un code déjà validé une fois (boutique, publicité ou télé) est refusé pour toujours.</span>
+          <input placeholder="Note (ex. payé par…)" value={pay.note} onChange={(e) => setPay({ ...pay, note: e.target.value })} />
           <div className="mp-actions">
             <button className="action-button primary" onClick={confirmPay}>✅ Confirmer (code PDG)</button>
             <button className="action-button neutral" onClick={() => setPay(null)}>Annuler</button>
