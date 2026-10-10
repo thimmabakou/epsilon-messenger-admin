@@ -664,3 +664,15 @@ button, input, textarea { font-family: inherit; }
 .pcc-verdict.ok { background: #EDF8F0; color: #145C2A; }
 .pcc-verdict.bad { background: #FDECEA; color: #A1271C; }
 .action-button:disabled { opacity: .45; cursor: not-allowed; }
+
+/* ——— Numéros de paiement d'Epsilon, verrouillés après validation ——— */
+.pay-locked { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; padding: 14px; border-radius: 16px; border: 1px solid rgba(30,142,62,.45); background: rgba(30,142,62,.08); }
+.pay-locked-title { font-size: 14px; color: #3DBB63; }
+.pay-locked-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; }
+.pay-locked-card { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 14px; background: #1E8E3E; color: #fff; box-shadow: 0 2px 8px rgba(0,0,0,.18); }
+.pay-locked-num { font-size: 18px; font-weight: 800; letter-spacing: .5px; }
+.pay-locked-edit { align-self: flex-start; background: transparent; border: 1px dashed rgba(255,255,255,.35); color: inherit; opacity: .8; padding: 7px 12px; border-radius: 10px; font-size: 13px; cursor: pointer; font-family: inherit; }
+.pay-badge { display: inline-flex; align-items: center; gap: 4px; padding: 5px 10px; border-radius: 9px; font-size: 12.5px; font-weight: 600; white-space: nowrap; }
+.pay-badge b { font-weight: 900; letter-spacing: .2px; }
+.pay-badge.mtn { background: #FFCB05; color: #000; }
+.pay-badge.airtel { background: #E40000; color: #fff; }

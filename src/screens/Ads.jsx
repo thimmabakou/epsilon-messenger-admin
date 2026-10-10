@@ -19,7 +19,8 @@ export default function Ads() {
   const [gate, setGate] = useState(null);
   const [reject, setReject] = useState(null);   // { a, reason }
   const [pay, setPay] = useState(null);         // formulaire des numéros de paiement
-  const [check, setCheck] = useState(null);     // publicité en cours de vérification (deux codes)
+  const [check, setCheck] = useState(null);
+  const [editPay, setEditPay] = useState(false); // numéros verrouillés ; « Modifier » demande le code du PDG     // publicité en cours de vérification (deux codes)
 
   const { data, error, reload } = useLoad(async () => {
     const [ads, settings] = await Promise.all([
@@ -63,20 +64,47 @@ export default function Ads() {
   };
   const stop = (a) => protect(`Arrêter tout de suite la publicité de « ${a.shop?.name || "?"} »`,
     () => act(() => rpc("eg_ad_stop", { p_ad: a.id }), "⏹ Publicité arrêtée."));
-  const savePay = () => protect("Enregistrer les numéros de paiement d'Epsilon",
-    () => act(() => rpc("eg_set_pay_info", { p_momo: pay.momo, p_airtel: pay.airtel, p_name: pay.name }), "💾 Numéros enregistrés : ils s'affichent dans l'application."));
+  const savePay = () => protect("Enregistrer les nouveaux numéros de paiement d'Epsilon",
+    async () => { if (await act(() => rpc("eg_set_pay_info", { p_momo: pay.momo, p_airtel: pay.airtel, p_name: pay.name }), "✅ Numéros validés : ils s'affichent dans l'application.")) setEditPay(false); });
+  const startEditPay = () => protect("Modifier les numéros de paiement d'Epsilon", async () => setEditPay(true));
+  const cancelEditPay = () => { setPay({ momo: data?.pay.momo_number || "", airtel: data?.pay.airtel_number || "", name: data?.pay.pay_name || "" }); setEditPay(false); };
+  const payLocked = !editPay && !!(data?.pay.momo_number || data?.pay.airtel_number);
 
   return (<>
     <ScreenTitle eyebrow="CONTENU" title="Publicités — Epsilon Market" />
     <Note icon="📣">Prix : <b>2 jours 500 FCFA</b> · <b>5 jours 1 000 FCFA</b> · <b>1 semaine 1 500 FCFA</b>. Pour valider, <b>recopiez le code reçu dans le SMS</b> du téléphone d'Epsilon : il doit être identique au code du commerçant (la case devient verte), et vérifiez le montant. Un code validé ne peut plus jamais resservir. La publicité démarre à la validation et s'arrête seule à la fin. 🔐 Réservé au PDG.</Note>
 
-    {pay && (
+    {pay && payLocked && (
+      <div className="pay-locked">
+        <strong className="pay-locked-title">✅ Numéros de paiement affichés par Epsilon — validés par le PDG</strong>
+        <div className="pay-locked-grid">
+          {data.pay.momo_number && (
+            <div className="pay-locked-card">
+              <span className="pay-badge mtn"><b>MTN</b> MoMo</span>
+              <span className="pay-locked-num">{data.pay.momo_number}</span>
+            </div>
+          )}
+          {data.pay.airtel_number && (
+            <div className="pay-locked-card">
+              <span className="pay-badge airtel"><b>airtel</b> money</span>
+              <span className="pay-locked-num">{data.pay.airtel_number}</span>
+            </div>
+          )}
+        </div>
+        {data.pay.pay_name && <span className="field-hint">Titulaire des comptes : <b>{data.pay.pay_name}</b></span>}
+        <button className="pay-locked-edit" onClick={startEditPay}>✏️ Modifier (code PDG)</button>
+      </div>
+    )}
+    {pay && !payLocked && (
       <div className="ver-form" style={{ marginBottom: 16 }}>
         <strong style={{ fontSize: 14 }}>📱 Numéros de paiement d'Epsilon (affichés aux commerçants)</strong>
         <input placeholder="Numéro MTN Mobile Money" value={pay.momo} inputMode="tel" onChange={(e) => setPay({ ...pay, momo: e.target.value })} autoComplete="off" />
         <input placeholder="Numéro Airtel Money (facultatif)" value={pay.airtel} inputMode="tel" onChange={(e) => setPay({ ...pay, airtel: e.target.value })} autoComplete="off" />
         <input placeholder="Nom exact du titulaire des comptes Mobile Money (tel qu’affiché à celui qui paie)" value={pay.name} onChange={(e) => setPay({ ...pay, name: e.target.value })} autoComplete="off" />
-        <div className="mp-actions"><button className="action-button primary" onClick={savePay}>💾 Enregistrer (code PDG)</button></div>
+        <div className="mp-actions">
+          <button className="action-button primary" onClick={savePay}>✅ Valider les numéros (code PDG)</button>
+          {editPay && <button className="action-button neutral" onClick={cancelEditPay}>Annuler</button>}
+        </div>
       </div>
     )}
 
