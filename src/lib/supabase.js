@@ -4,6 +4,14 @@ import { createClient } from "@supabase/supabase-js";
 // Adresse d'arrivée, mémorisée avant que Supabase ne lise puis n'efface le lien d'invitation ou de réinitialisation
 export const initialHash = typeof window !== "undefined" ? window.location.hash : "";
 
+// Les liens envoyés par e-mail arrivent sous la forme « #/admin#access_token=… » (deux #).
+// Supabase ne sait lire que « #access_token=… » : on remet l'adresse dans la bonne forme AVANT qu'il la lise,
+// sinon il ne trouve pas la connexion (« Auth session missing! »).
+if (typeof window !== "undefined") {
+  const m = window.location.hash.match(/^#\/?[^#]*#(.*(access_token|error_description)=.*)$/);
+  if (m) window.history.replaceState(null, "", window.location.pathname + window.location.search + "#" + m[1]);
+}
+
 export const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
   import.meta.env.VITE_SUPABASE_ANON_KEY,

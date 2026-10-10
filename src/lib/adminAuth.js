@@ -40,6 +40,6 @@ export async function sessionIsAdmin() {
 }
 
 export async function sendPasswordReset(email) {
-  const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + "/#/admin" });
+  const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + "/" });
   if (error) throw new Error(error.message);
 }

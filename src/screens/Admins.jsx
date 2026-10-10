@@ -28,7 +28,7 @@ export default function Admins() {
     : [], [selId]);
 
   const invite = async () => {
-    const r = await act(() => invokeFn("invite-admin", { name: inv.name.trim(), email: inv.email.trim(), phone: inv.phone.replace(/\s/g, ""), redirectTo: window.location.origin + "/#/admin" }),
+    const r = await act(() => invokeFn("invite-admin", { name: inv.name.trim(), email: inv.email.trim(), phone: inv.phone.replace(/\s/g, ""), redirectTo: window.location.origin + "/" }),
       "✉️ Invitation envoyée. L'administrateur démarre sans aucune permission : cochez maintenant ce qu'il peut faire.");
     if (r) { setSelId(r.id); setInviteOpen(false); setInv({ name: "", email: "", phone: "+242" }); }
   };
