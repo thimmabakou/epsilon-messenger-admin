@@ -676,3 +676,6 @@ button, input, textarea { font-family: inherit; }
 .pay-badge b { font-weight: 900; letter-spacing: .2px; }
 .pay-badge.mtn { background: #FFCB05; color: #000; }
 .pay-badge.airtel { background: #E40000; color: #fff; }
+/* Messages automatiques */
+.auto-msg { display: flex; flex-direction: column; gap: 6px; padding: 10px 0; border-top: 1px solid var(--border, rgba(255,255,255,.1)); }
+.auto-msg-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }

@@ -7,8 +7,8 @@ import { useAdmin, useLoad } from "../lib/admin";
 import { dateTime } from "../lib/format";
 import { uploadMusicFile } from "../lib/files";
 import { SecurityGate } from "./common";
+import { notifyAll as pushAll } from "../lib/broadcastPush";
 
-const APP = "https://epsilon-messenger-app.pages.dev";
 const kindOf = (f) => (!f ? "text" : f.type.startsWith("image/") ? "photo" : f.type.startsWith("video/") ? "video" : "document");
 const KIND = { text: "📝 Texte", photo: "🖼️ Photo", video: "🎥 Vidéo", document: "📄 Document" };
 
@@ -23,20 +23,7 @@ export default function SupportBroadcast() {
   const allowed = me?.isPdg || can("support.reply");
   const { data, reload } = useLoad(() => q(supabase.from("support_broadcasts").select("*").eq("archived", false).order("created_at", { ascending: false }).limit(10)));
 
-  async function notifyAll(preview) {
-    const { data: s } = await supabase.auth.getSession();
-    const token = s?.session?.access_token;
-    let offset = 0, sent = 0, guard = 0;
-    while (offset != null && guard++ < 500) {
-      const r = await fetch(`${APP}/api/push`, { method: "POST", headers: { authorization: `Bearer ${token}`, "content-type": "application/json" }, body: JSON.stringify({ kind: "broadcast", preview, offset }) });
-      if (!r.ok) { setProgress(`Notifications : erreur ${r.status} ${(await r.text()).slice(0, 120)}`); break; }
-      const j = await r.json();
-      sent += j.sent || 0;
-      setProgress(`Notifications envoyées : ${sent}${j.total ? ` / ${j.total}` : ""}${j.error ? ` — erreur : ${j.error}` : ""}${j.reason ? ` — ${j.reason}` : ""}`);
-      offset = j.next;
-    }
-    return sent;
-  }
+  const notifyAll = (preview) => pushAll(preview, setProgress);
 
   const ask = () => {
     if (!allowed) return deny("support.reply");

@@ -6,6 +6,11 @@ import { useAdmin, useLoad, Loading } from "../lib/admin";
 import { FEATURE_LIST, KIND_LABEL } from "../lib/constants";
 import { ScreenTitle, SecurityGate } from "../components/common";
 import StorageMove from "../components/StorageMove";
+import { notifyAll } from "../lib/broadcastPush";
+
+const PART = { all: "Toute l'application", messaging: "La messagerie", calls: "Les appels", statuses: "Les statuts", marketplace: "Les boutiques", support: "Le service client", reports: "Les signalements" };
+const toLocalInput = (d) => { const z = new Date(d.getTime() - d.getTimezoneOffset() * 60000); return z.toISOString().slice(0, 16); };
+const fmtWhen = (iso) => new Date(iso).toLocaleString("fr-FR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
 
 const FILE_SIZES = [["100 Mo", 100], ["200 Mo", 200], ["500 Mo", 500], ["1 Go", 1024]];
 
@@ -14,6 +19,9 @@ export default function Settings({ goto }) {
   const [tab, setTab] = useState("options");
   const [confirmKey, setConfirmKey] = useState(null); // module à désactiver
   const [gate, setGate] = useState(null); // { title, run(code) }
+  const [maint, setMaint] = useState(null); // fenêtre « couper une partie » : { target, when, start, end, announce }
+  const [pushInfo, setPushInfo] = useState(null);
+  const plans = useLoad(async () => q(supabase.from("maintenance_plans").select("*").eq("status", "prevue").order("starts_at")));
 
   const { data, error } = useLoad(async () => {
     const [settings, versions] = await Promise.all([
@@ -35,9 +43,64 @@ export default function Settings({ goto }) {
   };
   // Un module absent de la liste est ouvert dans l'application : seul « false » le coupe
   const isOn = (key) => modules[key] !== false;
+  // Prévenir tout le monde : communiqué automatique (si le modèle est allumé) + notifications
+  const announce = async (res) => {
+    if (!res?.body) return;
+    setPushInfo("Communiqué publié. Envoi des notifications…");
+    await notifyAll(res.body, setPushInfo);
+    setTimeout(() => setPushInfo(null), 30000);
+  };
+  const reopen = (target) => {
+    const perm = target === "all" ? "settings.maintenance" : "settings.modules";
+    if (!can(perm)) return deny(perm);
+    const run = async (code) => {
+      const ok = await act(async () => {
+        if (target === "all") await rpc("set_setting", { p_key: "maintenance", p_value: false, p_code: code || null });
+        else await rpc("set_setting", { p_key: "modules", p_value: { ...modules, [target]: true }, p_code: code || null });
+        try { await announce(await rpc("eg_maint_announce", { p_kind: "end", p_target: target })); } catch { /* SQL 43 pas encore exécuté */ }
+      }, `✅ ${PART[target]} : de nouveau disponible.`);
+      if (ok) setGate(null);
+      return ok;
+    };
+    if (target === "all" && me.isPdg) setGate({ title: "Désactiver le mode maintenance", run }); else run();
+  };
+  const openMaint = (target) => {
+    const perm = target === "all" ? "settings.maintenance" : "settings.modules";
+    if (!can(perm)) return deny(perm);
+    const now = new Date();
+    setMaint({ target, when: "now", start: toLocalInput(new Date(now.getTime() + 3600000)), end: "", announce: true });
+  };
+  const confirmMaint = () => {
+    const m = maint;
+    const startIso = m.when === "plan" ? new Date(m.start).toISOString() : new Date().toISOString();
+    const endIso = m.end ? new Date(m.end).toISOString() : null;
+    if (m.when === "plan" && !m.start) return act(async () => { throw new Error("Choisissez l'heure de début."); });
+    if (endIso && new Date(endIso) <= new Date(startIso)) return act(async () => { throw new Error("La fin doit être après le début."); });
+    const run = async (code) => {
+      const ok = await act(async () => {
+        if (m.when === "now" && !endIso) {
+          // Coupé tout de suite, jusqu'à nouvel ordre : l'interrupteur, puis le communiqué
+          if (m.target === "all") await rpc("set_setting", { p_key: "maintenance", p_value: true, p_code: code || null });
+          else await rpc("set_setting", { p_key: "modules", p_value: { ...modules, [m.target]: false }, p_code: code || null });
+          if (m.announce) { try { await announce(await rpc("eg_maint_announce", { p_kind: "start", p_target: m.target })); } catch { /* SQL 43 */ } }
+        } else {
+          // Heures précises : maintenance programmée (début et retour automatiques)
+          await announce(await rpc("eg_maint_plan", { p_target: m.target, p_start: startIso, p_end: endIso, p_announce: m.announce }));
+        }
+        setMaint(null); setConfirmKey(null); plans.reload?.();
+      }, m.when === "plan" ? "⏰ Maintenance programmée." : `🛠️ ${PART[m.target]} : en maintenance.`);
+      if (ok) setGate(null);
+      return ok;
+    };
+    if (me.isPdg) setGate({ title: `${PART[m.target]} en maintenance`, run }); else run();
+  };
+  const stopPlan = (p) => act(async () => {
+    await announce(await rpc("eg_maint_stop", { p_id: p.id }));
+    plans.reload?.();
+  }, new Date(p.starts_at) > new Date() ? "Maintenance annulée." : "✅ Maintenance terminée.");
   const toggleModule = (key) => {
-    if (isOn(key)) return setConfirmKey(key); // désactiver = confirmation
-    save("modules", { ...modules, [key]: true });
+    if (isOn(key)) return openMaint(key); // couper = fenêtre (maintenant ou programmé, message automatique)
+    reopen(key);
   };
 
   const fc = FEATURE_LIST.find((f) => f.key === confirmKey);
@@ -61,16 +124,6 @@ export default function Settings({ goto }) {
     </div>
   );
   else if (tab === "features") body = (<>
-    {fc && (
-      <div className="suspend-box" style={{ margin: "0 0 14px", borderColor: "var(--danger)" }}>
-        <span className="label">⚠️ Désactiver « {fc.label} » ?</span>
-        <p style={{ fontSize: 13, margin: "0 0 4px" }}>Tous les utilisateurs verront « {fc.label} en maintenance » dans l'application (en moins de 30 secondes) et la base de données refusera les envois. Le changement sera tracé dans le journal.</p>
-        <div className="row">
-          <button className="action-button danger" onClick={() => save("modules", { ...modules, [fc.key]: false }, { critical: true, title: `Désactiver « ${fc.label} »` })}>{me.isPdg ? "Confirmer avec mon code" : "Confirmer"}</button>
-          <button className="action-button neutral" onClick={() => setConfirmKey(null)}>Annuler</button>
-        </div>
-      </div>
-    )}
     <div className="settings-group">
       {FEATURE_LIST.map((f) => (
         <div key={f.key} className="settings-field">
@@ -85,7 +138,7 @@ export default function Settings({ goto }) {
     <div className="settings-group">
       <div className="settings-field"><div className="settings-field-main"><strong>Mode maintenance</strong><span>Protégé par le code de sécurité du PDG</span></div>
         <button className={"toggle-switch" + (s.maintenance === true ? " on" : "")} aria-label="Mode maintenance"
-          onClick={() => save("maintenance", !(s.maintenance === true), { critical: true, perm: "settings.maintenance", title: s.maintenance === true ? "Désactiver le mode maintenance" : "Activer le mode maintenance" })} /></div>
+          onClick={() => (s.maintenance === true ? reopen("all") : openMaint("all"))} /></div>
       <div className="settings-field"><div className="settings-field-main"><strong>Gestion des versions</strong><span>Préparer, tester et publier les versions de l'application</span></div><button className="action-button neutral" onClick={() => goto("versions")}>Ouvrir →</button></div>
       <div className="settings-field"><div className="settings-field-main"><strong>Version en production</strong><span>{prod ? prod.notes.slice(0, 3).join(", ") : "Aucune version publiée"}</span></div><span className="sec-badge">{prod ? prod.version : "—"}</span></div>
       {test && <div className="settings-field"><div className="settings-field-main"><strong>Version en test</strong><span>{KIND_LABEL[test.kind]} · {test.notes[0] || ""}</span></div><span className="sec-badge" style={{ background: "#fff0e0", color: "#b5650a" }}>{test.version}</span></div>}
@@ -101,6 +154,52 @@ export default function Settings({ goto }) {
       {[["options", "Options"], ["features", "Fonctionnalités"], ["technical", "Technique"]].map(([k, l]) => <button key={k} className={"settings-tab" + (k === tab ? " active" : "")} onClick={() => setTab(k)}>{l}</button>)}
     </div>
     {body}
+    {(plans.data || []).length > 0 && (tab === "features" || tab === "technical") && (
+      <div className="ver-form" style={{ marginTop: 14 }}>
+        <strong style={{ fontSize: 14 }}>⏰ Maintenances programmées</strong>
+        {plans.data.map((p) => {
+          const live = new Date(p.starts_at) <= new Date();
+          return (
+            <div key={p.id} className="settings-field">
+              <div className="settings-field-main">
+                <strong>{PART[p.target] || p.target} {live ? "· 🛠️ en cours" : "· prévue"}</strong>
+                <span>{p.ends_at ? `du ${fmtWhen(p.starts_at)} au ${fmtWhen(p.ends_at)}` : `à partir du ${fmtWhen(p.starts_at)}, jusqu'à nouvel ordre`} — début et retour automatiques</span>
+              </div>
+              <button className="action-button neutral" onClick={() => stopPlan(p)}>{live ? "⏹ Terminer maintenant" : "Annuler"}</button>
+            </div>
+          );
+        })}
+      </div>
+    )}
+    {pushInfo && <p className="field-hint"><b>{pushInfo}</b></p>}
+    {maint && (
+      <div className="pcc-back" onClick={() => setMaint(null)}>
+        <div className="ver-form pcc" onClick={(e) => e.stopPropagation()}>
+          <strong style={{ fontSize: 15 }}>🛠️ {PART[maint.target]} en maintenance</strong>
+          <span className="field-hint">{maint.target === "all" ? "Toute l'application affichera l'écran de maintenance (sauf pour l'équipe et votre compte personnel)." : "Cette partie affichera « en maintenance » pour tous ; le reste de l'application continue de fonctionner."}</span>
+          <span className="pcc-label">Quand ?</span>
+          <div className="mp-actions">
+            <button className={"action-button " + (maint.when === "now" ? "primary" : "neutral")} onClick={() => setMaint({ ...maint, when: "now" })}>Maintenant</button>
+            <button className={"action-button " + (maint.when === "plan" ? "primary" : "neutral")} onClick={() => setMaint({ ...maint, when: "plan" })}>⏰ Programmer</button>
+          </div>
+          {maint.when === "plan" && (<>
+            <span className="pcc-label">Début</span>
+            <input type="datetime-local" value={maint.start} onChange={(e) => setMaint({ ...maint, start: e.target.value })} />
+          </>)}
+          <span className="pcc-label">Fin {maint.when === "now" ? "(retour prévu — facultatif)" : "(facultatif)"}</span>
+          <input type="datetime-local" value={maint.end} onChange={(e) => setMaint({ ...maint, end: e.target.value })} />
+          <span className="field-hint">{maint.end ? "À l'heure de fin, tout revient tout seul et le message « de nouveau disponible » apparaît chez tout le monde." : "Sans heure de fin : jusqu'à nouvel ordre (vous rallumerez vous-même)."}</span>
+          <label className="field-hint" style={{ display: "flex", gap: 8, alignItems: "center", cursor: "pointer", fontSize: 13.5 }}>
+            <input type="checkbox" checked={maint.announce} onChange={(e) => setMaint({ ...maint, announce: e.target.checked })} style={{ width: "auto" }} />
+            📢 Prévenir tous les utilisateurs (message automatique + notification)
+          </label>
+          <div className="mp-actions">
+            <button className="action-button danger" onClick={confirmMaint}>{maint.when === "plan" ? "⏰ Programmer" : "🛠️ Mettre en maintenance"}{me.isPdg ? " (code PDG)" : ""}</button>
+            <button className="action-button neutral" onClick={() => setMaint(null)}>Annuler</button>
+          </div>
+        </div>
+      </div>
+    )}
     {gate && <SecurityGate title={gate.title} onConfirm={gate.run} onCancel={() => setGate(null)} />}
   </>);
 }
