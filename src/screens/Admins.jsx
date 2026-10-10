@@ -4,22 +4,23 @@ import { supabase, q, rpc, invokeFn } from "../lib/supabase";
 import { useAdmin, useLoad, Loading } from "../lib/admin";
 import { PERMISSION_GROUPS, PROFILE_PRESETS } from "../lib/constants";
 import { dateTime, initials } from "../lib/format";
-import { Empty, History, Note, ScreenTitle } from "../components/common";
+import { Empty, History, Note, ScreenTitle, SecurityGate } from "../components/common";
 
 export default function Admins() {
   const { me, act } = useAdmin();
   const [selId, setSelId] = useState(null);
   const [inviteOpen, setInviteOpen] = useState(false);
   const [inv, setInv] = useState({ name: "", email: "", phone: "+242" });
+  const [gate, setGate] = useState(null);
 
-  const { data, error } = useLoad(async () => {
+  const { data, error, reload } = useLoad(async () => {
     const [admins, perms] = await Promise.all([
       q(supabase.from("admins").select("*").eq("is_pdg", false).order("created_at")),
       q(supabase.from("admin_permissions").select("admin_id,perm_key")),
     ]);
     return admins.map((a) => ({ ...a, perms: perms.filter((p) => p.admin_id === a.user_id).map((p) => p.perm_key) }));
   });
-  const admins = (data || []).filter((a) => a.user_id !== me.id);
+  const admins = (data || []).filter((a) => a.user_id !== me.id && !a.deleted_at);
   const a = admins.find((x) => x.user_id === selId);
 
   const log = useLoad(async () => a && me.isPdg
@@ -36,6 +37,17 @@ export default function Admins() {
   const clear = () => act(() => rpc("apply_admin_profile", { p_admin: a.user_id, p_label: "Personnalisé", p_perms: [] }), "Toutes les permissions ont été retirées.");
   const setActive = () => act(() => rpc("set_admin_active", { p_admin: a.user_id, p_active: !a.active }), a.active ? "Administrateur désactivé." : "Administrateur réactivé.");
 
+  // Supprimer définitivement (PDG seulement, avec le code de sécurité du PDG)
+  const remove = () => setGate({
+    title: `Supprimer définitivement l'administrateur « ${a.display_name} »`,
+    run: async (code) => {
+      setGate(null);
+      const r = await act(() => rpc("eg_admin_delete", { p_admin: a.user_id, p_code: code }),
+        `🗑 « ${a.display_name} » a été supprimé. Il n'a plus aucun accès au site.`);
+      if (r) { setSelId(null); reload?.(); }
+    },
+  });
+
   let detail;
   if (!a) detail = <Empty icon="🔑" text="Sélectionnez un administrateur pour définir ses permissions" />;
   else detail = (<>
@@ -49,6 +61,7 @@ export default function Admins() {
     <div className="report-actions" style={{ marginBottom: 14 }}>
       <button className={"action-button " + (a.active ? "danger" : "ok")} onClick={setActive}>{a.active ? "⏸ Désactiver" : "▶ Réactiver"}</button>
       <button className="action-button neutral" onClick={clear}>🧹 Retirer toutes les permissions</button>
+      {me.isPdg && <button className="action-button danger" onClick={remove}>🗑 Supprimer (code PDG)</button>}
     </div>
     {me.isPdg && <JobTitle key={a.user_id} admin={a} />}
     <span className="field-hint">Appliquer un profil type (vous pourrez ensuite ajuster case par case)</span>
@@ -97,6 +110,7 @@ export default function Admins() {
       </div>
       <div className="report-detail">{detail}</div>
     </div>
+    {gate && <SecurityGate title={gate.title} onConfirm={gate.run} onCancel={() => setGate(null)} />}
   </>);
 }
 
