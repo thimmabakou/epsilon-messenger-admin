@@ -33,8 +33,10 @@ export default function Settings({ goto }) {
     if (critical && me.isPdg) setGate({ title, run: async (code) => { if (await run(code)) { setGate(null); setConfirmKey(null); } } });
     else run().then(() => setConfirmKey(null));
   };
+  // Un module absent de la liste est ouvert dans l'application : seul « false » le coupe
+  const isOn = (key) => modules[key] !== false;
   const toggleModule = (key) => {
-    if (modules[key]) return setConfirmKey(key); // désactiver = confirmation
+    if (isOn(key)) return setConfirmKey(key); // désactiver = confirmation
     save("modules", { ...modules, [key]: true });
   };
 
@@ -62,7 +64,7 @@ export default function Settings({ goto }) {
     {fc && (
       <div className="suspend-box" style={{ margin: "0 0 14px", borderColor: "var(--danger)" }}>
         <span className="label">⚠️ Désactiver « {fc.label} » ?</span>
-        <p style={{ fontSize: 13, margin: "0 0 4px" }}>Cette fonctionnalité disparaîtra pour <strong>tous les utilisateurs</strong>. Le changement sera tracé dans le journal.</p>
+        <p style={{ fontSize: 13, margin: "0 0 4px" }}>Tous les utilisateurs verront « {fc.label} en maintenance » dans l'application (en moins de 30 secondes) et la base de données refusera les envois. Le changement sera tracé dans le journal.</p>
         <div className="row">
           <button className="action-button danger" onClick={() => save("modules", { ...modules, [fc.key]: false }, { critical: true, title: `Désactiver « ${fc.label} »` })}>{me.isPdg ? "Confirmer avec mon code" : "Confirmer"}</button>
           <button className="action-button neutral" onClick={() => setConfirmKey(null)}>Annuler</button>
@@ -73,7 +75,7 @@ export default function Settings({ goto }) {
       {FEATURE_LIST.map((f) => (
         <div key={f.key} className="settings-field">
           <div className="settings-field-main"><strong>{f.label}</strong><span>{f.desc}</span></div>
-          <button className={"toggle-switch" + (modules[f.key] ? " on" : "")} onClick={() => toggleModule(f.key)} aria-label={f.label} />
+          <button className={"toggle-switch" + (isOn(f.key) ? " on" : "")} onClick={() => toggleModule(f.key)} aria-label={f.label} />
         </div>
       ))}
     </div>

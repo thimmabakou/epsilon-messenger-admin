@@ -43,8 +43,8 @@ export default function Security({ flags }) {
     <div className={"emergency-card" + (flags.frozen ? " frozen" : "")}>
       <h2>{flags.frozen ? "🧊 Plateforme gelée" : "🚨 Gel d'urgence de la plateforme"}</h2>
       <p>{flags.frozen
-        ? "Toutes les sessions administrateurs sont déconnectées et aucune action sensible n'est possible. Vous seul pouvez dégeler la plateforme."
-        : "En cas d'attaque grave ou de fuite : un clic fige tout. Sessions administrateurs déconnectées, actions sensibles bloquées. Réservé au PDG, protégé par votre code de sécurité."}</p>
+        ? "L'application est suspendue pour tous les utilisateurs (écran « momentanément suspendu »), les sessions administrateurs sont déconnectées et aucune action sensible n'est possible. Vous seul pouvez dégeler la plateforme."
+        : "En cas d'attaque grave ou de fuite : un clic fige tout. L'application s'arrête pour tous les utilisateurs, les sessions administrateurs sont déconnectées, les actions sensibles bloquées. Réservé au PDG, protégé par votre code de sécurité."}</p>
       <button className="primary-button danger" onClick={() => setGate(true)}>{flags.frozen ? "Dégeler la plateforme" : "Geler la plateforme"}</button>
     </div>
     {!data && <Loading error={error} />}
