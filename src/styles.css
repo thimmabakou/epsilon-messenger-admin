@@ -286,6 +286,9 @@ button, input, textarea { font-family: inherit; }
 .user-row:hover, .user-row.active { border-color: var(--fuchsia); }
 .user-row.active { background: var(--rose-soft); }
 .u-avatar { width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: #fff; background: linear-gradient(135deg, var(--rose), var(--violet)); }
+.u-avatar { overflow: hidden; }
+.u-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.u-avatar.xl { width: 96px; height: 96px; font-size: 32px; cursor: zoom-in; }
 .u-avatar.big { width: 54px; height: 54px; font-size: 19px; }
 .u-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .u-main strong { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

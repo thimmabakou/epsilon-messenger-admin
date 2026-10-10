@@ -2,8 +2,8 @@
 import { useMemo, useState } from "react";
 import { supabase, q, rpc } from "../lib/supabase";
 import { useAdmin, useLoad, Loading } from "../lib/admin";
-import { ageRange, ago, dateOnly, dateTime, fullName, initials, maskPhone, shortId, statusLabel } from "../lib/format";
-import { Empty, History, Note, Pills, ScreenTitle } from "../components/common";
+import { ageRange, ago, dateOnly, dateTime, fullName, maskPhone, shortId, statusLabel } from "../lib/format";
+import { Avatar, Empty, History, Note, Pills, ScreenTitle } from "../components/common";
 import SanctionPanel from "../components/SanctionPanel";
 
 const KIND_LABEL = { avertissement: "Avertissement envoyé", suspension: "Compte suspendu", retrait_contenu: "Contenu retiré", retrait_produit: "Produit retiré" };
@@ -17,7 +17,7 @@ export default function Users({ nav, goto }) {
   const [panel, setPanel] = useState(null);
 
   const { data, error } = useLoad(() => q(supabase.from("profiles")
-    .select("id,first_name,last_name,phone,city,birth_year,status,suspended_until,created_at,last_seen_at")
+    .select("id,first_name,last_name,phone,avatar_url,city,birth_year,status,suspended_until,created_at,last_seen_at")
     .order("created_at", { ascending: false }).limit(1000)));
   const users = data || [];
   const cities = useMemo(() => ["Toutes", ...[...new Set(users.map((u) => u.city).filter(Boolean))].sort()], [users]);
@@ -64,13 +64,13 @@ export default function Users({ nav, goto }) {
     detailView = (<>
       <div className="report-detail-header" style={{ marginBottom: 0 }}>
         <div className="user-head">
-          <div className="u-avatar big">{initials(fullName(sel))}</div>
+          <a href={sel.avatar_url || undefined} target="_blank" rel="noreferrer" title={sel.avatar_url ? "Voir la photo en grand" : ""}><Avatar url={sel.avatar_url} name={fullName(sel)} style={{ width: 96, height: 96, fontSize: 32 }} /></a>
           <div><h2>{fullName(sel)}</h2><div className="sub">{shortId(sel.id)} · <span className={"u-status " + st}>{st}</span></div></div>
         </div>
         <button className="icon-button" onClick={() => setSelId(null)}>✕</button>
       </div>
       <div className="report-info-grid">
-        <div><span className="label">Téléphone</span><strong>{maskPhone(sel.phone)}</strong></div>
+        <div><span className="label">Téléphone</span><strong>{can("users.detail") ? (sel.phone || "—") : maskPhone(sel.phone)}</strong></div>
         <div><span className="label">Ville</span><strong>{sel.city || "—"}</strong></div>
         <div><span className="label">Tranche d'âge</span><strong>{ageRange(sel.birth_year)}</strong></div>
         <div><span className="label">Inscrit le</span><strong>{dateOnly(sel.created_at)}</strong></div>
@@ -112,7 +112,7 @@ export default function Users({ nav, goto }) {
         {!data ? <Loading error={error} /> : list.length === 0 && <p className="reports-empty">{users.length ? "Aucun utilisateur ne correspond à cette recherche." : "Aucun utilisateur inscrit pour le moment."}</p>}
         {list.map((u) => (
           <button key={u.id} className={"user-row" + (u.id === selId ? " active" : "")} onClick={() => { setSelId(u.id); setPanel(null); }}>
-            <div className="u-avatar">{initials(fullName(u))}</div>
+            <Avatar url={u.avatar_url} name={fullName(u)} />
             <div className="u-main"><strong>{fullName(u)}</strong><span>{shortId(u.id)} · {u.city || "—"}</span></div>
             <span className={"u-status " + statusLabel(u.status)}>{statusLabel(u.status)}</span>
           </button>

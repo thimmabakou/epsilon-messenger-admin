@@ -77,3 +77,16 @@ export function SecurityGate({ title, onConfirm, onCancel }) {
     </div>
   );
 }
+
+// Photo de profil (ou initiales si la personne n'a pas de photo / si l'image ne se charge pas)
+export function Avatar({ url, name, big, style }) {
+  const [broken, setBroken] = useState(false);
+  const letters = String(name || "?").split(" ").filter(Boolean).map((w) => w[0]).slice(0, 2).join("").toUpperCase() || "?";
+  return (
+    <div className={"u-avatar" + (big ? " big" : "")} style={style}>
+      {url && !broken
+        ? <img src={url} alt="" loading="lazy" decoding="async" onError={() => setBroken(true)} />
+        : letters}
+    </div>
+  );
+}

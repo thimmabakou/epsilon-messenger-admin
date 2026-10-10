@@ -2,8 +2,8 @@
 import { useEffect, useRef, useState } from "react";
 import { supabase, q, rpc } from "../lib/supabase";
 import { useAdmin, useLoad, Loading } from "../lib/admin";
-import { dateTime, fullName, initials } from "../lib/format";
-import { Empty, Note, Pills, ScreenTitle } from "../components/common";
+import { dateTime, fullName } from "../lib/format";
+import { Avatar, Empty, Note, Pills, ScreenTitle } from "../components/common";
 import { callUser, notifyUser } from "../lib/supportLine";
 import SupportStatus from "../components/SupportStatus";
 import SupportBroadcast from "../components/SupportBroadcast";
@@ -30,7 +30,7 @@ export default function Support({ nav, goto }) {
 
   const { data, error, reload } = useLoad(async () => {
     const convs = await q(supabase.from("support_conversations")
-      .select("*, user:profiles!support_conversations_user_id_fkey(id,first_name,last_name,status)")
+      .select("*, user:profiles!support_conversations_user_id_fkey(id,first_name,last_name,avatar_url,status)")
       .order("updated_at", { ascending: false }).limit(300));
     const ids = convs.map((c) => c.id);
     const last = ids.length ? await q(supabase.from("support_messages").select("conversation_id,sender,body,created_at").in("conversation_id", ids).order("created_at", { ascending: false }).limit(1000)) : [];
@@ -219,7 +219,7 @@ export default function Support({ nav, goto }) {
         {!data ? <Loading error={error} /> : list.length === 0 && <p className="reports-empty">Aucune conversation dans cette catégorie.</p>}
         {list.map((c) => (
           <button key={c.id} className={"conv-row" + (c.id === selId ? " active" : "")} onClick={() => { setSelId(c.id); setNewFor(null); setReply(""); }}>
-            <div className="u-avatar">{initials(fullName(c.user))}</div>
+            <Avatar url={c.user?.avatar_url} name={fullName(c.user)} />
             <div className="conv-main">
               <div className="conv-top"><strong>{fullName(c.user)}</strong><span className={"conv-tag " + c.tag}>{c.tag === "support" ? "Support" : "Contestation"}</span></div>
               <div className="conv-preview">{c.last ? (c.last.sender === "team" ? "Vous : " : "") + c.last.body : ""}</div>
