@@ -278,7 +278,7 @@ export const HELP_SHEETS = [
       { t: "Préparer le logo et la présentation", d: "Le logo de la chaîne (image carrée, nette) et deux ou trois lignes de présentation. Ils seront affichés dans l'onglet TV." },
       { t: "Paiement", d: "Le responsable envoie le total du contrat (formule de direct + stockage, voir la fiche du stockage) par MTN Mobile Money ou Airtel Money aux numéros d'Epsilon, puis transmet la référence du SMS de confirmation. Le paiement en espèces est possible, avec un reçu." },
       { t: "Création et activation (PDG)", d: "Dans le site : Epsilon TV → « Nouvelle chaîne » (nom, présentation, logo, numéro du responsable) → « Créer la chaîne ». Puis activer sa formule : choisir la formule et la durée, recopier la référence du paiement (ou cocher « Payé en espèces ») et confirmer avec le code PDG. La chaîne apparaît aussitôt dans l'onglet TV." },
-      { t: "Publier des vidéos (différé)", d: "Le responsable ouvre l'onglet TV → sa chaîne (« Ma chaîne ») → « Publier une vidéo » : un titre, la vidéo (95 Mo au maximum), puis « Publier ». Il peut supprimer une vidéo à tout moment." },
+      { t: "Publier des vidéos (différé)", d: "Le responsable ouvre l'onglet TV → sa chaîne (« Ma chaîne ») → « Publier une vidéo » : un titre, la vidéo (1 Go au maximum ; au-delà de 90 Mo elle part en plusieurs morceaux, avec le pourcentage affiché : il faut rester sur l'écran avec une bonne connexion), puis « Publier ». Il peut supprimer une vidéo à tout moment." },
       { t: "Le direct", d: "Le bouton « Passer en direct » est déjà visible sur la chaîne, avec la mention « Bientôt disponible ». Dès son ouverture, le direct se lancera depuis le téléphone ou un studio. Pendant le direct, chaque minute regardée par chaque spectateur est décomptée de la formule." },
       { t: "Suivi et renouvellement", d: "Sur sa chaîne, le responsable voit sa formule, les jours restants et les minutes déjà consommées. L'application le prévient avant la fin. Sans renouvellement, la chaîne n'est plus visible, mais ses vidéos ne sont pas effacées." },
     ],
@@ -294,7 +294,7 @@ export const HELP_SHEETS = [
     ],
     problems: [
       { q: "« Ma chaîne n'apparaît plus. »", a: "La formule est sans doute terminée, ou la chaîne a été mise en pause. Vérifier dans le site (Epsilon TV) la date de fin et l'historique des paiements." },
-      { q: "« Ma vidéo ne se publie pas. »", a: "Elle dépasse 95 Mo, ou le réseau a coupé. La couper en plusieurs parties, ou la réenregistrer en qualité plus basse." },
+      { q: "« Ma vidéo ne se publie pas. »", a: "Elle dépasse 1 Go, ou le réseau a coupé pendant l'envoi. Réessayer avec une meilleure connexion (Wi-Fi si possible) ; pour une vidéo de plus de 1 Go, la couper en plusieurs parties ou la réenregistrer en qualité plus basse." },
     ],
   },
 
@@ -340,12 +340,12 @@ export const HELP_SHEETS = [
       { t: "Quand l'espace est plein", d: "Le responsable voit sur sa chaîne « Espace pour les vidéos : … Go utilisés sur … Go ». Quand c'est plein, l'application refuse les nouvelles vidéos et lui dit de supprimer d'anciennes vidéos ou de demander plus d'espace au Service client." },
     ],
     tips: [
-      "Chaque vidéo publiée ne doit pas dépasser 95 Mo. Pour une longue émission, la couper en plusieurs parties.",
+      "Chaque vidéo publiée peut aller jusqu'à 1 Go (environ 1 h à 1 h 30 en bonne qualité pour téléphone). Pour une émission plus lourde, la couper en plusieurs parties.",
       "Supprimer une vidéo libère son espace tout de suite.",
       "Si la formule n'est pas renouvelée, la chaîne n'est plus visible, mais ses vidéos ne sont pas effacées : elles réapparaissent au renouvellement.",
     ],
     problems: [
-      { q: "« L'application refuse ma vidéo. »", a: "Soit la vidéo dépasse 95 Mo, soit l'espace de la chaîne est plein. Regarder la ligne « Espace pour les vidéos » sur la chaîne, puis proposer de supprimer d'anciennes vidéos ou de vendre de l'espace en plus." },
+      { q: "« L'application refuse ma vidéo. »", a: "Soit la vidéo dépasse 1 Go, soit l'espace de la chaîne est plein. Regarder la ligne « Espace pour les vidéos » sur la chaîne, puis proposer de supprimer d'anciennes vidéos ou de vendre de l'espace en plus." },
       { q: "« Pourquoi je paie le stockage en plus du direct ? »", a: "Le direct, c'est la diffusion en temps réel. Le stockage, c'est la garde de vos vidéos jour et nuit pour que votre public les revoie quand il veut : ce sont deux services différents." },
     ],
   },
