@@ -8,6 +8,7 @@ import { callUser, notifyUser } from "../lib/supportLine";
 import SupportStatus from "../components/SupportStatus";
 import SupportBroadcast from "../components/SupportBroadcast";
 import AutoMessages from "../components/AutoMessages";
+import HelpSheets from "../components/HelpSheets";
 import { startVoice, uploadVoice, fmtSecs } from "../lib/voice";
 
 export default function Support({ nav, goto }) {
@@ -206,6 +207,7 @@ export default function Support({ nav, goto }) {
     <ScreenTitle eyebrow="SERVICE CLIENT" title="Boîte de réception" />
     <SupportBroadcast />
     <AutoMessages />
+    <HelpSheets />
     <SupportStatus />
     <section className="users-summary">
       <div className="u-sum"><span>Conversations</span><strong>{convs.length}</strong></div>

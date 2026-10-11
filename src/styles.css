@@ -682,3 +682,29 @@ button, input, textarea { font-family: inherit; }
 /* Messages automatiques */
 .auto-msg { display: flex; flex-direction: column; gap: 6px; padding: 10px 0; border-top: 1px solid var(--border, rgba(255,255,255,.1)); }
 .auto-msg-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+
+/* Fiches pratiques du Service client */
+.hs-search { width: 100%; margin: 8px 0 4px; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border, rgba(0,0,0,.15)); background: var(--surface, #fff); color: inherit; font: inherit; font-size: 14px; box-sizing: border-box; }
+.hs-item { border-top: 1px solid var(--border, rgba(0,0,0,.1)); }
+.hs-head { width: 100%; display: flex; align-items: center; gap: 10px; padding: 12px 2px; background: none; border: none; color: inherit; font: inherit; cursor: pointer; text-align: left; }
+.hs-icon { font-size: 20px; width: 28px; text-align: center; }
+.hs-title { flex: 1; font-weight: 700; font-size: 14.5px; }
+.hs-chev { opacity: .6; }
+.hs-sheet { padding: 0 2px 14px; display: flex; flex-direction: column; gap: 8px; }
+.hs-intro { margin: 0; font-size: 14px; line-height: 1.55; }
+.hs-base { margin: 4px 0 0; font-weight: 600; font-size: 13.5px; }
+.hs-steps { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.hs-steps li { padding: 10px 12px; border-radius: 10px; background: rgba(127,127,127,.08); border-left: 3px solid var(--accent, #c2338f); }
+.hs-num { display: block; font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--accent, #c2338f); margin-bottom: 2px; }
+.hs-steps strong { display: block; font-size: 14px; margin-bottom: 3px; }
+.hs-steps p { margin: 0; font-size: 13.5px; line-height: 1.55; }
+.hs-block { margin-top: 6px; }
+.hs-block h4 { margin: 6px 0; font-size: 14px; }
+.hs-list { margin: 0; padding-left: 18px; font-size: 13.5px; line-height: 1.55; }
+.hs-list li { margin-bottom: 4px; }
+.hs-qa { display: flex; flex-direction: column; gap: 2px; padding: 8px 0; border-bottom: 1px dashed rgba(127,127,127,.25); font-size: 13.5px; line-height: 1.5; }
+.hs-scroll { overflow-x: auto; }
+.hs-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.hs-table th, .hs-table td { padding: 7px 8px; border-bottom: 1px solid rgba(127,127,127,.2); text-align: left; vertical-align: top; }
+.hs-table th { font-size: 12px; opacity: .75; white-space: nowrap; }
+.hs-price { font-weight: 700; white-space: nowrap; }
