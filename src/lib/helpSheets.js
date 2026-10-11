@@ -286,7 +286,7 @@ export const HELP_SHEETS = [
       "Contenus interdits : piratage (films, matchs, émissions d'autres chaînes sans droits), violence, contenu sexuel, appels à la haine. Une chaîne qui ne respecte pas cela est mise en pause sans remboursement.",
       "Pour diffuser des matchs ou des films, le responsable doit posséder les droits. Au moindre doute, demander l'avis du PDG avant d'ouvrir la chaîne.",
       "Une église ou une association qui veut seulement annoncer un événement n'a pas besoin d'une chaîne : orientez-la vers la publicité ou un communiqué (voir ces fiches).",
-      "Bandeaux défilants : chaque chaîne écrit elle-même les messages qui défilent en bas de ses vidéos (onglet TV → Ma chaîne → « Bandeaux défilants », un message par ligne, 10 au maximum). Elle peut y mettre ses annonces, ses flash infos, ou des publicités qu'elle vend elle-même à ses annonceurs, au prix qu'elle veut : Epsilon ne prend rien sur ces ventes. C'est un bon argument pour convaincre une chaîne de venir sur Epsilon.",
+      "Bandeaux défilants : chaque chaîne écrit elle-même les messages qui défilent en bas de ses vidéos (onglet TV → Ma chaîne → « Bandeaux défilants » : un carreau par message, 5 au maximum, chacun avec son bouton Supprimer). Elle peut y mettre ses annonces, ses flash infos, ou des publicités qu'elle vend elle-même à ses annonceurs, au prix qu'elle veut : Epsilon ne prend rien sur ces ventes. C'est un bon argument pour convaincre une chaîne de venir sur Epsilon.",
       "Les bandeaux respectent les mêmes règles que le reste (pas d'arnaque, de haine ni de contenu choquant). En cas d'abus, le PDG peut les retirer dans le site : Epsilon TV → la chaîne → « Retirer les bandeaux ».",
     ],
     problems: [
