@@ -212,12 +212,13 @@ export const HELP_SHEETS = [
       "Une chaîne Epsilon TV diffuse des vidéos dans l'onglet TV de l'application : en différé (vidéos publiées, regardables à tout moment) et en direct. Les gens suivent la chaîne comme on s'abonne à une page. C'est Epsilon qui ouvre la chaîne, après paiement.",
     pricing: {
       base: "Tarif : 1,20 FCFA par minute regardée. Une « minute regardée », c'est 1 spectateur qui regarde le direct pendant 1 minute : si 100 personnes regardent 1 heure, cela fait 100 × 60 = 6 000 minutes, soit 7 200 FCFA. Les vidéos en différé ne consomment pas de minutes.",
-      head: ["Formule (par mois)", "Minutes regardées", "À quoi ça correspond", "Prix"],
+      head: ["Formule (1 mois)", "Prix", "Minutes regardées", "1 émission d'1 h par semaine : spectateurs", "1 h de direct chaque jour : spectateurs"],
+      priceCol: 1,
       rows: [
-        ["Bronze", "20 000", "4 émissions d'1 h devant environ 80 personnes", "24 000 FCFA"],
-        ["Argent", "100 000", "4 émissions d'1 h devant environ 400 personnes", "120 000 FCFA"],
-        ["Or", "500 000", "30 h de direct devant environ 280 personnes", "600 000 FCFA"],
-        ["Sur mesure", "au choix", "un événement ponctuel : culte, concert, match amateur…", "1,20 FCFA la minute"],
+        ["Bronze", "24 000 FCFA", "20 000", "jusqu'à 80", "jusqu'à 10"],
+        ["Argent", "120 000 FCFA", "100 000", "jusqu'à 400", "jusqu'à 55"],
+        ["Or", "600 000 FCFA", "500 000", "jusqu'à 2 000", "jusqu'à 275"],
+        ["Sur mesure", "1,20 FCFA la minute", "au choix", "selon l'événement", "selon l'événement"],
       ],
       extra: [
         "Recharge en cours de mois : 10 000 minutes = 12 000 FCFA (ou toute autre quantité, à 1,20 FCFA la minute).",
@@ -255,7 +256,7 @@ export function sheetAsText(s) {
   if (s.prices) { out.push("Prix :"); s.prices.forEach(([a, b]) => out.push(`• ${a} : ${b}`)); out.push(""); }
   if (s.pricing) {
     out.push(s.pricing.base);
-    s.pricing.rows.forEach((r) => out.push(/\d/.test(r[1]) ? `• ${r[0]} : ${r[1]} minutes regardées (${r[2]}) → ${r[3]}` : `• ${r[0]} : minutes ${r[1]}, pour ${r[2]} → ${r[3]}`));
+    s.pricing.rows.forEach((r) => out.push(/\d/.test(r[2]) ? `• ${r[0]} — ${r[1]} : ${r[2]} minutes regardées (1 émission d'1 h par semaine : ${r[3]} spectateurs ; 1 h chaque jour : ${r[4]} spectateurs)` : `• ${r[0]} — ${r[1]}, nombre de minutes au choix (pour un culte, un concert, un événement ponctuel)`));
     s.pricing.extra.forEach((e) => out.push(`• ${e}`));
     out.push("");
   }

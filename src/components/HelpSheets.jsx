@@ -39,7 +39,7 @@ function Sheet({ s }) {
           <div className="hs-scroll">
             <table className="hs-table">
               <thead><tr>{s.pricing.head.map((h) => <th key={h}>{h}</th>)}</tr></thead>
-              <tbody>{s.pricing.rows.map((r) => <tr key={r[0]}>{r.map((c, i) => <td key={i} className={i === 3 ? "hs-price" : ""}>{c}</td>)}</tr>)}</tbody>
+              <tbody>{s.pricing.rows.map((r) => <tr key={r[0]}>{r.map((c, i) => <td key={i} className={i === (s.pricing.priceCol ?? 3) ? "hs-price" : ""}>{c}</td>)}</tr>)}</tbody>
             </table>
           </div>
           <ul className="hs-list">{s.pricing.extra.map((e) => <li key={e}>{e}</li>)}</ul>
