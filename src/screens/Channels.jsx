@@ -1,7 +1,7 @@
 // Epsilon TV — gestion des chaînes (réservé au PDG, chaque action demande le code de sécurité du PDG).
 // Démarrage : la chaîne paie par Mobile Money / espèces, puis le PDG active ici sa formule pour la durée payée.
 // Tarif (validé par le PDG le 11/10/2026) : 1,20 FCFA par minute regardée (1 spectateur pendant 1 minute).
-// Formules : Bronze 24 000 FCFA (20 000 min) · Argent 120 000 FCFA (100 000 min) · Platine 300 000 FCFA (250 000 min) · Or 600 000 FCFA (500 000 min)
+// Formules (bonus validés le 11/10/2026) : Bronze 24 000 FCFA (21 000 min) · Argent 120 000 FCFA (110 000 min) · Platine 300 000 FCFA (287 500 min) · Or 600 000 FCFA (600 000 min)
 //            · Sur mesure 1,20 FCFA la minute (packs prépayés) · Recharge 12 000 FCFA (+10 000 min).
 import { useRef, useState } from "react";
 import { supabase, q } from "../lib/supabase";
@@ -13,10 +13,10 @@ import { Empty, Note, ScreenTitle, SecurityGate, Pills } from "../components/com
 export const PRICE_PER_MINUTE = 1.2; // FCFA par minute regardée
 const priceOf = (minutes) => Math.round((Number(minutes) || 0) * PRICE_PER_MINUTE);
 export const PLANS = {
-  bronze: { label: "Bronze", price: 24000, minutes: 20000 },
-  argent: { label: "Argent", price: 120000, minutes: 100000 },
-  platine: { label: "Platine", price: 300000, minutes: 250000 }, // fichier SQL 45
-  or: { label: "Or", price: 600000, minutes: 500000 },
+  bronze: { label: "Bronze", price: 24000, minutes: 21000 },
+  argent: { label: "Argent", price: 120000, minutes: 110000 },
+  platine: { label: "Platine", price: 300000, minutes: 287500 }, // fichier SQL 45
+  or: { label: "Or", price: 600000, minutes: 600000 },
   sur_mesure: { label: "Sur mesure", price: null, minutes: null },
 };
 const MONTHS = [1, 3, 6, 12];
@@ -116,7 +116,7 @@ export default function Channels() {
     <ScreenTitle eyebrow="CONTENU" title="Epsilon TV — Chaînes">
       <button className="primary-button" onClick={() => (allowed ? setOpen(!open) : deny("PDG"))}>＋ Créer une chaîne</button>
     </ScreenTitle>
-    <Note icon="📺">Une chaîne n'apparaît dans l'application qu'après <b>activation d'une formule</b>, une fois le paiement reçu (Mobile Money ou espèces). Tarif : <b>1,20 FCFA par minute regardée</b> (1 spectateur pendant 1 minute ; Cloudflare nous coûte ≈ 0,60). Formules : <b>Bronze</b> 24 000 FCFA (20 000 min) · <b>Argent</b> 120 000 FCFA (100 000 min) · <b>Platine</b> 300 000 FCFA (250 000 min) · <b>Or</b> 600 000 FCFA (500 000 min) · <b>Sur mesure</b> 1,20 FCFA la minute · <b>Recharge</b> 12 000 FCFA (+10 000 min). À la fin de la période payée, la chaîne disparaît toute seule. 🔐 Réservé au PDG.</Note>
+    <Note icon="📺">Une chaîne n'apparaît dans l'application qu'après <b>activation d'une formule</b>, une fois le paiement reçu (Mobile Money ou espèces). Tarif : <b>1,20 FCFA par minute regardée</b> (1 spectateur pendant 1 minute ; Cloudflare nous coûte ≈ 0,60). Formules : <b>Bronze</b> 24 000 FCFA (21 000 min, +5 %) · <b>Argent</b> 120 000 FCFA (110 000 min, +10 %) · <b>Platine</b> 300 000 FCFA (287 500 min, +15 %) · <b>Or</b> 600 000 FCFA (600 000 min, +20 %) · <b>Sur mesure</b> 1,20 FCFA la minute · <b>Recharge</b> 12 000 FCFA (+10 000 min). À la fin de la période payée, la chaîne disparaît toute seule. 🔐 Réservé au PDG.</Note>
 
     {open && (
       <div className="ver-form">
