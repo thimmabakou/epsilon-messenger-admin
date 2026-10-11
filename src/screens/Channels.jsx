@@ -126,6 +126,16 @@ export default function Channels() {
   const togglePause = (c) => protect(c.status === "active" ? `Mettre « ${c.name} » en pause` : `Remettre « ${c.name} » en service`,
     () => act(() => q(supabase.from("tv_channels").update({ status: c.status === "active" ? "paused" : "active" }).eq("id", c.id)),
       c.status === "active" ? "⏸ Chaîne en pause (invisible)." : "▶ Chaîne remise en service."));
+  // Numéro de canal (fichier SQL 49) : le PDG peut le changer s'il est libre
+  const setNo = (c) => {
+    const v = window.prompt(`Numéro de canal pour « ${c.name} »`, c.channel_no ?? "");
+    const n = parseInt(String(v || "").replace(/\D/g, ""), 10);
+    if (!n || n === c.channel_no) return;
+    protect(`Mettre « ${c.name} » sur le canal ${n}`, () => act(async () => {
+      const { error: e } = await supabase.rpc("eg_tv_set_no", { p_channel: c.id, p_no: n });
+      if (e) throw new Error(/eg_tv_set_no/.test(e.message) ? "Exécutez d'abord le fichier SQL 49 (numéros de canal) dans Supabase." : e.message);
+    }, `🔢 « ${c.name} » est maintenant sur le canal ${n}.`));
+  };
   // Modération : retirer les bandeaux défilants d'une chaîne qui enfreint les règles (fichier SQL 48)
   const clearTicker = (c) => protect(`Retirer les bandeaux défilants de « ${c.name} »`,
     () => act(async () => {
@@ -167,7 +177,7 @@ export default function Channels() {
           <div key={c.id} className="music-row">
             <div className="music-cover">{c.logo_url ? <img src={c.logo_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 10 }} /> : "📺"}</div>
             <div className="music-main">
-              <strong>{c.name}{c.is_live ? " · 🔴 en direct" : ""}</strong>
+              <strong>{c.channel_no != null ? `Canal ${c.channel_no} · ` : ""}{c.name}{c.is_live ? " · 🔴 en direct" : ""}</strong>
               <span className="field-hint">Responsable : {c.owner ? `${fullName(c.owner)} (${c.owner.phone || "—"})` : "aucun"}</span>
               <span className="field-hint">
                 Formule {PLANS[c.plan]?.label || c.plan} · {c.paid_until ? (left > 0 ? `jusqu'au ${dateOnly(c.paid_until)} (${left} j)` : `terminée le ${dateOnly(c.paid_until)}`) : "jamais activée"}
@@ -184,6 +194,7 @@ export default function Channels() {
               <button className="action-button neutral" onClick={() => startPay(c, "recharge")}>➕ Recharge</button>
               <button className="action-button neutral" onClick={() => startPay(c, "stockage")}>💾 Espace en plus</button>
               <button className="action-button neutral" onClick={() => setHist(hist?.id === c.id ? null : c)}>🧾 Paiements</button>
+              <button className="action-button neutral" onClick={() => setNo(c)}>🔢 Numéro de canal</button>
               <button className="action-button neutral" onClick={() => togglePause(c)}>{c.status === "active" ? "⏸ Pause" : "▶ Reprendre"}</button>
               {(c.ticker || []).length > 0 && <button className="action-button neutral" onClick={() => clearTicker(c)}>🧹 Retirer les bandeaux</button>}
               <button className="action-button danger" onClick={() => remove(c)}>🗑️ Supprimer</button>
