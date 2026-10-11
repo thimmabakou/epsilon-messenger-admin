@@ -126,6 +126,12 @@ export default function Channels() {
   const togglePause = (c) => protect(c.status === "active" ? `Mettre « ${c.name} » en pause` : `Remettre « ${c.name} » en service`,
     () => act(() => q(supabase.from("tv_channels").update({ status: c.status === "active" ? "paused" : "active" }).eq("id", c.id)),
       c.status === "active" ? "⏸ Chaîne en pause (invisible)." : "▶ Chaîne remise en service."));
+  // Modération : retirer les bandeaux défilants d'une chaîne qui enfreint les règles (fichier SQL 48)
+  const clearTicker = (c) => protect(`Retirer les bandeaux défilants de « ${c.name} »`,
+    () => act(async () => {
+      const { error: e } = await supabase.rpc("eg_tv_set_ticker", { p_channel: c.id, p_items: [], p_on: false });
+      if (e) throw new Error(e.message);
+    }, "🧹 Bandeaux retirés."));
   const remove = (c) => protect(`Supprimer définitivement la chaîne « ${c.name} » et ses vidéos`,
     () => act(() => q(supabase.from("tv_channels").delete().eq("id", c.id)), "🗑️ Chaîne supprimée."));
 
@@ -167,6 +173,7 @@ export default function Channels() {
                 Formule {PLANS[c.plan]?.label || c.plan} · {c.paid_until ? (left > 0 ? `jusqu'au ${dateOnly(c.paid_until)} (${left} j)` : `terminée le ${dateOnly(c.paid_until)}`) : "jamais activée"}
               </span>
               <span className="field-hint">Minutes : {fmt(used)} / {fmt(quota)}{quota ? ` (${Math.round((used / quota) * 100)} %)` : ""}</span>
+              {(c.ticker || []).length > 0 && <span className="field-hint">📰 Bandeaux{c.ticker_on === false ? " (masqués)" : ""} : {c.ticker.join(" • ")}</span>}
               <span className="field-hint">Espace vidéos : {(PLANS[c.plan]?.gb || 0) + Number(c.storage_extra_gb || 0)} Go{Number(c.storage_extra_gb || 0) ? ` (dont ${c.storage_extra_gb} Go en plus)` : ""}</span>
             </div>
             <div className="mp-actions" style={{ flexDirection: "column", alignItems: "stretch" }}>
@@ -178,6 +185,7 @@ export default function Channels() {
               <button className="action-button neutral" onClick={() => startPay(c, "stockage")}>💾 Espace en plus</button>
               <button className="action-button neutral" onClick={() => setHist(hist?.id === c.id ? null : c)}>🧾 Paiements</button>
               <button className="action-button neutral" onClick={() => togglePause(c)}>{c.status === "active" ? "⏸ Pause" : "▶ Reprendre"}</button>
+              {(c.ticker || []).length > 0 && <button className="action-button neutral" onClick={() => clearTicker(c)}>🧹 Retirer les bandeaux</button>}
               <button className="action-button danger" onClick={() => remove(c)}>🗑️ Supprimer</button>
             </div>
             {hist?.id === c.id && (
