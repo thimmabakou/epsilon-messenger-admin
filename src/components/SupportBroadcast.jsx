@@ -6,7 +6,7 @@ import { supabase, q } from "../lib/supabase";
 import { useAdmin, useLoad } from "../lib/admin";
 import { dateTime } from "../lib/format";
 import { uploadMusicFile } from "../lib/files";
-import { SecurityGate } from "./common";
+import { SecurityGate, InlineEdit, sqlHint } from "./common";
 import { notifyAll as pushAll } from "../lib/broadcastPush";
 
 const kindOf = (f) => (!f ? "text" : f.type.startsWith("image/") ? "photo" : f.type.startsWith("video/") ? "video" : "document");
@@ -45,6 +45,13 @@ export default function SupportBroadcast() {
   };
   // Deux façons de retirer : seulement de cette liste, ou de la discussion de TOUS les utilisateurs
   const [delAsk, setDelAsk] = useState(null);
+  // Corriger le texte d'une annonce déjà envoyée (il change dans la discussion de tous les utilisateurs)
+  const [editId, setEditId] = useState(null);
+  const saveEdit = (b, body) => act(async () => {
+    const { error: e } = await supabase.rpc("eg_broadcast_edit", { p_id: b.id, p_body: body });
+    if (e) throw new Error(sqlHint(e, 51));
+    setEditId(null); reload?.();
+  }, "✏️ Annonce corrigée : le nouveau texte s'affiche chez tous les utilisateurs.");
   const removeFor = (b, forAll) => act(async () => {
     const { data: n, error: e } = await supabase.rpc("eg_broadcast_remove", { p_id: b.id, p_for_all: forAll });
     if (e) throw new Error(/function|schema cache/i.test(e.message) ? "Exécutez d'abord le fichier SQL 27 (retirer les annonces) dans Supabase." : e.message);
@@ -71,8 +78,13 @@ export default function SupportBroadcast() {
       {progress && <span className="field-hint"><b>{progress}</b></span>}
       {(data || []).map((b) => (
         <div key={b.id} className="field-hint" style={{ display: "flex", alignItems: "center", gap: 8, borderTop: "1px solid var(--border)", paddingTop: 6 }}>
-          <span style={{ flex: 1 }}>{KIND[b.kind]} · {b.body ? b.body.slice(0, 80) : b.file_name || ""} · {dateTime(b.created_at)}</span>
+          {editId === b.id ? (
+            <div style={{ flex: 1 }}><InlineEdit value={b.body || ""} onSave={(v) => saveEdit(b, v)} onCancel={() => setEditId(null)} /></div>
+          ) : (
+            <span style={{ flex: 1 }}>{KIND[b.kind]} · {b.body ? b.body.slice(0, 160) : b.file_name || ""} · {dateTime(b.created_at)}{b.edited_at ? " · modifié" : ""}</span>
+          )}
           <div className="mp-actions" style={{ flexDirection: "column", alignItems: "stretch" }}>
+            {allowed && editId !== b.id && <button className="action-button neutral" onClick={() => setEditId(b.id)}>✏️ Modifier</button>}
             <button className="action-button neutral" onClick={() => removeFor(b, false)}>Masquer du site</button>
             <button className="action-button danger" onClick={() => setDelAsk(b)}>🗑️ Supprimer pour tous</button>
           </div>

@@ -90,3 +90,22 @@ export function Avatar({ url, name, big, style }) {
     </div>
   );
 }
+
+// Corriger un message déjà envoyé (annonces, statuts…) : zone de texte + Enregistrer / Annuler
+export function InlineEdit({ value, max = 2000, rows = 3, onSave, onCancel }) {
+  const [v, setV] = useState(value || "");
+  const [busy, setBusy] = useState(false);
+  const save = async () => { setBusy(true); try { await onSave(v.trim()); } finally { setBusy(false); } };
+  return (
+    <div className="inline-edit">
+      <textarea rows={rows} maxLength={max} value={v} autoFocus onChange={(e) => setV(e.target.value)} />
+      <div className="mp-actions">
+        <button className="action-button neutral" onClick={onCancel} disabled={busy}>Annuler</button>
+        <button className="action-button primary" onClick={save} disabled={busy || v.trim() === (value || "").trim()}>✏️ Enregistrer la correction</button>
+      </div>
+    </div>
+  );
+}
+
+// Message d'erreur clair quand le fichier SQL d'une fonction n'a pas encore été exécuté
+export const sqlHint = (e, file) => (/function|schema cache|edited_at/i.test(e?.message || "") ? `Exécutez d'abord le fichier SQL ${file} dans Supabase.` : e?.message || String(e));

@@ -4,7 +4,7 @@ import { supabase, q, rpc, invokeFn } from "../lib/supabase";
 import { useAdmin, useLoad, Loading } from "../lib/admin";
 import { PERMISSION_GROUPS, REQ_STATUS, permLabel } from "../lib/constants";
 import { dateTime, initials } from "../lib/format";
-import { Empty, Note, ScreenTitle } from "../components/common";
+import { Empty, Note, ScreenTitle, sqlHint } from "../components/common";
 
 const statusClass = (st) => st === "accordee" ? "granted" : st === "refusee" ? "refused" : st === "en_attente" ? "pending" : "info";
 
@@ -13,11 +13,12 @@ export default function Requests({ nav }) {
   const pdg = me.isPdg;
   const [selId, setSelId] = useState(null);
   const [reply, setReply] = useState("");
+  const [editing, setEditing] = useState(null); // mon message en cours de correction
   const [formOpen, setFormOpen] = useState(!!nav.newPerm && !pdg);
   const [nr, setNr] = useState({ perm: nav.newPerm || "", text: "" });
   const box = useRef();
 
-  const { data, error } = useLoad(async () => {
+  const { data, error, reload } = useLoad(async () => {
     const reqs = await q(supabase.from("perm_requests").select("*").order("created_at", { ascending: false }));
     const names = pdg && reqs.length ? await q(supabase.from("admins").select("user_id,display_name").in("user_id", [...new Set(reqs.map((r) => r.admin_id))])) : [];
     const ids = reqs.map((r) => r.id);
@@ -45,6 +46,16 @@ export default function Requests({ nav }) {
   };
   const send = async () => {
     if (!reply.trim()) return;
+    if (editing) {
+      const m = editing;
+      if (reply.trim() !== m.body && await act(async () => {
+        const { error: e } = await supabase.rpc("eg_perm_message_edit", { p_id: String(m.id), p_body: reply.trim() });
+        if (e) throw new Error(sqlHint(e, 51));
+        return true;
+      }, "✏️ Message corrigé.")) reload?.();
+      setEditing(null); setReply("");
+      return;
+    }
     if (await act(() => rpc("reply_perm_request", { p_request: r.id, p_body: reply.trim() }))) setReply("");
   };
   const decide = (grant) => act(() => rpc("decide_perm_request", { p_request: r.id, p_grant: grant }), grant ? "✅ Permission accordée : elle s'applique immédiatement." : "Demande refusée.");
@@ -62,7 +73,13 @@ export default function Requests({ nav }) {
         const mine = pdg ? m.sender === "pdg" : m.sender === "admin";
         const cls = m.sender === "system" ? "system" : mine ? "team" : "user";
         const who = m.sender === "system" ? "" : m.sender === "pdg" ? "PDG · " : `${r.adminName} · `;
-        return <div key={m.id} className={"conv-msg " + cls}>{m.body}<span className="conv-msg-when">{who}{dateTime(m.created_at)}</span></div>;
+        return (
+          <div key={m.id} className={"conv-msg " + cls}>{m.body}
+            <span className="conv-msg-when">{who}{dateTime(m.created_at)}{m.edited_at ? " · modifié" : ""}
+              {mine && m.sender !== "system" && <button className="conv-edit" onClick={() => { setEditing(m); setReply(m.body || ""); }}>✏️ Modifier</button>}
+            </span>
+          </div>
+        );
       })}
     </div>
     {pdg && r.perm_key && !["accordee", "refusee"].includes(r.status) && (
@@ -71,9 +88,13 @@ export default function Requests({ nav }) {
         <button className="action-button danger" onClick={() => decide(false)}>❌ Refuser</button>
       </div>
     )}
+    {editing && (
+      <div className="conv-editing">✏️ <span>Correction de votre message</span>
+        <button className="icon-button" onClick={() => { setEditing(null); setReply(""); }} aria-label="Annuler">✕</button></div>
+    )}
     <div className="conv-reply">
-      <input placeholder={pdg ? `Répondre à ${r.adminName}…` : "Écrire au PDG…"} value={reply} autoComplete="off" onChange={(e) => setReply(e.target.value)} onKeyDown={(e) => e.key === "Enter" && send()} />
-      <button className="primary-button" onClick={send} style={{ padding: "10px 16px" }}>Envoyer</button>
+      <input placeholder={editing ? "Corriger votre message…" : pdg ? `Répondre à ${r.adminName}…` : "Écrire au PDG…"} value={reply} autoComplete="off" onChange={(e) => setReply(e.target.value)} onKeyDown={(e) => e.key === "Enter" && send()} />
+      <button className="primary-button" onClick={send} style={{ padding: "10px 16px" }}>{editing ? "Corriger" : "Envoyer"}</button>
     </div>
   </>);
 

@@ -5,6 +5,7 @@ import { supabase, q } from "../lib/supabase";
 import { useAdmin, useLoad } from "../lib/admin";
 import { dateTime } from "../lib/format";
 import { uploadMusicFile } from "../lib/files";
+import { InlineEdit, sqlHint } from "./common";
 
 const COLORS = ["#7A3B8C", "#C2338F", "#1E8A4C", "#2563EB", "#D97706", "#1F1330"];
 
@@ -35,6 +36,14 @@ export default function SupportStatus() {
     reload?.();
   }, "Statut retiré : il disparaît chez tous les utilisateurs.");
 
+  // Corriger le texte d'un statut déjà publié
+  const [editId, setEditId] = useState(null);
+  const saveEdit = (s, body) => act(async () => {
+    const { error: e } = await supabase.rpc("eg_support_status_edit", { p_id: s.id, p_body: body });
+    if (e) throw new Error(sqlHint(e, 51));
+    setEditId(null); reload?.();
+  }, "✏️ Statut corrigé chez tous les utilisateurs.");
+
   return (
     <div className="ver-form" style={{ marginBottom: 16 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
@@ -57,7 +66,12 @@ export default function SupportStatus() {
       {live.map((s) => (
         <div key={s.id} className="field-hint" style={{ display: "flex", alignItems: "center", gap: 8, borderTop: "1px solid var(--border)", paddingTop: 6 }}>
           <span style={{ width: 12, height: 12, borderRadius: "50%", background: s.bg_color || "#7A3B8C", flexShrink: 0 }} />
-          <span style={{ flex: 1 }}>{s.kind === "photo" ? "🖼️ " : ""}{s.body || "(photo)"} · jusqu'au {dateTime(s.expires_at)}</span>
+          {editId === s.id ? (
+            <div style={{ flex: 1 }}><InlineEdit value={s.body || ""} max={500} onSave={(v) => saveEdit(s, v)} onCancel={() => setEditId(null)} /></div>
+          ) : (
+            <span style={{ flex: 1 }}>{s.kind === "photo" ? "🖼️ " : ""}{s.body || "(photo)"} · jusqu'au {dateTime(s.expires_at)}{s.edited_at ? " · modifié" : ""}</span>
+          )}
+          {allowed && editId !== s.id && <button className="action-button neutral" onClick={() => setEditId(s.id)}>✏️ Modifier</button>}
           <button className="action-button danger" onClick={() => remove(s)}>🗑️ Retirer pour tous</button>
         </div>
       ))}
