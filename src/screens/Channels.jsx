@@ -1,7 +1,8 @@
 // Epsilon TV — gestion des chaînes (réservé au PDG, chaque action demande le code de sécurité du PDG).
 // Démarrage : la chaîne paie par Mobile Money / espèces, puis le PDG active ici sa formule pour la durée payée.
-// Formules : Bronze 25 000 FCFA (20 000 min) · Argent 110 000 FCFA (100 000 min) · Or 500 000 FCFA (500 000 min)
-//            · Sur mesure 1 FCFA par minute (packs prépayés) · Recharge 12 000 FCFA (+10 000 min).
+// Tarif (validé par le PDG le 11/10/2026) : 1,20 FCFA par minute regardée (1 spectateur pendant 1 minute).
+// Formules : Bronze 24 000 FCFA (20 000 min) · Argent 120 000 FCFA (100 000 min) · Or 600 000 FCFA (500 000 min)
+//            · Sur mesure 1,20 FCFA la minute (packs prépayés) · Recharge 12 000 FCFA (+10 000 min).
 import { useRef, useState } from "react";
 import { supabase, q } from "../lib/supabase";
 import { useAdmin, useLoad, Loading } from "../lib/admin";
@@ -9,10 +10,12 @@ import { dateOnly, fmt, fullName } from "../lib/format";
 import { uploadMusicFile } from "../lib/files";
 import { Empty, Note, ScreenTitle, SecurityGate, Pills } from "../components/common";
 
+export const PRICE_PER_MINUTE = 1.2; // FCFA par minute regardée
+const priceOf = (minutes) => Math.round((Number(minutes) || 0) * PRICE_PER_MINUTE);
 export const PLANS = {
-  bronze: { label: "Bronze", price: 25000, minutes: 20000 },
-  argent: { label: "Argent", price: 110000, minutes: 100000 },
-  or: { label: "Or", price: 500000, minutes: 500000 },
+  bronze: { label: "Bronze", price: 24000, minutes: 20000 },
+  argent: { label: "Argent", price: 120000, minutes: 100000 },
+  or: { label: "Or", price: 600000, minutes: 500000 },
   sur_mesure: { label: "Sur mesure", price: null, minutes: null },
 };
 const MONTHS = [1, 3, 6, 12];
@@ -75,7 +78,7 @@ export default function Channels() {
     if (kind === "recharge") setPay({ c, kind, minutes: 10000, amount: 12000, note: "", ref: "", cash: false });
     else setPay({ c, kind, plan: c.plan || "bronze", months: 1, amount: PLANS[c.plan || "bronze"].price, minutes: 1000000, note: "", ref: "", cash: false });
   };
-  const setPlan = (plan) => setPay((p) => ({ ...p, plan, amount: plan === "sur_mesure" ? p.minutes : PLANS[plan].price * p.months }));
+  const setPlan = (plan) => setPay((p) => ({ ...p, plan, amount: plan === "sur_mesure" ? priceOf(p.minutes) : PLANS[plan].price * p.months }));
   const setMonths = (months) => setPay((p) => ({ ...p, months, amount: p.plan === "sur_mesure" ? p.amount : PLANS[p.plan].price * months }));
   const confirmPay = () => {
     const p = pay;
@@ -112,7 +115,7 @@ export default function Channels() {
     <ScreenTitle eyebrow="CONTENU" title="Epsilon TV — Chaînes">
       <button className="primary-button" onClick={() => (allowed ? setOpen(!open) : deny("PDG"))}>＋ Créer une chaîne</button>
     </ScreenTitle>
-    <Note icon="📺">Une chaîne n'apparaît dans l'application qu'après <b>activation d'une formule</b>, une fois le paiement reçu (Mobile Money ou espèces). Formules : <b>Bronze</b> 25 000 FCFA (20 000 min) · <b>Argent</b> 110 000 FCFA (100 000 min) · <b>Or</b> 500 000 FCFA (500 000 min) · <b>Sur mesure</b> 1 FCFA la minute · <b>Recharge</b> 12 000 FCFA (+10 000 min). À la fin de la période payée, la chaîne disparaît toute seule. 🔐 Réservé au PDG.</Note>
+    <Note icon="📺">Une chaîne n'apparaît dans l'application qu'après <b>activation d'une formule</b>, une fois le paiement reçu (Mobile Money ou espèces). Tarif : <b>1,20 FCFA par minute regardée</b> (1 spectateur pendant 1 minute ; Cloudflare nous coûte ≈ 0,60). Formules : <b>Bronze</b> 24 000 FCFA (20 000 min) · <b>Argent</b> 120 000 FCFA (100 000 min) · <b>Or</b> 600 000 FCFA (500 000 min) · <b>Sur mesure</b> 1,20 FCFA la minute · <b>Recharge</b> 12 000 FCFA (+10 000 min). À la fin de la période payée, la chaîne disparaît toute seule. 🔐 Réservé au PDG.</Note>
 
     {open && (
       <div className="ver-form">
@@ -183,14 +186,14 @@ export default function Channels() {
             <span className="field-hint">Durée payée</span>
             <Pills options={MONTHS.map((m) => [m, `${m} mois`])} value={pay.months} onChange={setMonths} />
             {pay.plan === "sur_mesure" && (<>
-              <span className="field-hint">Minutes achetées (1 FCFA la minute)</span>
-              <input inputMode="numeric" value={pay.minutes} onChange={(e) => { const m = digits(e.target.value); setPay({ ...pay, minutes: m, amount: m }); }} />
+              <span className="field-hint">Minutes achetées (1,20 FCFA la minute regardée)</span>
+              <input inputMode="numeric" value={pay.minutes} onChange={(e) => { const m = digits(e.target.value); setPay({ ...pay, minutes: m, amount: priceOf(m) }); }} />
             </>)}
             {pay.plan !== "sur_mesure" && <span className="field-hint">Inclus : {fmt(PLANS[pay.plan].minutes * pay.months)} minutes regardées</span>}
           </>)}
           {pay.kind === "recharge" && (<>
-            <span className="field-hint">Minutes ajoutées</span>
-            <input inputMode="numeric" value={pay.minutes} onChange={(e) => setPay({ ...pay, minutes: digits(e.target.value) })} />
+            <span className="field-hint">Minutes ajoutées (1,20 FCFA la minute regardée)</span>
+            <input inputMode="numeric" value={pay.minutes} onChange={(e) => { const m = digits(e.target.value); setPay({ ...pay, minutes: m, amount: priceOf(m) }); }} />
           </>)}
           <span className="field-hint">Montant reçu (FCFA)</span>
           <input inputMode="numeric" value={pay.amount} onChange={(e) => setPay({ ...pay, amount: digits(e.target.value) })} />

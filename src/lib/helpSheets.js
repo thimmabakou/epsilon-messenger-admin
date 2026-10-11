@@ -2,7 +2,7 @@
 // Chaque étape est écrite pour être lue telle quelle au client, ou copiée et envoyée dans sa discussion.
 // Les prix et les noms de boutons correspondent à l'application actuelle : à mettre à jour ici si ça change.
 
-export const TV_PRICE_PER_MIN = 150; // FCFA la minute de direct
+export const TV_PRICE_PER_MIN = 1.2; // FCFA par minute regardée (1 spectateur × 1 minute), validé par le PDG le 11/10/2026
 
 export const HELP_SHEETS = [
   // ───────────────────────────── STATUTS ─────────────────────────────
@@ -211,31 +211,31 @@ export const HELP_SHEETS = [
     intro:
       "Une chaîne Epsilon TV diffuse des vidéos dans l'onglet TV de l'application : en différé (vidéos publiées, regardables à tout moment) et en direct. Les gens suivent la chaîne comme on s'abonne à une page. C'est Epsilon qui ouvre la chaîne, après paiement.",
     pricing: {
-      base: "Tarif de base : 150 FCFA la minute de direct. Le différé est compris dans chaque bouquet.",
-      head: ["Bouquet (30 jours)", "Direct", "Différé", "Prix"],
+      base: "Tarif : 1,20 FCFA par minute regardée. Une « minute regardée », c'est 1 spectateur qui regarde le direct pendant 1 minute : si 100 personnes regardent 1 heure, cela fait 100 × 60 = 6 000 minutes, soit 7 200 FCFA. Les vidéos en différé ne consomment pas de minutes.",
+      head: ["Formule (par mois)", "Minutes regardées", "À quoi ça correspond", "Prix"],
       rows: [
-        ["Découverte", "120 min (2 h)", "240 min (4 h)", "18 000 FCFA"],
-        ["Bronze", "300 min (5 h)", "600 min (10 h)", "45 000 FCFA"],
-        ["Argent", "900 min (15 h)", "1 800 min (30 h)", "121 500 FCFA (−10 %)"],
-        ["Or", "2 400 min (40 h)", "6 000 min (100 h)", "306 000 FCFA (−15 %)"],
-        ["Sur mesure", "le nombre de minutes choisi", "le double", "150 FCFA la minute de direct"],
+        ["Bronze", "20 000", "4 émissions d'1 h devant environ 80 personnes", "24 000 FCFA"],
+        ["Argent", "100 000", "4 émissions d'1 h devant environ 400 personnes", "120 000 FCFA"],
+        ["Or", "500 000", "30 h de direct devant environ 280 personnes", "600 000 FCFA"],
+        ["Sur mesure", "au choix", "un événement ponctuel : culte, concert, match amateur…", "1,20 FCFA la minute"],
       ],
       extra: [
-        "Recharge en cours de mois : 60 minutes de direct = 9 000 FCFA · 120 minutes = 18 000 FCFA.",
-        "Engagement 3 mois : −5 % · 6 mois : −10 % · 12 mois : −15 % (sur les bouquets Découverte et Bronze).",
-        "Les minutes non utilisées ne sont pas reportées au mois suivant.",
+        "Recharge en cours de mois : 10 000 minutes = 12 000 FCFA (ou toute autre quantité, à 1,20 FCFA la minute).",
+        "On peut payer 1, 3, 6 ou 12 mois d'avance : le prix et les minutes sont multipliés par le nombre de mois.",
+        "La chaîne ne paie jamais plus que ce qu'elle a acheté : quand ses minutes sont épuisées, elle recharge.",
+        "Si la chaîne renouvelle avant la fin de sa formule, les minutes qui lui restent sont gardées.",
       ],
     },
     steps: [
       { t: "Premier contact", d: "Le responsable de la chaîne écrit ou appelle le Service client Epsilon. On note : le nom de la chaîne, le type (télé, radio, église, entreprise…), la ville, le nom et le numéro du responsable, ce qu'il veut diffuser, et à quelle fréquence." },
       { t: "Le responsable crée son compte", d: "Il doit avoir un compte Epsilon Messenger à son nom, sur le numéro qui gérera la chaîne. Sans compte, on ne peut pas lui confier la chaîne." },
-      { t: "Choisir le bouquet", d: "On l'aide à calculer : une émission d'1 heure par semaine en direct, c'est environ 240 minutes par mois → bouquet Bronze. Un direct chaque jour d'1 heure, c'est 1 800 minutes → bouquet Or, ou Argent avec des recharges." },
+      { t: "Choisir la formule", d: "On l'aide à calculer avec une question simple : combien d'heures de direct par mois, et combien de personnes regardent à peu près ? On multiplie : heures × 60 × spectateurs. Exemple : une église qui fait 4 cultes d'1 h par mois, suivis par 50 fidèles en ligne → 4 × 60 × 50 = 12 000 minutes → formule Bronze (20 000 minutes), avec de la marge. Au début, conseiller la plus petite formule : la chaîne pourra toujours recharger." },
       { t: "Préparer le logo et la présentation", d: "Le logo de la chaîne (image carrée, nette) et deux ou trois lignes de présentation. Ils seront affichés dans l'onglet TV." },
-      { t: "Paiement", d: "Le responsable envoie le montant du bouquet par MTN Mobile Money ou Airtel Money aux numéros d'Epsilon, puis transmet la référence du SMS de confirmation. Le paiement en espèces est possible, avec un reçu." },
-      { t: "Création et activation (PDG)", d: "Dans le site : Epsilon TV → « Nouvelle chaîne » (nom, présentation, logo, numéro du responsable) → « Créer la chaîne ». Puis activer sa formule : choisir le bouquet et la durée, recopier la référence du paiement (ou cocher « Payé en espèces ») et confirmer avec le code PDG. La chaîne apparaît aussitôt dans l'onglet TV." },
+      { t: "Paiement", d: "Le responsable envoie le montant de la formule par MTN Mobile Money ou Airtel Money aux numéros d'Epsilon, puis transmet la référence du SMS de confirmation. Le paiement en espèces est possible, avec un reçu." },
+      { t: "Création et activation (PDG)", d: "Dans le site : Epsilon TV → « Nouvelle chaîne » (nom, présentation, logo, numéro du responsable) → « Créer la chaîne ». Puis activer sa formule : choisir la formule et la durée, recopier la référence du paiement (ou cocher « Payé en espèces ») et confirmer avec le code PDG. La chaîne apparaît aussitôt dans l'onglet TV." },
       { t: "Publier des vidéos (différé)", d: "Le responsable ouvre l'onglet TV → sa chaîne (« Ma chaîne ») → « Publier une vidéo » : un titre, la vidéo (95 Mo au maximum), puis « Publier ». Il peut supprimer une vidéo à tout moment." },
-      { t: "Le direct", d: "Le bouton « Passer en direct » est déjà visible sur la chaîne, avec la mention « Bientôt disponible ». Dès son ouverture, le direct se lancera depuis le téléphone ou un studio, et les minutes de direct seront décomptées du bouquet." },
-      { t: "Suivi et renouvellement", d: "Sur sa chaîne, le responsable voit sa formule, les jours restants et ses minutes. L'application le prévient avant la fin. Sans renouvellement, la chaîne n'est plus visible, mais ses vidéos ne sont pas effacées." },
+      { t: "Le direct", d: "Le bouton « Passer en direct » est déjà visible sur la chaîne, avec la mention « Bientôt disponible ». Dès son ouverture, le direct se lancera depuis le téléphone ou un studio. Pendant le direct, chaque minute regardée par chaque spectateur est décomptée de la formule." },
+      { t: "Suivi et renouvellement", d: "Sur sa chaîne, le responsable voit sa formule, les jours restants et les minutes déjà consommées. L'application le prévient avant la fin. Sans renouvellement, la chaîne n'est plus visible, mais ses vidéos ne sont pas effacées." },
     ],
     tips: [
       "Contenus interdits : piratage (films, matchs, émissions d'autres chaînes sans droits), violence, contenu sexuel, appels à la haine. Une chaîne qui ne respecte pas cela est mise en pause sans remboursement.",
@@ -255,7 +255,7 @@ export function sheetAsText(s) {
   if (s.prices) { out.push("Prix :"); s.prices.forEach(([a, b]) => out.push(`• ${a} : ${b}`)); out.push(""); }
   if (s.pricing) {
     out.push(s.pricing.base);
-    s.pricing.rows.forEach((r) => out.push(`• ${r[0]} : ${r[1]} de direct + ${r[2]} de différé → ${r[3]}`));
+    s.pricing.rows.forEach((r) => out.push(/\d/.test(r[1]) ? `• ${r[0]} : ${r[1]} minutes regardées (${r[2]}) → ${r[3]}` : `• ${r[0]} : minutes ${r[1]}, pour ${r[2]} → ${r[3]}`));
     s.pricing.extra.forEach((e) => out.push(`• ${e}`));
     out.push("");
   }
