@@ -211,7 +211,7 @@ export const HELP_SHEETS = [
     intro:
       "Une chaîne Epsilon TV diffuse des vidéos dans l'onglet TV de l'application : en différé (vidéos publiées, regardables à tout moment) et en direct. Les gens suivent la chaîne comme on s'abonne à une page. C'est Epsilon qui ouvre la chaîne, après paiement.",
     pricing: {
-      base: "Tarif : 1,20 FCFA par minute regardée, avec des minutes offertes dans les formules (Bronze +5 %, Argent +10 %, Platine +15 %, Or +20 %). Une « minute regardée », c'est 1 spectateur qui regarde le direct pendant 1 minute : si 100 personnes regardent 1 heure, cela fait 100 × 60 = 6 000 minutes, soit 7 200 FCFA. Les vidéos en différé ne consomment pas de minutes.",
+      base: "Tarif : 1,20 FCFA par minute regardée, avec des minutes offertes dans les formules (Bronze +5 %, Argent +10 %, Platine +15 %, Or +20 %). Une « minute regardée », c'est 1 spectateur qui regarde le direct pendant 1 minute : si 100 personnes regardent 1 heure, cela fait 100 × 60 = 6 000 minutes, soit 7 200 FCFA. Les vidéos en différé ne consomment pas de minutes : elles se paient à part, selon l'espace occupé (voir la fiche « Epsilon TV : stockage des vidéos »).",
       head: ["Formule (1 mois)", "Prix", "Minutes regardées", "1 émission d'1 h par semaine : spectateurs", "1 h de direct chaque jour : spectateurs"],
       priceCol: 1,
       rows: [
@@ -276,7 +276,7 @@ export const HELP_SHEETS = [
       { t: "Le responsable crée son compte", d: "Il doit avoir un compte Epsilon Messenger à son nom, sur le numéro qui gérera la chaîne. Sans compte, on ne peut pas lui confier la chaîne." },
       { t: "Choisir la formule", d: "On l'aide à calculer avec une question simple : combien d'heures de direct par mois, et combien de personnes regardent à peu près ? On multiplie : heures × 60 × spectateurs. Exemple : une église qui fait 4 cultes d'1 h par mois, suivis par 50 fidèles en ligne → 4 × 60 × 50 = 12 000 minutes → formule Bronze (21 000 minutes avec le bonus), avec de la marge. Les tableaux ci-dessus donnent directement la réponse. Au début, conseiller la plus petite formule qui suffit : la chaîne pourra toujours recharger." },
       { t: "Préparer le logo et la présentation", d: "Le logo de la chaîne (image carrée, nette) et deux ou trois lignes de présentation. Ils seront affichés dans l'onglet TV." },
-      { t: "Paiement", d: "Le responsable envoie le montant de la formule par MTN Mobile Money ou Airtel Money aux numéros d'Epsilon, puis transmet la référence du SMS de confirmation. Le paiement en espèces est possible, avec un reçu." },
+      { t: "Paiement", d: "Le responsable envoie le total du contrat (formule de direct + stockage, voir la fiche du stockage) par MTN Mobile Money ou Airtel Money aux numéros d'Epsilon, puis transmet la référence du SMS de confirmation. Le paiement en espèces est possible, avec un reçu." },
       { t: "Création et activation (PDG)", d: "Dans le site : Epsilon TV → « Nouvelle chaîne » (nom, présentation, logo, numéro du responsable) → « Créer la chaîne ». Puis activer sa formule : choisir la formule et la durée, recopier la référence du paiement (ou cocher « Payé en espèces ») et confirmer avec le code PDG. La chaîne apparaît aussitôt dans l'onglet TV." },
       { t: "Publier des vidéos (différé)", d: "Le responsable ouvre l'onglet TV → sa chaîne (« Ma chaîne ») → « Publier une vidéo » : un titre, la vidéo (95 Mo au maximum), puis « Publier ». Il peut supprimer une vidéo à tout moment." },
       { t: "Le direct", d: "Le bouton « Passer en direct » est déjà visible sur la chaîne, avec la mention « Bientôt disponible ». Dès son ouverture, le direct se lancera depuis le téléphone ou un studio. Pendant le direct, chaque minute regardée par chaque spectateur est décomptée de la formule." },
@@ -292,6 +292,58 @@ export const HELP_SHEETS = [
       { q: "« Ma vidéo ne se publie pas. »", a: "Elle dépasse 95 Mo, ou le réseau a coupé. La couper en plusieurs parties, ou la réenregistrer en qualité plus basse." },
     ],
   },
+
+  // ───────────────────────────── EPSILON TV : STOCKAGE ─────────────────────────────
+  {
+    id: "tv-stockage",
+    icon: "💾",
+    title: "Epsilon TV : stockage des vidéos (différé) et total du contrat",
+    who: "Chaînes Epsilon TV · à joindre au contrat avec la fiche du direct",
+    intro:
+      "Les vidéos qu'une chaîne publie pour être regardées à tout moment (émissions passées, rediffusions, reportages) sont gardées sur les serveurs d'Epsilon. Cet espace se paie au mois, en plus des minutes de direct. Le contrat d'une chaîne comprend donc deux parties : le direct (sa formule) et le stockage du différé.",
+    prices: [
+      ["Prix de l'espace", "90 FCFA le Go par mois"],
+      ["Bronze : 10 Go compris", "900 FCFA par mois"],
+      ["Argent : 30 Go compris", "2 700 FCFA par mois"],
+      ["Platine : 60 Go compris", "5 400 FCFA par mois"],
+      ["Or : 100 Go compris", "9 000 FCFA par mois"],
+      ["Sur mesure : 10 Go compris", "900 FCFA par mois"],
+      ["Espace en plus (n'importe quelle formule)", "90 FCFA le Go par mois"],
+    ],
+    pricing: {
+      base: "Total du contrat = prix de la formule de direct + prix du stockage. Les deux se paient ensemble, au même moment, pour la même durée.",
+      head: ["Formule", "Direct (minutes regardées)", "Stockage du différé", "Total par mois", "Total 3 mois", "Total 12 mois"],
+      priceCol: 3,
+      rows: [
+        ["Bronze", "24 000 FCFA (21 000 min)", "900 FCFA (10 Go)", "24 900 FCFA", "74 700 FCFA", "298 800 FCFA"],
+        ["Argent", "120 000 FCFA (110 000 min)", "2 700 FCFA (30 Go)", "122 700 FCFA", "368 100 FCFA", "1 472 400 FCFA"],
+        ["Platine", "300 000 FCFA (287 500 min)", "5 400 FCFA (60 Go)", "305 400 FCFA", "916 200 FCFA", "3 664 800 FCFA"],
+        ["Or", "600 000 FCFA (600 000 min)", "9 000 FCFA (100 Go)", "609 000 FCFA", "1 827 000 FCFA", "7 308 000 FCFA"],
+        ["Sur mesure", "1,20 FCFA × minutes", "900 FCFA (10 Go)", "minutes × 1,20 + 900", "", ""],
+      ],
+      extra: [
+        "Exemple Sur mesure : 36 000 minutes pour une église → 43 200 + 900 = 44 100 FCFA pour le mois.",
+        "Exemple avec espace en plus : Bronze + 20 Go en plus → 24 900 + 1 800 = 26 700 FCFA pour le mois.",
+      ],
+    },
+    steps: [
+      { t: "Estimer l'espace nécessaire", d: "Repère simple : 1 Go contient environ 1 à 2 heures de vidéo en qualité normale (720p). Une chaîne qui garde 4 émissions d'1 heure par mois utilise environ 2 à 4 Go par mois. Les vidéos restent tant que la chaîne ne les supprime pas : l'espace se remplit donc de mois en mois." },
+      { t: "Choisir la formule", d: "L'espace compris dans la formule suffit dans la plupart des cas. Si la chaîne garde beaucoup de vidéos (archives, séries, cultes de toute l'année), ajouter de l'espace en plus." },
+      { t: "Calculer le total du contrat", d: "Prendre le prix de la formule de direct, ajouter le stockage (tableau ci-dessus), puis multiplier par le nombre de mois payés d'avance. Le total s'affiche aussi tout seul dans le site, au moment d'activer la formule." },
+      { t: "Encaisser et activer", d: "Le responsable paie le total par MTN Mobile Money ou Airtel Money (ou en espèces avec reçu). Dans le site : Epsilon TV → « Activer » ou « Renouveler » : le montant proposé comprend déjà le stockage." },
+      { t: "Vendre de l'espace en plus", d: "Dans le site : Epsilon TV → la chaîne → « 💾 Espace en plus ». Indiquer le nombre de Go : le prix se calcule tout seul (90 FCFA le Go). L'espace en plus reste valable jusqu'à la fin de la formule en cours ; il faut le reprendre au renouvellement." },
+      { t: "Quand l'espace est plein", d: "Le responsable voit sur sa chaîne « Espace pour les vidéos : … Go utilisés sur … Go ». Quand c'est plein, l'application refuse les nouvelles vidéos et lui dit de supprimer d'anciennes vidéos ou de demander plus d'espace au Service client." },
+    ],
+    tips: [
+      "Chaque vidéo publiée ne doit pas dépasser 95 Mo. Pour une longue émission, la couper en plusieurs parties.",
+      "Supprimer une vidéo libère son espace tout de suite.",
+      "Si la formule n'est pas renouvelée, la chaîne n'est plus visible, mais ses vidéos ne sont pas effacées : elles réapparaissent au renouvellement.",
+    ],
+    problems: [
+      { q: "« L'application refuse ma vidéo. »", a: "Soit la vidéo dépasse 95 Mo, soit l'espace de la chaîne est plein. Regarder la ligne « Espace pour les vidéos » sur la chaîne, puis proposer de supprimer d'anciennes vidéos ou de vendre de l'espace en plus." },
+      { q: "« Pourquoi je paie le stockage en plus du direct ? »", a: "Le direct, c'est la diffusion en temps réel. Le stockage, c'est la garde de vos vidéos jour et nuit pour que votre public les revoie quand il veut : ce sont deux services différents." },
+    ],
+  },
 ];
 
 // Texte simple d'une fiche (pour la copier et l'envoyer à un client)
@@ -300,7 +352,7 @@ export function sheetAsText(s) {
   if (s.prices) { out.push("Prix :"); s.prices.forEach(([a, b]) => out.push(`• ${a} : ${b}`)); out.push(""); }
   if (s.pricing) {
     out.push(s.pricing.base);
-    s.pricing.rows.forEach((r) => out.push(/\d/.test(r[2]) ? `• ${r[0]} — ${r[1]} : ${r[2].replace(" min ", " minutes regardées ")} (1 émission d'1 h par semaine : ${r[3]} spectateurs ; 1 h chaque jour : ${r[4]} spectateurs)` : `• ${r[0]} — ${r[1]}, nombre de minutes au choix (pour un culte, un concert, un événement ponctuel)`));
+    s.pricing.rows.forEach((r) => out.push(s.id !== "tv" ? `• ${r[0]} : ` + s.pricing.head.slice(1).map((h, k) => (r[k + 1] ? `${h} ${r[k + 1]}` : "")).filter(Boolean).join(" · ") : /\d/.test(r[2]) ? `• ${r[0]} — ${r[1]} : ${r[2].replace(" min ", " minutes regardées ")} (1 émission d'1 h par semaine : ${r[3]} spectateurs ; 1 h chaque jour : ${r[4]} spectateurs)` : `• ${r[0]} — ${r[1]}, nombre de minutes au choix (pour un culte, un concert, un événement ponctuel)`));
     s.pricing.extra.forEach((e) => out.push(`• ${e}`));
     (s.pricing.tables || []).forEach((t) => {
       out.push("", t.title + " :");
