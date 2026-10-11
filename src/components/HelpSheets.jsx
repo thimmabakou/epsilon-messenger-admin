@@ -43,6 +43,24 @@ function Sheet({ s }) {
             </table>
           </div>
           <ul className="hs-list">{s.pricing.extra.map((e) => <li key={e}>{e}</li>)}</ul>
+          {(s.pricing.tables || []).map((t) => (
+            <div key={t.title} className="hs-block">
+              <h4>📊 {t.title}</h4>
+              <div className="hs-scroll">
+                <table className="hs-table">
+                  <thead><tr>{t.head.map((h) => <th key={h}>{h}</th>)}</tr></thead>
+                  <tbody>{t.rows.map((r) => <tr key={r[0]}>{r.map((v, i) => <td key={i} className={i === 0 ? "hs-price" : ""}>{v}</td>)}</tr>)}</tbody>
+                </table>
+              </div>
+            </div>
+          ))}
+          {s.pricing.note && <span className="field-hint">{s.pricing.note}</span>}
+          {s.pricing.examples && (
+            <div className="hs-block">
+              <h4>🎯 Exemples concrets</h4>
+              <ul className="hs-list">{s.pricing.examples.map((e) => <li key={e}>{e}</li>)}</ul>
+            </div>
+          )}
         </>
       )}
 

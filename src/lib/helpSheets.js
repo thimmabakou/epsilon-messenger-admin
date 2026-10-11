@@ -217,9 +217,53 @@ export const HELP_SHEETS = [
       rows: [
         ["Bronze", "24 000 FCFA", "20 000", "jusqu'à 80", "jusqu'à 10"],
         ["Argent", "120 000 FCFA", "100 000", "jusqu'à 400", "jusqu'à 55"],
+        ["Platine", "300 000 FCFA", "250 000", "jusqu'à 1 040", "jusqu'à 135"],
         ["Or", "600 000 FCFA", "500 000", "jusqu'à 2 000", "jusqu'à 275"],
         ["Sur mesure", "1,20 FCFA la minute", "au choix", "selon l'événement", "selon l'événement"],
       ],
+      tables: [
+        { title: "Combien coûte UN direct", head: ["Spectateurs en moyenne", "1 heure", "2 heures", "3 heures", "4 heures"], rows: [
+          ["50", "3 600 FCFA", "7 200 FCFA", "10 800 FCFA", "14 400 FCFA"],
+          ["100", "7 200 FCFA", "14 400 FCFA", "21 600 FCFA", "28 800 FCFA"],
+          ["200", "14 400 FCFA", "28 800 FCFA", "43 200 FCFA", "57 600 FCFA"],
+          ["500", "36 000 FCFA", "72 000 FCFA", "108 000 FCFA", "144 000 FCFA"],
+          ["1 000", "72 000 FCFA", "144 000 FCFA", "216 000 FCFA", "288 000 FCFA"],
+        ] },
+        { title: "Bronze — 24 000 FCFA (20 000 minutes) : combien de directs par mois", head: ["Spectateurs", "Directs d'1 h", "Directs de 2 h", "Directs de 3 h", "Directs de 4 h"], rows: [
+          ["50", "6", "3", "2", "1"],
+          ["100", "3", "1", "1", "—"],
+          ["200", "1", "—", "—", "—"],
+        ] },
+        { title: "Argent — 120 000 FCFA (100 000 minutes) : combien de directs par mois", head: ["Spectateurs", "Directs d'1 h", "Directs de 2 h", "Directs de 3 h", "Directs de 4 h"], rows: [
+          ["50", "33", "16", "11", "8"],
+          ["100", "16", "8", "5", "4"],
+          ["200", "8", "4", "2", "2"],
+          ["500", "3", "1", "1", "—"],
+          ["1 000", "1", "—", "—", "—"],
+        ] },
+        { title: "Platine — 300 000 FCFA (250 000 minutes) : combien de directs par mois", head: ["Spectateurs", "Directs d'1 h", "Directs de 2 h", "Directs de 3 h", "Directs de 4 h"], rows: [
+          ["50", "83", "41", "27", "20"],
+          ["100", "41", "20", "13", "10"],
+          ["200", "20", "10", "6", "5"],
+          ["500", "8", "4", "2", "2"],
+          ["1 000", "4", "2", "1", "1"],
+        ] },
+        { title: "Or — 600 000 FCFA (500 000 minutes) : combien de directs par mois", head: ["Spectateurs", "Directs d'1 h", "Directs de 2 h", "Directs de 3 h", "Directs de 4 h"], rows: [
+          ["50", "166", "83", "55", "41"],
+          ["100", "83", "41", "27", "20"],
+          ["200", "41", "20", "13", "10"],
+          ["500", "16", "8", "5", "4"],
+          ["1 000", "8", "4", "2", "2"],
+        ] },
+      ],
+      examples: [
+        "Journal télévisé d'1 h chaque jour (30 directs) devant 100 personnes : 30 × 60 × 100 = 180 000 minutes → 216 000 FCFA par mois en Sur mesure. Ou Platine (300 000 FCFA, 41 directs possibles) pour avoir de la marge les jours de forte audience.",
+        "Église : culte de 3 h chaque dimanche (4 directs) devant 50 fidèles : 4 × 180 × 50 = 36 000 minutes → 43 200 FCFA en Sur mesure (Bronze ne suffit pas).",
+        "Radio : émission de 2 h chaque semaine (4 directs) devant 200 auditeurs : 4 × 120 × 200 = 96 000 minutes → 115 200 FCFA en Sur mesure, ou Argent (120 000 FCFA) avec un peu de marge.",
+        "Concert de 4 h, une seule fois, devant 1 000 personnes : 240 000 minutes → 288 000 FCFA en Sur mesure.",
+        "Toutes les formules sont au même prix à la minute (1,20 FCFA) : Sur mesure revient donc toujours au prix exact du besoin. Les formules servent à avoir de la marge sans calculer.",
+      ],
+      note: "« — » : la formule ne suffit pas, même pour un seul direct. Les spectateurs sont une moyenne : les gens arrivent et repartent pendant le direct.",
       extra: [
         "Recharge en cours de mois : 10 000 minutes = 12 000 FCFA (ou toute autre quantité, à 1,20 FCFA la minute).",
         "On peut payer 1, 3, 6 ou 12 mois d'avance : le prix et les minutes sont multipliés par le nombre de mois.",
@@ -230,7 +274,7 @@ export const HELP_SHEETS = [
     steps: [
       { t: "Premier contact", d: "Le responsable de la chaîne écrit ou appelle le Service client Epsilon. On note : le nom de la chaîne, le type (télé, radio, église, entreprise…), la ville, le nom et le numéro du responsable, ce qu'il veut diffuser, et à quelle fréquence." },
       { t: "Le responsable crée son compte", d: "Il doit avoir un compte Epsilon Messenger à son nom, sur le numéro qui gérera la chaîne. Sans compte, on ne peut pas lui confier la chaîne." },
-      { t: "Choisir la formule", d: "On l'aide à calculer avec une question simple : combien d'heures de direct par mois, et combien de personnes regardent à peu près ? On multiplie : heures × 60 × spectateurs. Exemple : une église qui fait 4 cultes d'1 h par mois, suivis par 50 fidèles en ligne → 4 × 60 × 50 = 12 000 minutes → formule Bronze (20 000 minutes), avec de la marge. Au début, conseiller la plus petite formule : la chaîne pourra toujours recharger." },
+      { t: "Choisir la formule", d: "On l'aide à calculer avec une question simple : combien d'heures de direct par mois, et combien de personnes regardent à peu près ? On multiplie : heures × 60 × spectateurs. Exemple : une église qui fait 4 cultes d'1 h par mois, suivis par 50 fidèles en ligne → 4 × 60 × 50 = 12 000 minutes → formule Bronze (20 000 minutes), avec de la marge. Les tableaux ci-dessus donnent directement la réponse. Au début, conseiller la plus petite formule qui suffit : la chaîne pourra toujours recharger." },
       { t: "Préparer le logo et la présentation", d: "Le logo de la chaîne (image carrée, nette) et deux ou trois lignes de présentation. Ils seront affichés dans l'onglet TV." },
       { t: "Paiement", d: "Le responsable envoie le montant de la formule par MTN Mobile Money ou Airtel Money aux numéros d'Epsilon, puis transmet la référence du SMS de confirmation. Le paiement en espèces est possible, avec un reçu." },
       { t: "Création et activation (PDG)", d: "Dans le site : Epsilon TV → « Nouvelle chaîne » (nom, présentation, logo, numéro du responsable) → « Créer la chaîne ». Puis activer sa formule : choisir la formule et la durée, recopier la référence du paiement (ou cocher « Payé en espèces ») et confirmer avec le code PDG. La chaîne apparaît aussitôt dans l'onglet TV." },
@@ -258,6 +302,11 @@ export function sheetAsText(s) {
     out.push(s.pricing.base);
     s.pricing.rows.forEach((r) => out.push(/\d/.test(r[2]) ? `• ${r[0]} — ${r[1]} : ${r[2]} minutes regardées (1 émission d'1 h par semaine : ${r[3]} spectateurs ; 1 h chaque jour : ${r[4]} spectateurs)` : `• ${r[0]} — ${r[1]}, nombre de minutes au choix (pour un culte, un concert, un événement ponctuel)`));
     s.pricing.extra.forEach((e) => out.push(`• ${e}`));
+    (s.pricing.tables || []).forEach((t) => {
+      out.push("", t.title + " :");
+      t.rows.forEach((r) => out.push(`• ${r[0]} spectateurs : ` + t.head.slice(1).map((h, i) => `${h.replace(/^Directs (de |d')/, "")} → ${r[i + 1]}`).join(" · ")));
+    });
+    if (s.pricing.examples) { out.push("", "Exemples :"); s.pricing.examples.forEach((e) => out.push(`• ${e}`)); }
     out.push("");
   }
   s.steps.forEach((st, i) => out.push(`Étape ${i + 1} — ${st.t}\n${st.d}\n`));
