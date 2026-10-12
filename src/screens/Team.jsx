@@ -4,6 +4,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useAdmin, useLoad, Loading } from "../lib/admin";
 import { supabase } from "../lib/supabase";
+import MicTest from "../components/MicTest";
 import { dateTime, initials } from "../lib/format";
 import { Empty, Note, ScreenTitle } from "../components/common";
 import { callAdmin } from "../lib/supportLine";
@@ -160,7 +161,7 @@ export default function Team() {
   </>);
 
   return (<>
-    <ScreenTitle eyebrow="ÉQUIPE" title="Messagerie de l'équipe" />
+    <ScreenTitle eyebrow="ÉQUIPE" title="Messagerie de l'équipe"><MicTest /></ScreenTitle>
     <Note icon="🔒" style={{ marginBottom: 14 }}>Messages, vocaux et appels entre administrateurs, directement depuis le site : gratuits, sans passer par un opérateur téléphonique. Ils restent séparés des discussions des utilisateurs.</Note>
     <div className="support-layout">
       <div className="reports-list">
