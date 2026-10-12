@@ -106,6 +106,15 @@ export default function Support({ nav, goto }) {
   };
 
   // ——— Corriger une de mes réponses ———
+  // Supprimer un message (il disparaît aussi dans l'application de l'utilisateur)
+  const delMsg = (m) => {
+    if (!window.confirm(m.sender === "team" ? "Supprimer cette réponse ? Elle disparaîtra aussi chez l'utilisateur." : "Supprimer ce message de l'utilisateur ? Il disparaîtra des deux côtés.")) return;
+    act(async () => {
+      const { error: e } = await supabase.rpc("eg_support_delete", { p_id: m.id });
+      if (e) throw new Error(/function|schema cache/i.test(e.message) ? "Exécutez d'abord le fichier SQL 56 dans Supabase." : e.message);
+      msgs.reload?.();
+    }, "🗑️ Message supprimé.");
+  };
   const startEdit = (m) => { setEditing(m); setReply(m.body || ""); };
   const cancelEdit = () => { setEditing(null); setReply(""); };
 
@@ -192,6 +201,9 @@ export default function Support({ nav, goto }) {
               {m.sender === "team" ? "Équipe Epsilon · " : ""}{dateTime(m.created_at)}{m.edited_at ? " · modifié" : ""}
               {m.sender === "team" && (m.kind || "text") === "text" && (!m.author_id || m.author_id === me?.id || me?.isPdg) && (
                 <button className="conv-edit" onClick={() => startEdit(m)} title="Corriger cette réponse">✏️ Modifier</button>
+              )}
+              {((m.sender === "team" && (!m.author_id || m.author_id === me?.id || me?.isPdg)) || (m.sender === "user" && me?.isPdg)) && (
+                <button className="conv-edit conv-del" onClick={() => delMsg(m)} title="Supprimer ce message">🗑️ Supprimer</button>
               )}
             </span></div>
         ))}

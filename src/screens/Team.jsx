@@ -3,6 +3,7 @@
 // La conversation existe d'office : un nouvel administrateur apparaît aussitôt chez tous les autres.
 import { useEffect, useRef, useState } from "react";
 import { useAdmin, useLoad, Loading } from "../lib/admin";
+import { supabase } from "../lib/supabase";
 import { dateTime, initials } from "../lib/format";
 import { Empty, Note, ScreenTitle } from "../components/common";
 import { callAdmin } from "../lib/supportLine";
@@ -14,6 +15,13 @@ export default function Team() {
   const [selId, setSelId] = useState(null);
   const [text, setText] = useState("");
   const [editing, setEditing] = useState(null);
+  const [delAsk, setDelAsk] = useState(null); // message à supprimer (choix : pour moi / pour tout le monde)
+  const delMsg = (m, forAll) => act(async () => {
+    setDelAsk(null);
+    const { error: e } = await supabase.rpc("eg_team_delete", { p_id: m.id, p_for_all: forAll });
+    if (e) throw new Error(/function|schema cache|hidden_for/i.test(e.message) ? "Exécutez d'abord le fichier SQL 56 dans Supabase." : e.message);
+    thread.reload?.(); contacts.reload?.();
+  }, forAll ? "🗑️ Message supprimé pour tout le monde." : "🗑️ Message supprimé pour vous.");
   const [rec, setRec] = useState(null);
   const [recSecs, setRecSecs] = useState(0);
   const [busy, setBusy] = useState(false);
@@ -112,11 +120,25 @@ export default function Team() {
               <span className="conv-msg-when">
                 {dateTime(m.created_at)}{m.edited_at ? " · modifié" : ""}{mine && m.read_at ? " · lu" : ""}
                 {mine && m.kind === "text" && <button className="conv-edit" onClick={() => { setEditing(m); setText(m.body); }}>✏️ Modifier</button>}
+                <button className="conv-edit conv-del" onClick={() => setDelAsk(m)}>🗑️ Supprimer</button>
               </span>
             </div>
           );
         })}
     </div>
+    {delAsk && (
+      <div className="gate-modal-overlay" onClick={() => setDelAsk(null)}>
+        <div className="gate-modal" onClick={(e) => e.stopPropagation()}>
+          <h3>🗑️ Supprimer ce message</h3>
+          <p style={{ whiteSpace: "pre-wrap" }}>« {(delAsk.kind === "voice" ? "🎤 Message vocal" : delAsk.body || "").slice(0, 160)} »</p>
+          <div className="gate-actions" style={{ flexDirection: "column", alignItems: "stretch" }}>
+            {delAsk.sender_id === me.id && <button className="action-button danger" onClick={() => delMsg(delAsk, true)}>Supprimer pour tout le monde</button>}
+            <button className="action-button neutral" onClick={() => delMsg(delAsk, false)}>Supprimer pour moi</button>
+            <button className="action-button neutral" onClick={() => setDelAsk(null)}>Annuler</button>
+          </div>
+        </div>
+      </div>
+    )}
     {editing && (
       <div className="conv-editing">✏️ <span>Correction de votre message</span>
         <button className="icon-button" onClick={() => { setEditing(null); setText(""); }} aria-label="Annuler">✕</button></div>

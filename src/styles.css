@@ -779,3 +779,4 @@ button, input, textarea { font-family: inherit; }
   .reg-table thead th, .reg-table .reg-idx { background: rgba(255,255,255,.06); color: rgba(255,255,255,.7); }
   .reg-code { color: #f1d27a !important; }
 }
+.conv-edit.conv-del { margin-left: 6px; }

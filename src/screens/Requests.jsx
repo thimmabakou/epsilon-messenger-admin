@@ -33,7 +33,10 @@ export default function Requests({ nav }) {
     // Lecture : la demande passe en « lue » et la pastille du menu se met à jour aussitôt.
     // (Avant, l'appel était préparé mais jamais envoyé : il manquait .then(), la pastille restait pour toujours.)
     if (r && (pdg ? r.unread_pdg : r.unread_admin)) {
-      supabase.rpc("mark_perm_request_read", { p_request: r.id }).then(({ error: e }) => { if (!e) refresh(); }, () => {});
+      supabase.rpc("eg_perm_read", { p_request: String(r.id) }).then(async ({ error: e }) => {
+        if (e) { const old = await supabase.rpc("mark_perm_request_read", { p_request: r.id }); if (old.error) return; } // SQL 56 pas encore exécuté
+        refresh();
+      }, () => {});
     }
     if (box.current) box.current.scrollTop = box.current.scrollHeight;
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -62,6 +65,14 @@ export default function Requests({ nav }) {
     }
     if (await act(() => rpc("reply_perm_request", { p_request: r.id, p_body: reply.trim() }))) setReply("");
   };
+  const delMsg = (m) => {
+    if (!window.confirm("Supprimer ce message ? Il disparaîtra pour vous et pour votre interlocuteur.")) return;
+    act(async () => {
+      const { error: e } = await supabase.rpc("eg_perm_message_delete", { p_id: String(m.id) });
+      if (e) throw new Error(/function|schema cache/i.test(e.message) ? "Exécutez d'abord le fichier SQL 56 dans Supabase." : e.message);
+      reload?.();
+    }, "🗑️ Message supprimé.");
+  };
   const decide = (grant) => act(() => rpc("decide_perm_request", { p_request: r.id, p_grant: grant }), grant ? "✅ Permission accordée : elle s'applique immédiatement." : "Demande refusée.");
 
   let thread;
@@ -81,6 +92,7 @@ export default function Requests({ nav }) {
           <div key={m.id} className={"conv-msg " + cls}>{m.body}
             <span className="conv-msg-when">{who}{dateTime(m.created_at)}{m.edited_at ? " · modifié" : ""}
               {mine && m.sender !== "system" && <button className="conv-edit" onClick={() => { setEditing(m); setReply(m.body || ""); }}>✏️ Modifier</button>}
+              {(mine || pdg) && m.sender !== "system" && <button className="conv-edit conv-del" onClick={() => delMsg(m)}>🗑️ Supprimer</button>}
             </span>
           </div>
         );
