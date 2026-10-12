@@ -9,7 +9,7 @@ import { Empty, Note, ScreenTitle, sqlHint } from "../components/common";
 const statusClass = (st) => st === "accordee" ? "granted" : st === "refusee" ? "refused" : st === "en_attente" ? "pending" : "info";
 
 export default function Requests({ nav }) {
-  const { me, act } = useAdmin();
+  const { me, act, refresh } = useAdmin();
   const pdg = me.isPdg;
   const [selId, setSelId] = useState(null);
   const [reply, setReply] = useState("");
@@ -30,7 +30,11 @@ export default function Requests({ nav }) {
 
   // Lecture : remet le compteur de non-lus à zéro
   useEffect(() => {
-    if (r && (pdg ? r.unread_pdg : r.unread_admin)) supabase.rpc("mark_perm_request_read", { p_request: r.id });
+    // Lecture : la demande passe en « lue » et la pastille du menu se met à jour aussitôt.
+    // (Avant, l'appel était préparé mais jamais envoyé : il manquait .then(), la pastille restait pour toujours.)
+    if (r && (pdg ? r.unread_pdg : r.unread_admin)) {
+      supabase.rpc("mark_perm_request_read", { p_request: r.id }).then(({ error: e }) => { if (!e) refresh(); }, () => {});
+    }
     if (box.current) box.current.scrollTop = box.current.scrollHeight;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selId, data]);
