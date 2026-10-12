@@ -6,6 +6,7 @@
 import { useRef, useState } from "react";
 import { supabase, q } from "../lib/supabase";
 import { useAdmin, useLoad, Loading } from "../lib/admin";
+import PrivateCodes from "../components/PrivateCodes";
 import { dateOnly, fmt, fullName } from "../lib/format";
 import { uploadMusicFile } from "../lib/files";
 import { Empty, Note, ScreenTitle, SecurityGate, Pills } from "../components/common";
@@ -58,12 +59,14 @@ export default function Channels() {
     const byId = Object.fromEntries(owners.map((o) => [o.id, o]));
     // Chaînes privées (fichier SQL 53) : leur code et le nombre de spectateurs autorisés
     let codes = [], access = [];
-    if (chans.some((c) => c.is_private)) {
-      codes = (await supabase.from("tv_private_codes").select("channel_id,code,created_at")).data || [];
+    {
+      codes = (await supabase.from("tv_private_codes").select("*")).data || [];
       access = (await supabase.from("tv_private_access").select("channel_id")).data || [];
     }
     return chans.map((c) => ({ ...c, owner: byId[c.owner_id] || null,
       privCode: codes.find((k) => k.channel_id === c.id)?.code || null,
+      privPending: codes.find((k) => k.channel_id === c.id)?.pending_code || null,
+      privActivatedAt: codes.find((k) => k.channel_id === c.id)?.activated_at || null,
       privViewers: access.filter((a) => a.channel_id === c.id).length }));
   });
   const payments = useLoad(async () => (hist ? q(supabase.from("tv_payments").select("*").eq("channel_id", hist.id).order("created_at", { ascending: false })) : null), [hist?.id]);
@@ -150,23 +153,6 @@ export default function Channels() {
       const { error: e } = await supabase.rpc("eg_tv_set_ticker", { p_channel: c.id, p_items: [], p_on: false });
       if (e) throw new Error(e.message);
     }, "🧹 Bandeaux retirés."));
-  // Chaîne privée (fichier SQL 53) : seul le PDG la rend privée et génère son code
-  const sql53 = (e) => (/eg_tv_|schema cache|tv_private/i.test(e.message) ? "Exécutez d'abord le fichier SQL 53 (chaînes privées) dans Supabase." : e.message);
-  const togglePrivate = (c) => protect(c.is_private ? `Rendre « ${c.name} » publique (visible par tous)` : `Rendre « ${c.name} » privée et générer son code d'accès`,
-    () => act(async () => {
-      const { error: e } = await supabase.rpc("eg_tv_set_private", { p_channel: c.id, p_on: !c.is_private });
-      if (e) throw new Error(sql53(e));
-    }, c.is_private ? "🌐 Chaîne redevenue publique." : "🔒 Chaîne privée : le code est affiché sur sa fiche. Le responsable le voit aussi dans « Gérer ma chaîne »."));
-  const newCode = (c) => protect(`Changer le code de « ${c.name} » (l'ancien ne marchera plus)`,
-    () => act(async () => {
-      const { error: e } = await supabase.rpc("eg_tv_new_code", { p_channel: c.id });
-      if (e) throw new Error(sql53(e));
-    }, "🔄 Nouveau code créé. Les spectateurs déjà autorisés gardent l'accès."));
-  const clearAccess = (c) => protect(`Retirer l'accès aux ${c.privViewers} spectateur(s) de « ${c.name} »`,
-    () => act(async () => {
-      const { error: e } = await supabase.rpc("eg_tv_clear_access", { p_channel: c.id });
-      if (e) throw new Error(sql53(e));
-    }, "🚫 Accès retirés : il faudra un nouveau code pour regarder la chaîne."));
   const remove = (c) => protect(`Supprimer définitivement la chaîne « ${c.name} » et ses vidéos`,
     () => act(() => q(supabase.from("tv_channels").delete().eq("id", c.id)), "🗑️ Chaîne supprimée."));
 
@@ -192,6 +178,8 @@ export default function Channels() {
       </div>
     )}
 
+    {data && rows.length > 0 && <PrivateCodes rows={rows} allowed={allowed} deny={deny} act={act} reload={reload} />}
+
     {!data && <Loading error={error} />}
     {data && rows.length === 0 && <Empty icon="📺" text="Aucune chaîne pour le moment." />}
     <div className="mp-section">
@@ -203,9 +191,6 @@ export default function Channels() {
             <div className="music-cover">{c.logo_url ? <img src={c.logo_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 10 }} /> : "📺"}</div>
             <div className="music-main">
               <strong>{c.channel_no != null ? `Canal ${c.channel_no} · ` : ""}{c.name}{c.is_private ? " · 🔒 privée" : ""}{c.is_live ? " · 🔴 en direct" : ""}</strong>
-              {c.is_private && (
-                <span className="field-hint">🔒 Code d'accès : <b style={{ fontSize: 15, letterSpacing: ".06em", color: "var(--ink)" }}>{c.privCode || "—"}</b> · {c.privViewers} spectateur(s) autorisé(s)</span>
-              )}
               <span className="field-hint">Responsable : {c.owner ? `${fullName(c.owner)} (${c.owner.phone || "—"})` : "aucun"}</span>
               <span className="field-hint">
                 Formule {PLANS[c.plan]?.label || c.plan} · {c.paid_until ? (left > 0 ? `jusqu'au ${dateOnly(c.paid_until)} (${left} j)` : `terminée le ${dateOnly(c.paid_until)}`) : "jamais activée"}
@@ -223,9 +208,6 @@ export default function Channels() {
               <button className="action-button neutral" onClick={() => startPay(c, "stockage")}>💾 Espace en plus</button>
               <button className="action-button neutral" onClick={() => setHist(hist?.id === c.id ? null : c)}>🧾 Paiements</button>
               <button className="action-button neutral" onClick={() => setNo(c)}>🔢 Numéro de canal</button>
-              <button className="action-button neutral" onClick={() => togglePrivate(c)}>{c.is_private ? "🌐 Rendre publique" : "🔒 Rendre privée"}</button>
-              {c.is_private && <button className="action-button neutral" onClick={() => newCode(c)}>🔄 Nouveau code</button>}
-              {c.is_private && c.privViewers > 0 && <button className="action-button neutral" onClick={() => clearAccess(c)}>🚫 Retirer les accès</button>}
               <button className="action-button neutral" onClick={() => togglePause(c)}>{c.status === "active" ? "⏸ Pause" : "▶ Reprendre"}</button>
               {(c.ticker || []).length > 0 && <button className="action-button neutral" onClick={() => clearTicker(c)}>🧹 Retirer les bandeaux</button>}
               <button className="action-button danger" onClick={() => remove(c)}>🗑️ Supprimer</button>

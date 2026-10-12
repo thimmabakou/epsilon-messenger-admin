@@ -49,7 +49,7 @@ export function History({ label, rows, empty = "Aucune action enregistrée." }) 
 }
 
 // Fenêtre qui demande le code de sécurité du PDG avant une action critique
-export function SecurityGate({ title, onConfirm, onCancel }) {
+export function SecurityGate({ title, onConfirm, onCancel, note }) {
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -66,7 +66,7 @@ export function SecurityGate({ title, onConfirm, onCancel }) {
     <div className="gate-modal-overlay">
       <div className="gate-modal">
         <h3>🔐 {title}</h3>
-        <p>Cette action est protégée. Saisissez votre <strong>code de sécurité du PDG</strong> pour confirmer.</p>
+        {note ? <p>{note}</p> : <p>Cette action est protégée. Saisissez votre <strong>code de sécurité du PDG</strong> pour confirmer.</p>}
         <PwInput id="gate-code" value={code} onChange={setCode} placeholder="••••••••" style={{ letterSpacing: 2 }} onEnter={confirm} />
         {error && <div className="gate-error">{error}</div>}
         <div className="gate-actions">
