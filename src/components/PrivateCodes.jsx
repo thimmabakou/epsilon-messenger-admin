@@ -105,3 +105,42 @@ export default function PrivateCodes({ rows, allowed, deny, act, reload }) {
     </div>
   );
 }
+
+// Registre des codes (façon tableur) : toutes les chaînes privées, avec leur code ACTIF.
+// Il se remplit tout seul : une chaîne qui devient privée y apparaît ; quand son code change,
+// l'ancien disparaît et le nouveau prend sa place (on lit toujours le code actif).
+export function CodesRegistry({ rows, onClose }) {
+  const [copied, setCopied] = useState(false);
+  const list = rows.filter((c) => c.is_private && c.privCode).sort((a, b) => (a.channel_no ?? 1e9) - (b.channel_no ?? 1e9));
+  const asText = () => ["Canal\tDésignation\tCode de sécurité", ...list.map((c) => `${c.channel_no ?? ""}\t${c.name}\t${c.privCode}`)].join("\n");
+  const copy = async () => { try { await navigator.clipboard.writeText(asText()); setCopied(true); setTimeout(() => setCopied(false), 2000); } catch { window.prompt("Registre :", asText()); } };
+  return (
+    <div className="reg-box">
+      <div className="reg-top">
+        <strong>📋 Registre des codes · chaînes privées</strong>
+        <span className="reg-count">{list.length}</span>
+        <span style={{ flex: 1 }} />
+        {list.length > 0 && <button className="reg-mini" onClick={copy}>{copied ? "✓ Copié" : "Copier"}</button>}
+        <button className="reg-mini" onClick={onClose} aria-label="Fermer">✕</button>
+      </div>
+      <div className="reg-scroll">
+        <table className="reg-table">
+          <thead><tr><th className="reg-idx" /><th>A · Canal</th><th>B · Désignation</th><th>C · Code de sécurité</th></tr></thead>
+          <tbody>
+            {list.length === 0 ? (
+              <tr><td className="reg-idx">1</td><td colSpan={3} className="reg-empty">Aucune chaîne privée pour le moment.</td></tr>
+            ) : list.map((c, i) => (
+              <tr key={c.id}>
+                <td className="reg-idx">{i + 1}</td>
+                <td className="reg-no">{c.channel_no ?? "–"}</td>
+                <td>{c.name}</td>
+                <td className="reg-code">{c.privCode}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <span className="field-hint">Mis à jour automatiquement : seul le code actif est affiché ; un nouveau code validé remplace l'ancien.</span>
+    </div>
+  );
+}

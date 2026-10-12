@@ -759,3 +759,23 @@ button, input, textarea { font-family: inherit; }
   .pc-actions { justify-content: flex-start; }
   .pc-steps i, .pc-row > .pc-empty { display: none; }
 }
+
+/* Registre des codes (façon tableur) */
+.reg-box { margin: 0 0 16px; padding: 12px; border-radius: 14px; background: var(--card, #fff); border: 1px solid var(--border); box-shadow: 0 6px 18px rgba(31,19,48,.06); }
+.reg-top { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 14px; }
+.reg-count { min-width: 22px; height: 22px; padding: 0 6px; border-radius: 11px; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: #1b1205; background: linear-gradient(135deg, #f7e08f, #d6a92a); }
+.reg-mini { border: 1px solid var(--border); background: var(--bg); color: var(--ink); border-radius: 8px; padding: 5px 10px; font-size: 12px; font-weight: 700; cursor: pointer; }
+.reg-scroll { overflow-x: auto; border: 1px solid #c9c2d1; border-radius: 6px; }
+.reg-table { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
+.reg-table th, .reg-table td { border: 1px solid #d9d3e0; padding: 7px 10px; text-align: left; white-space: nowrap; color: var(--ink); }
+.reg-table thead th { background: #ece7f1; font-size: 11.5px; font-weight: 800; color: #4a3d5c; position: sticky; top: 0; }
+.reg-table tbody tr:nth-child(even) td:not(.reg-idx) { background: rgba(122,59,140,.04); }
+.reg-table .reg-idx { width: 30px; text-align: center; background: #ece7f1; color: #7d7090; font-size: 11px; font-weight: 700; }
+.reg-no { font-weight: 800; text-align: center !important; width: 60px; }
+.reg-code { font-family: ui-monospace, Menlo, Consolas, monospace; font-weight: 800; letter-spacing: .06em; color: #8a6510 !important; }
+.reg-empty { color: var(--muted, #888) !important; font-style: italic; }
+@media (prefers-color-scheme: dark) {
+  .reg-table th, .reg-table td { border-color: rgba(255,255,255,.12); }
+  .reg-table thead th, .reg-table .reg-idx { background: rgba(255,255,255,.06); color: rgba(255,255,255,.7); }
+  .reg-code { color: #f1d27a !important; }
+}

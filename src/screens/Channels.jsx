@@ -6,7 +6,7 @@
 import { useRef, useState } from "react";
 import { supabase, q } from "../lib/supabase";
 import { useAdmin, useLoad, Loading } from "../lib/admin";
-import PrivateCodes from "../components/PrivateCodes";
+import PrivateCodes, { CodesRegistry } from "../components/PrivateCodes";
 import { dateOnly, fmt, fullName } from "../lib/format";
 import { uploadMusicFile } from "../lib/files";
 import { Empty, Note, ScreenTitle, SecurityGate, Pills } from "../components/common";
@@ -47,6 +47,7 @@ export default function Channels() {
   const allowed = !!me?.isPdg;
   const [gate, setGate] = useState(null);
   const [open, setOpen] = useState(false);
+  const [showReg, setShowReg] = useState(false); // registre des codes des chaînes privées (façon tableur)
   const [form, setForm] = useState({ name: "", description: "", phone: "", logo: null });
   const [pay, setPay] = useState(null);       // { c, kind: "formule"|"recharge", plan, months, amount, minutes, note }
   const [hist, setHist] = useState(null);     // chaîne dont on regarde l'historique
@@ -158,6 +159,7 @@ export default function Channels() {
 
   return (<>
     <ScreenTitle eyebrow="CONTENU" title="Epsilon TV — Chaînes">
+      <button className="action-button neutral" onClick={() => (allowed ? setShowReg(!showReg) : deny("PDG"))}>📋 Registre des codes</button>
       <button className="primary-button" onClick={() => (allowed ? setOpen(!open) : deny("PDG"))}>＋ Créer une chaîne</button>
     </ScreenTitle>
     <Note icon="📺">Une chaîne n'apparaît dans l'application qu'après <b>activation d'une formule</b>, une fois le paiement reçu (Mobile Money ou espèces). Tarif : <b>1,20 FCFA par minute regardée</b> (1 spectateur pendant 1 minute ; Cloudflare nous coûte ≈ 0,60). Stockage du différé compris (90 FCFA le Go par mois) : Bronze 10 Go · Argent 30 Go · Platine 60 Go · Or 100 Go · Sur mesure 10 Go. Formules : <b>Bronze</b> 24 000 FCFA (21 000 min, +5 %) · <b>Argent</b> 120 000 FCFA (110 000 min, +10 %) · <b>Platine</b> 300 000 FCFA (287 500 min, +15 %) · <b>Or</b> 600 000 FCFA (600 000 min, +20 %) · <b>Sur mesure</b> 1,20 FCFA la minute · <b>Recharge</b> 12 000 FCFA (+10 000 min). À la fin de la période payée, la chaîne disparaît toute seule. 🔐 Réservé au PDG.</Note>
@@ -178,6 +180,7 @@ export default function Channels() {
       </div>
     )}
 
+    {showReg && data && <CodesRegistry rows={rows} onClose={() => setShowReg(false)} />}
     {data && rows.length > 0 && <PrivateCodes rows={rows} allowed={allowed} deny={deny} act={act} reload={reload} />}
 
     {!data && <Loading error={error} />}
