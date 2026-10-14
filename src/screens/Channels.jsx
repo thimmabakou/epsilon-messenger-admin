@@ -7,7 +7,7 @@ import { useRef, useState } from "react";
 import { supabase, q } from "../lib/supabase";
 import { useAdmin, useLoad, Loading } from "../lib/admin";
 import PrivateCodes, { CodesRegistry } from "../components/PrivateCodes";
-import { dateOnly, fmt, fullName } from "../lib/format";
+import { COUNTRIES, dateOnly, fmt, fullName } from "../lib/format";
 import { uploadMusicFile } from "../lib/files";
 import { Empty, Note, ScreenTitle, SecurityGate, Pills } from "../components/common";
 
@@ -34,7 +34,10 @@ const daysLeft = (c) => (c.paid_until ? Math.ceil((new Date(c.paid_until) - Date
 const digits = (v) => String(v ?? "").replace(/\D/g, "");
 
 async function findByPhone(raw) {
-  let d = digits(raw);
+  let d = digits(raw).replace(/^00/, "");
+  // Numéro avec l'indicatif d'un autre pays (Sénégal, Mali, Burkina Faso, Niger) : enregistré tel quel
+  const intl = Object.keys(COUNTRIES).find((c) => c !== "242" && d.startsWith(c) && d.length === c.length + COUNTRIES[c][2]);
+  if (intl) return (await q(supabase.from("profiles").select("id,first_name,last_name,phone").eq("phone", d).limit(1)))[0] || null;
   if (d.startsWith("242") && d.length > 9) d = d.slice(3);
   if (d.length < 8) return null;
   const rows = await q(supabase.from("profiles").select("id,first_name,last_name,phone")

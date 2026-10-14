@@ -61,3 +61,14 @@ export const fullName = (p) => (p ? `${p.first_name || ""} ${p.last_name || ""}`
 
 // Identifiant court et lisible à partir d'un identifiant technique
 export const shortId = (uuid, prefix = "EM") => (uuid ? `${prefix}-${String(uuid).replace(/-/g, "").slice(0, 6).toUpperCase()}` : "—");
+
+// Pays des comptes (Congo et, depuis octobre 2026, Sénégal et pays de l'AES). Hors Congo, le numéro
+// est enregistré avec son indicatif devant (ex. 221771234567).
+export const COUNTRIES = { "242": ["🇨🇬", "Congo", 9], "221": ["🇸🇳", "Sénégal", 9], "223": ["🇲🇱", "Mali", 8], "226": ["🇧🇫", "Burkina Faso", 8], "227": ["🇳🇪", "Niger", 8] };
+export function ccOfPhone(phone, cc) {
+  if (cc && cc !== "242" && COUNTRIES[cc]) return cc;
+  const d = String(phone || "").replace(/\D/g, "");
+  const hit = Object.keys(COUNTRIES).find((c) => c !== "242" && d.startsWith(c) && d.length === c.length + COUNTRIES[c][2]);
+  return hit || "242";
+}
+export const countryLabel = (phone, cc) => { const c = COUNTRIES[ccOfPhone(phone, cc)]; return `${c[0]} ${c[1]}`; };

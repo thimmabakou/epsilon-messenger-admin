@@ -2,7 +2,7 @@
 import { useMemo, useState } from "react";
 import { supabase, q, rpc } from "../lib/supabase";
 import { useAdmin, useLoad, Loading } from "../lib/admin";
-import { ageRange, ago, dateOnly, dateTime, fullName, maskPhone, shortId, statusLabel } from "../lib/format";
+import { ageRange, ago, countryLabel, dateOnly, dateTime, fullName, maskPhone, shortId, statusLabel } from "../lib/format";
 import { Avatar, Empty, History, Note, Pills, ScreenTitle } from "../components/common";
 import SanctionPanel from "../components/SanctionPanel";
 
@@ -71,6 +71,7 @@ export default function Users({ nav, goto }) {
       </div>
       <div className="report-info-grid">
         <div><span className="label">Téléphone</span><strong>{can("users.detail") ? (sel.phone || "—") : maskPhone(sel.phone)}</strong></div>
+        <div><span className="label">Pays</span><strong>{countryLabel(sel.phone, sel.country_code)}</strong></div>
         <div><span className="label">Ville</span><strong>{sel.city || "—"}</strong></div>
         <div><span className="label">Tranche d'âge</span><strong>{ageRange(sel.birth_year)}</strong></div>
         <div><span className="label">Inscrit le</span><strong>{dateOnly(sel.created_at)}</strong></div>
@@ -113,7 +114,7 @@ export default function Users({ nav, goto }) {
         {list.map((u) => (
           <button key={u.id} className={"user-row" + (u.id === selId ? " active" : "")} onClick={() => { setSelId(u.id); setPanel(null); }}>
             <Avatar url={u.avatar_url} name={fullName(u)} />
-            <div className="u-main"><strong>{fullName(u)}</strong><span>{shortId(u.id)} · {u.city || "—"}</span></div>
+            <div className="u-main"><strong>{fullName(u)}</strong><span>{shortId(u.id)} · {countryLabel(u.phone, u.country_code).split(" ")[0]} {u.city || "—"}</span></div>
             <span className={"u-status " + statusLabel(u.status)}>{statusLabel(u.status)}</span>
           </button>
         ))}
