@@ -10,7 +10,7 @@ import { Empty, Note, Pills, ScreenTitle } from "../components/common";
 import PayCodeCheck from "../components/PayCodeCheck";
 
 const TABS = [["en_attente", "En attente"], ["validee", "Validés"], ["refusee", "Refusés"]];
-const KIND = { ouverture: "Ouverture", mensuel: "Mois" };
+const KIND = { ouverture: "Ouverture", mensuel: "Mois", sponsor: "🚀 Sponsoring d'un produit (7 jours, portée ×4)" };
 const PLAN = { basic: "Standard", pro: "Pro ⭐" };
 
 export default function ShopPayments() {
@@ -24,13 +24,16 @@ export default function ShopPayments() {
     const pays = await q(supabase.from("shop_payments").select("*").order("created_at", { ascending: false }).limit(400));
     const shopIds = [...new Set(pays.map((p) => p.shop_id))];
     const userIds = [...new Set(pays.map((p) => p.owner_id))];
-    const [shops, users] = await Promise.all([
+    const prodIds = [...new Set(pays.map((p) => p.product_ref).filter(Boolean))];
+    const [shops, users, prods] = await Promise.all([
       shopIds.length ? q(supabase.from("shops").select("id,name,city,plan,paid_until").in("id", shopIds)) : [],
       userIds.length ? q(supabase.from("profiles").select("id,first_name,last_name,phone").in("id", userIds)) : [],
+      prodIds.length ? q(supabase.from("products").select("id,name,boost_until").in("id", prodIds)) : [],
     ]);
+    const P = Object.fromEntries(prods.map((x) => [String(x.id), x]));
     const S = Object.fromEntries(shops.map((s) => [String(s.id), s]));
     const U = Object.fromEntries(users.map((u) => [u.id, u]));
-    return pays.map((p) => ({ ...p, shop: S[String(p.shop_id)], owner: U[p.owner_id] }));
+    return pays.map((p) => ({ ...p, shop: S[String(p.shop_id)], owner: U[p.owner_id], product: p.product_ref ? P[p.product_ref] : null }));
   });
   const list = (data || []).filter((p) => p.status === tab);
   const count = (k) => (data || []).filter((p) => p.status === k).length;
@@ -41,14 +44,14 @@ export default function ShopPayments() {
   const approve = (p) => (allowed ? setCheck(p) : deny("shops.pay"));
   const confirmApprove = async (adminRef) => {
     const p = check;
-    const ok = await act(() => rpc({ p_payment: p.id, p_ok: true, p_admin_ref: adminRef }), "✅ Codes identiques : paiement validé, la boutique est visible 30 jours de plus.");
+    const ok = await act(() => rpc({ p_payment: p.id, p_ok: true, p_admin_ref: adminRef }), p.kind === "sponsor" ? "✅ Codes identiques : sponsoring validé, le produit a une portée ×4 pendant 7 jours." : "✅ Codes identiques : paiement validé, la boutique est visible 30 jours de plus.");
     if (ok) setCheck(null);
   };
   const confirmReject = () => act(async () => { await rpc({ p_payment: reject.p.id, p_ok: false, p_reason: reject.reason || null }); setReject(null); }, "❌ Paiement refusé. Le commerçant voit le motif dans sa boutique.");
 
   return (<>
     <ScreenTitle eyebrow="COMMERCE" title="Paiements des boutiques" />
-    <Note icon="💳">Ouverture <b>600 FCFA</b> (1er mois) · puis chaque mois <b>1 000 FCFA</b> (Standard) ou <b>3 000 FCFA</b> (Pro, plus de visibilité). Pour valider, <b>recopiez le code reçu dans le SMS</b> du téléphone d'Epsilon : il doit être identique au code du commerçant (la case devient verte). Vérifiez aussi le <b>montant</b>. Un code validé ne peut plus jamais resservir. Chaque décision est inscrite au journal de sécurité.</Note>
+    <Note icon="💳">Ouverture <b>600 FCFA</b> (1er mois) · puis chaque mois <b>1 000 FCFA</b> (Standard) ou <b>3 000 FCFA</b> (Pro, plus de visibilité) · sponsoring d'un produit <b>200 FCFA</b> (7 jours, portée 400 km au lieu de 100). Pour valider, <b>recopiez le code reçu dans le SMS</b> du téléphone d'Epsilon : il doit être identique au code du commerçant (la case devient verte). Vérifiez aussi le <b>montant</b>. Un code validé ne peut plus jamais resservir. Chaque décision est inscrite au journal de sécurité.</Note>
     <Pills options={TABS.map(([k, l]) => [k, `${l} (${count(k)})`])} value={tab} onChange={setTab} />
     {!data && <Loading error={error} />}
     {data && list.length === 0 && <Empty icon="💳" text="Aucun paiement ici." />}
@@ -58,7 +61,8 @@ export default function ShopPayments() {
           <div className="music-main">
             <strong>{p.shop?.name || "Boutique supprimée"}{p.shop?.city ? ` · ${p.shop.city}` : ""}</strong>
             <span className="field-hint">Commerçant : {p.owner ? `${fullName(p.owner)} (${p.owner.phone || "—"})` : "—"}</span>
-            <span className="field-hint">{KIND[p.kind] || p.kind} · formule {PLAN[p.plan] || p.plan} · <b>{fmt(p.amount_fcfa)} FCFA</b></span>
+            <span className="field-hint">{KIND[p.kind] || p.kind}{p.kind !== "sponsor" && <> · formule {PLAN[p.plan] || p.plan}</>} · <b>{fmt(p.amount_fcfa)} FCFA</b></span>
+            {p.kind === "sponsor" && <span className="field-hint">Produit : <b>{p.product?.name || "produit supprimé"}</b>{p.product?.boost_until && new Date(p.product.boost_until) > new Date() ? ` · déjà sponsorisé jusqu'au ${dateOnly(p.product.boost_until)}` : ""}</span>}
             <span className="field-hint">Code du commerçant : <b style={{ fontSize: 15 }}>{p.pay_ref}</b> · déclaré le {dateTime(p.created_at)}</span>
             {p.shop?.paid_until && <span className="field-hint">Abonnement actuel jusqu'au {dateOnly(p.shop.paid_until)}</span>}
             {p.status === "refusee" && p.reject_reason && <span className="field-hint">Motif : {p.reject_reason}</span>}
@@ -75,7 +79,7 @@ export default function ShopPayments() {
     </div>
     {check && (
       <PayCodeCheck title={`Vérifier le paiement — ${check.shop?.name || "boutique"}`} sellerRef={check.pay_ref}
-        amount={`${fmt(check.amount_fcfa)} FCFA`} details={`${KIND[check.kind] || check.kind} · formule ${PLAN[check.plan] || check.plan} · déclaré le ${dateTime(check.created_at)}`}
+        amount={`${fmt(check.amount_fcfa)} FCFA`} details={`${KIND[check.kind] || check.kind}${check.kind === "sponsor" ? ` · ${check.product?.name || "produit"}` : ` · formule ${PLAN[check.plan] || check.plan}`} · déclaré le ${dateTime(check.created_at)}`}
         onValidate={confirmApprove} onCancel={() => setCheck(null)}
         onRefuse={() => { const p = check; setCheck(null); setReject({ p, reason: "" }); }} />
     )}

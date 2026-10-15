@@ -147,6 +147,35 @@ export const HELP_SHEETS = [
     ],
   },
 
+  // ───────────────────────────── PORTÉE ET SPONSORING ─────────────────────────────
+  {
+    id: "portee",
+    icon: "🚀",
+    title: "Portée des produits et sponsoring",
+    who: "Propriétaires de boutique",
+    intro:
+      "Chaque produit est montré en priorité aux clients proches : à 100 km autour de la ville de la boutique. Les clients plus loin le voient aussi, mais plus bas dans le fil. Pour toucher plus loin, le vendeur peut sponsoriser un produit : sa portée est multipliée par 4 (400 km) pendant 7 jours. Exemple : un produit de Pointe-Noire sponsorisé est montré en priorité jusqu'à Dolisie, Sibiti et Brazzaville.",
+    prices: [
+      ["Portée normale (comprise dans l'abonnement)", "100 km autour de la ville"],
+      ["Sponsoring d'un produit : portée ×4 (400 km) pendant 7 jours", "200 FCFA"],
+    ],
+    steps: [
+      { t: "Bien choisir la ville de la boutique", d: "Menu ⋮ de la boutique → « Modifier la boutique » → Ville : choisir une ville de la liste proposée (exemple : Brazzaville, Pointe-Noire, Dolisie). Une ville non reconnue empêche le calcul de la distance : le produit est alors montré partout, sans priorité." },
+      { t: "Ouvrir le produit à sponsoriser", d: "Menu ⋮ → « Mes produits » → toucher le produit. Descendre jusqu'au cadre « 📍 Portée du produit »." },
+      { t: "Payer le sponsoring", d: "Touchez « Sponsoriser ce produit ». Envoyez 200 FCFA à l'un des numéros MTN Mobile Money ou Airtel Money d'Epsilon affichés, puis recopiez la référence du SMS de confirmation et touchez « J'ai payé »." },
+      { t: "Attendre la validation", d: "L'équipe Epsilon vérifie le code (site : Paiements boutiques). Dès la validation, le produit porte la mention « 🚀 Sponsorisé » et touche les clients à 400 km pendant 7 jours. On peut prolonger de 7 jours à tout moment." },
+    ],
+    tips: [
+      "Le sponsoring se paie produit par produit : on choisit ceux qu'on veut vendre plus vite.",
+      "La position du client vient de la ville de son profil (pas du GPS) : rien n'est demandé à son téléphone.",
+      "La boutique doit être ouverte (abonnement payé) pour sponsoriser un produit.",
+    ],
+    problems: [
+      { q: "« Mon produit n'est pas vu à Brazzaville. »", a: "Vérifier la ville de la boutique (elle doit être dans la liste). Depuis Pointe-Noire, Brazzaville est à environ 390 km : il faut sponsoriser le produit pour l'atteindre en priorité." },
+      { q: "« J'ai payé mais rien ne change. »", a: "Le sponsoring démarre à la validation. Vérifier dans le site (Paiements boutiques) que la déclaration est arrivée et que le code correspond au SMS." },
+    ],
+  },
+
   // ───────────────────────────── PUBLICITÉS ─────────────────────────────
   {
     id: "publicite",
