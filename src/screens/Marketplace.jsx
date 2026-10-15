@@ -4,6 +4,15 @@ import { supabase, q, rpc } from "../lib/supabase";
 import { useAdmin, useLoad, Loading } from "../lib/admin";
 import { dateOnly, dateTime, fmt, fullName, statusLabel } from "../lib/format";
 import { History, Note, Pills, ScreenTitle } from "../components/common";
+
+// Prix dans la monnaie de la boutique (fichier SQL 60) : en euro et en dollar, enregistré en centimes
+const SYM = { XAF: "FCFA", CDF: "FC", EUR: "€", USD: "$ US", CAD: "$ CA" };
+function priceText(p) {
+  const cur = SYM[p.currency] ? p.currency : "XAF";
+  const dec = cur === "EUR" || cur === "USD" || cur === "CAD";
+  const v = dec ? p.price_fcfa / 100 : p.price_fcfa;
+  return `${v.toLocaleString("fr-FR", { minimumFractionDigits: dec && v % 1 ? 2 : 0, maximumFractionDigits: dec ? 2 : 0 })} ${SYM[cur]}`;
+}
 import SanctionPanel from "../components/SanctionPanel";
 
 export default function Marketplace() {
@@ -104,7 +113,7 @@ export default function Marketplace() {
             <tr>
               <td><strong>{p.name}</strong>{p.status === "en_ligne" && isReported(p) && <> <span className="sec-badge alert">Signalé</span></>}<br /><span className="field-hint">Publié le {dateOnly(p.published_at)}</span></td>
               <td>{shopName(p.shop_id)}</td>
-              <td>{p.price_fcfa != null ? `${fmt(p.price_fcfa)} FCFA` : "—"}</td>
+              <td>{p.price_fcfa != null ? priceText(p) : "—"}</td>
               <td><span className={"doc-status " + (p.status === "en_ligne" ? "published" : "draft")}>{p.status === "en_ligne" ? "En ligne" : "Retiré"}</span>{p.removed_reason && <><br /><span className="field-hint">{p.removed_reason}</span></>}</td>
               <td>{p.status === "en_ligne"
                 ? <button className="action-button danger" onClick={() => setPanel({ type: "product", id: p.id, mode: "remove" })}>🗑️ Retirer</button>
