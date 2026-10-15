@@ -786,3 +786,9 @@ button, input, textarea { font-family: inherit; }
 .mic-test-res { font-size: 12.5px; line-height: 1.45; padding: 8px 10px; border-radius: 10px; text-align: left; }
 .mic-test-res.ok { background: rgba(34,165,101,.12); color: #1a7a4c; }
 .mic-test-res.bad { background: rgba(224,57,62,.1); color: #c0392b; }
+
+/* Fiches pratiques : monnaie du client (conversion au taux du jour) */
+.hs-zone { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 10px 0 4px; font-size: 13.5px; font-weight: 600; }
+.hs-zone select { flex: 1; min-width: 200px; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--border); background: var(--white); color: inherit; font: inherit; font-weight: 500; }
+.send-sheet { margin: 8px 0; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--white); display: flex; flex-direction: column; gap: 8px; }
+.send-sheet select { padding: 8px 10px; border-radius: 10px; border: 1px solid var(--border); background: transparent; color: inherit; font: inherit; }

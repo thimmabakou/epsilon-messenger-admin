@@ -8,7 +8,9 @@ import { callUser, notifyUser } from "../lib/supportLine";
 import SupportStatus from "../components/SupportStatus";
 import SupportBroadcast from "../components/SupportBroadcast";
 import AutoMessages from "../components/AutoMessages";
-import HelpSheets from "../components/HelpSheets";
+import HelpSheets, { sheetForClient } from "../components/HelpSheets";
+import { HELP_SHEETS } from "../lib/helpSheets";
+import { CLIENT_ZONES, zoneOfProfile, zoneById, loadRates } from "../lib/money";
 import { startVoice, uploadVoice, fmtSecs } from "../lib/voice";
 
 export default function Support({ nav, goto }) {
@@ -21,17 +23,19 @@ export default function Support({ nav, goto }) {
   const [rec, setRec] = useState(null);         // enregistrement vocal en cours
   const [recSecs, setRecSecs] = useState(0);
   const [voiceBusy, setVoiceBusy] = useState(false);
+  // Envoyer une fiche (prix, contrat…) au client, dans la monnaie de son pays
+  const [sheetPanel, setSheetPanel] = useState(null); // { id, zone }
   useEffect(() => {
     if (!rec) return undefined;
     const t = setInterval(() => setRecSecs(Math.round((Date.now() - rec.started) / 1000)), 500);
     return () => clearInterval(t);
   }, [rec]);
   // Changer de conversation : on abandonne une correction ou un vocal en cours
-  useEffect(() => { setEditing(null); rec?.cancel(); setRec(null); }, [selId]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { setEditing(null); rec?.cancel(); setRec(null); setSheetPanel(null); }, [selId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const { data, error, reload } = useLoad(async () => {
     const convs = await q(supabase.from("support_conversations")
-      .select("*, user:profiles!support_conversations_user_id_fkey(id,first_name,last_name,avatar_url,status)")
+      .select("*, user:profiles!support_conversations_user_id_fkey(id,first_name,last_name,avatar_url,status,country_code,phone)")
       .order("updated_at", { ascending: false }).limit(300));
     const ids = convs.map((c) => c.id);
     const last = ids.length ? await q(supabase.from("support_messages").select("conversation_id,sender,body,created_at").in("conversation_id", ids).order("created_at", { ascending: false }).limit(1000)) : [];
@@ -139,6 +143,22 @@ export default function Support({ nav, goto }) {
     if (ok) { notifyUser(conv.user_id, "🎤 Message vocal"); msgs.reload?.(); reload?.(); }
   };
 
+  const openSheetPanel = async () => {
+    if (sheetPanel) return setSheetPanel(null);
+    await loadRates();
+    setSheetPanel({ id: HELP_SHEETS.find((x) => x.id === "boutique")?.id || HELP_SHEETS[0].id, zone: zoneOfProfile(conv?.user) });
+  };
+  const sendSheet = async () => {
+    if (!can("support.reply")) return deny("support.reply");
+    const sh = HELP_SHEETS.find((x) => x.id === sheetPanel.id);
+    if (!sh) return;
+    const body = sheetForClient(sh, sheetPanel.zone);
+    if (await act(() => rpc("support_reply", { p_conversation: selId, p_body: body }), `📘 Fiche envoyée (${zoneById(sheetPanel.zone).label}).`)) {
+      notifyUser(conv.user_id, `${sh.icon} ${sh.title}`);
+      setSheetPanel(null); msgs.reload?.(); reload?.();
+    }
+  };
+
   const lift = async () => {
     if (!can("mod.cancel")) return deny("mod.cancel");
     await act(async () => {
@@ -189,6 +209,7 @@ export default function Support({ nav, goto }) {
         <div className="mp-actions">
           {conv.user && <button className="action-button ok" onClick={() => callUser({ id: conv.user_id, first_name: conv.user.first_name, last_name: conv.user.last_name })}>📞 Appeler</button>}
           {conv.user && can("users.list") && <button className="action-button neutral" onClick={() => goto("users", { userId: conv.user_id })}>👤 Fiche</button>}
+          <button className="action-button neutral" onClick={openSheetPanel}>📘 Envoyer une fiche</button>
           <button className="icon-button" onClick={() => setSelId(null)}>✕</button>
         </div>
       </div>
@@ -210,6 +231,22 @@ export default function Support({ nav, goto }) {
       </div>
       {conv.tag === "contestation" && (status === "suspendu" || status === "averti") && (
         <div className="mp-actions" style={{ marginTop: 10 }}><button className="action-button ok" onClick={lift}>↩️ Lever la sanction</button></div>
+      )}
+      {sheetPanel && (
+        <div className="send-sheet">
+          <strong>📘 Envoyer une fiche à {fullName(conv.user)}</strong>
+          <select value={sheetPanel.id} onChange={(e) => setSheetPanel({ ...sheetPanel, id: e.target.value })}>
+            {HELP_SHEETS.map((x) => <option key={x.id} value={x.id}>{x.icon} {x.title}</option>)}
+          </select>
+          <select value={sheetPanel.zone} onChange={(e) => setSheetPanel({ ...sheetPanel, zone: e.target.value })}>
+            {CLIENT_ZONES.map((z) => <option key={z.id} value={z.id}>💱 {z.label}</option>)}
+          </select>
+          <span className="field-hint">La monnaie est choisie d'après le pays du compte du client. Les montants sont convertis au taux du jour, avec une phrase qui l'explique en tête de la fiche.</span>
+          <div className="mp-actions">
+            <button className="primary-button" onClick={sendSheet}>Envoyer la fiche</button>
+            <button className="action-button neutral" onClick={() => setSheetPanel(null)}>Annuler</button>
+          </div>
+        </div>
       )}
       {replyBox("Écrire une réponse au client…", true)}
     </>);

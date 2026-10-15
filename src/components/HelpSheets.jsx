@@ -1,7 +1,15 @@
 // Fiches pratiques du Service client (rubrique Service client, sous les messages automatiques) :
 // une fiche par sujet, étape par étape, à lire au client au téléphone ou à lui copier dans sa discussion.
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { HELP_SHEETS, sheetAsText } from "../lib/helpSheets";
+import { CLIENT_ZONES, convertDeep, conversionNote, loadRates } from "../lib/money";
+
+// Fiche prête à envoyer à un client : montants dans sa monnaie (+ phrase sur le taux du jour)
+export function sheetForClient(s, zoneId) {
+  const note = conversionNote(zoneId);
+  const text = sheetAsText(convertDeep(s, zoneId));
+  return note ? `${note}\n\n${text}` : text;
+}
 
 function Steps({ steps }) {
   return (
@@ -17,14 +25,18 @@ function Steps({ steps }) {
   );
 }
 
-function Sheet({ s }) {
+function Sheet({ s: raw, zone }) {
   const [copied, setCopied] = useState(false);
+  const s = convertDeep(raw, zone);
+  const note = conversionNote(zone);
   const copy = async () => {
-    try { await navigator.clipboard.writeText(sheetAsText(s)); setCopied(true); setTimeout(() => setCopied(false), 2500); }
-    catch { window.prompt("Copiez le texte :", sheetAsText(s)); }
+    const text = sheetForClient(raw, zone);
+    try { await navigator.clipboard.writeText(text); setCopied(true); setTimeout(() => setCopied(false), 2500); }
+    catch { window.prompt("Copiez le texte :", text); }
   };
   return (
     <div className="hs-sheet">
+      {note && <p className="hs-base">{note}</p>}
       <p className="hs-intro">{s.intro}</p>
       <span className="field-hint">Pour : {s.who}</span>
 
@@ -96,6 +108,9 @@ function Sheet({ s }) {
 
 export default function HelpSheets() {
   const [open, setOpen] = useState(false);
+  const [zone, setZone] = useState("XAF"); // monnaie du client à qui on lit / envoie la fiche
+  const [, setReady] = useState(0);
+  useEffect(() => { if (open) loadRates().then(() => setReady((x) => x + 1)); }, [open]);
   const [cur, setCur] = useState(null);
   const [q, setQ] = useState("");
   const list = useMemo(() => {
@@ -113,6 +128,11 @@ export default function HelpSheets() {
       <span className="field-hint">Quand un client appelle parce qu'il ne s'en sort pas, ouvrez la fiche du sujet et lisez-lui les étapes une par une, en attendant qu'il ait fini chaque étape avant de passer à la suivante. Le bouton « Copier la fiche » permet aussi de la lui envoyer par écrit dans sa discussion.</span>
       {open && (
         <>
+          <label className="hs-zone">💱 Monnaie du client :
+            <select value={zone} onChange={(e) => setZone(e.target.value)}>
+              {CLIENT_ZONES.map((z) => <option key={z.id} value={z.id}>{z.label}</option>)}
+            </select>
+          </label>
           <input className="hs-search" placeholder="Chercher un mot (ex. référence, débat, musique, recharge…)" value={q} onChange={(e) => setQ(e.target.value)} />
           {list.length === 0 && <span className="field-hint">Aucune fiche ne parle de « {q} ».</span>}
           {list.map((s) => (
@@ -122,7 +142,7 @@ export default function HelpSheets() {
                 <span className="hs-title">{s.title}</span>
                 <span className="hs-chev">{cur === s.id ? "▾" : "▸"}</span>
               </button>
-              {cur === s.id && <Sheet s={s} />}
+              {cur === s.id && <Sheet s={s} zone={zone} />}
             </div>
           ))}
         </>
