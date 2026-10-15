@@ -1,4 +1,4 @@
-// Paiements des boutiques (abonnement) : ouverture 500 FCFA, puis 500 FCFA/mois (Standard) ou 2 000 FCFA/mois (Pro).
+// Paiements des boutiques (abonnement) : ouverture 600 FCFA, puis 1 000 FCFA/mois (Standard) ou 3 000 FCFA/mois (Pro).
 // Le commerçant paie par Mobile Money et donne la référence du SMS ; ici, on compare avec le SMS reçu
 // sur le téléphone d'Epsilon, puis on valide (la boutique est visible 30 jours de plus) ou on refuse.
 // Accessible au PDG et aux administrateurs qui ont la permission « Valider les paiements des boutiques ».
@@ -48,7 +48,7 @@ export default function ShopPayments() {
 
   return (<>
     <ScreenTitle eyebrow="COMMERCE" title="Paiements des boutiques" />
-    <Note icon="💳">Ouverture <b>500 FCFA</b> (1er mois) · puis chaque mois <b>500 FCFA</b> (Standard) ou <b>2 000 FCFA</b> (Pro, plus de visibilité). Pour valider, <b>recopiez le code reçu dans le SMS</b> du téléphone d'Epsilon : il doit être identique au code du commerçant (la case devient verte). Vérifiez aussi le <b>montant</b>. Un code validé ne peut plus jamais resservir. Chaque décision est inscrite au journal de sécurité.</Note>
+    <Note icon="💳">Ouverture <b>600 FCFA</b> (1er mois) · puis chaque mois <b>1 000 FCFA</b> (Standard) ou <b>3 000 FCFA</b> (Pro, plus de visibilité). Pour valider, <b>recopiez le code reçu dans le SMS</b> du téléphone d'Epsilon : il doit être identique au code du commerçant (la case devient verte). Vérifiez aussi le <b>montant</b>. Un code validé ne peut plus jamais resservir. Chaque décision est inscrite au journal de sécurité.</Note>
     <Pills options={TABS.map(([k, l]) => [k, `${l} (${count(k)})`])} value={tab} onChange={setTab} />
     {!data && <Loading error={error} />}
     {data && list.length === 0 && <Empty icon="💳" text="Aucun paiement ici." />}

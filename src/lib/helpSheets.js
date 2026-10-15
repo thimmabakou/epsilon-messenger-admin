@@ -88,16 +88,16 @@ export const HELP_SHEETS = [
     intro:
       "Une boutique permet de vendre ses articles dans l'onglet Boutiques (Epsilon Market). Les clients voient les produits, les mettent dans leur panier, et la commande arrive au vendeur dans une discussion.",
     prices: [
-      ["Ouverture (comprend le 1er mois)", "500 FCFA"],
-      ["Formule Standard, chaque mois", "500 FCFA"],
-      ["Formule Pro, chaque mois (produits montrés plus souvent, en meilleure place)", "2 000 FCFA"],
+      ["Ouverture (comprend le 1er mois)", "600 FCFA"],
+      ["Formule Standard, chaque mois", "1 000 FCFA"],
+      ["Formule Pro, chaque mois (produits montrés plus souvent, en meilleure place)", "3 000 FCFA"],
     ],
     steps: [
       { t: "Aller dans les Boutiques", d: "Ouvrez l'onglet « Boutiques », puis touchez « Créer ma boutique »." },
       { t: "Lire et accepter les conditions", d: "Une page explique les prix et les règles. Lisez jusqu'en bas, cochez « J'ai lu et j'accepte ces conditions », puis « Suivant »." },
       { t: "Remplir la fiche de la boutique", d: "Nom de la boutique, ville, une courte description de ce que vous vendez, le logo (une photo carrée, nette) et la photo de couverture (la grande image du haut). Enregistrez." },
       { t: "Ajouter les premiers produits", d: "Vous pouvez déjà ajouter vos produits (voir la fiche « Ajouter un produit »). La boutique reste cachée au public tant que l'ouverture n'est pas payée." },
-      { t: "Payer l'ouverture", d: "Touchez « Payer l'ouverture ». L'application affiche les numéros MTN Mobile Money et Airtel Money d'Epsilon, avec le nom du titulaire. Envoyez 500 FCFA à l'un de ces numéros, depuis votre téléphone, comme un transfert ordinaire." },
+      { t: "Payer l'ouverture", d: "Touchez « Payer l'ouverture ». L'application affiche les numéros MTN Mobile Money et Airtel Money d'Epsilon, avec le nom du titulaire. Envoyez 600 FCFA à l'un de ces numéros, depuis votre téléphone, comme un transfert ordinaire." },
       { t: "Recopier la référence du SMS", d: "Après le paiement, MTN ou Airtel envoie un SMS de confirmation. Il contient la référence de la transaction (exemple : « ID : 2610091234567 »). Recopiez-la exactement dans la case, puis touchez « J'ai payé 500 FCFA »." },
       { t: "Attendre la validation", d: "L'équipe Epsilon vérifie que l'argent est bien arrivé avec cette référence, en général le jour même. Dès que c'est validé, la boutique devient visible par tout le monde pendant 30 jours." },
       { t: "Renouveler chaque mois", d: "Tout se gère dans la boutique, menu ⋮ en haut → « Abonnement de la boutique ». L'application prévient avant la fin. Sans paiement, la boutique est cachée au bout de 3 jours, mais rien n'est effacé : il suffit de payer pour réapparaître." },
