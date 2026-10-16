@@ -11,6 +11,24 @@ export function sheetForClient(s, zoneId) {
   return note ? `${note}\n\n${text}` : text;
 }
 
+// Copier une fiche entière (dans la monnaie du client) : bouton sur chaque ligne de la liste ET dans la fiche ouverte
+async function copySheet(raw, zone) {
+  const text = sheetForClient(raw, zone);
+  try { await navigator.clipboard.writeText(text); return true; }
+  catch { window.prompt("Copiez le texte :", text); return false; }
+}
+
+function CopyButton({ s, zone, big }) {
+  const [done, setDone] = useState(false);
+  const go = async (e) => {
+    e.stopPropagation();
+    if (await copySheet(s, zone)) { setDone(true); setTimeout(() => setDone(false), 2500); }
+  };
+  return big
+    ? <button className="action-button neutral" onClick={go}>{done ? "✅ Fiche copiée : collez-la dans la discussion du client" : "📋 Copier la fiche (pour l'envoyer au client)"}</button>
+    : <button className={"hs-copy" + (done ? " done" : "")} onClick={go} aria-label="Copier la fiche">{done ? "✅ Copiée" : "📋 Copier"}</button>;
+}
+
 function Steps({ steps }) {
   return (
     <ol className="hs-steps">
@@ -26,16 +44,11 @@ function Steps({ steps }) {
 }
 
 function Sheet({ s: raw, zone }) {
-  const [copied, setCopied] = useState(false);
   const s = convertDeep(raw, zone);
   const note = conversionNote(zone);
-  const copy = async () => {
-    const text = sheetForClient(raw, zone);
-    try { await navigator.clipboard.writeText(text); setCopied(true); setTimeout(() => setCopied(false), 2500); }
-    catch { window.prompt("Copiez le texte :", text); }
-  };
   return (
     <div className="hs-sheet">
+      <div className="mp-actions"><CopyButton s={raw} zone={zone} big /></div>
       {note && <p className="hs-base">{note}</p>}
       <p className="hs-intro">{s.intro}</p>
       <span className="field-hint">Pour : {s.who}</span>
@@ -100,7 +113,7 @@ function Sheet({ s: raw, zone }) {
       )}
 
       <div className="mp-actions">
-        <button className="action-button neutral" onClick={copy}>{copied ? "✅ Copiée" : "📋 Copier la fiche (pour l'envoyer au client)"}</button>
+        <CopyButton s={raw} zone={zone} big />
       </div>
     </div>
   );
@@ -125,7 +138,7 @@ export default function HelpSheets() {
         <strong style={{ fontSize: 14, flex: 1 }}>📘 Fiches pratiques (guider un client)</strong>
         <button className="action-button neutral" onClick={() => setOpen(!open)}>{open ? "Fermer" : "Ouvrir les fiches"}</button>
       </div>
-      <span className="field-hint">Quand un client appelle parce qu'il ne s'en sort pas, ouvrez la fiche du sujet et lisez-lui les étapes une par une, en attendant qu'il ait fini chaque étape avant de passer à la suivante. Le bouton « Copier la fiche » permet aussi de la lui envoyer par écrit dans sa discussion.</span>
+      <span className="field-hint">Quand un client appelle parce qu'il ne s'en sort pas, ouvrez la fiche du sujet et lisez-lui les étapes une par une, en attendant qu'il ait fini chaque étape avant de passer à la suivante. S'il ne comprend toujours pas, touchez « 📋 Copier » à côté de la fiche, puis collez-la dans sa discussion : il pourra la relire tranquillement, autant de fois qu'il faut.</span>
       {open && (
         <>
           <label className="hs-zone">💱 Monnaie du client :
@@ -137,11 +150,14 @@ export default function HelpSheets() {
           {list.length === 0 && <span className="field-hint">Aucune fiche ne parle de « {q} ».</span>}
           {list.map((s) => (
             <div key={s.id} className={"hs-item" + (cur === s.id ? " open" : "")}>
-              <button className="hs-head" onClick={() => setCur(cur === s.id ? null : s.id)}>
-                <span className="hs-icon">{s.icon}</span>
-                <span className="hs-title">{s.title}</span>
-                <span className="hs-chev">{cur === s.id ? "▾" : "▸"}</span>
-              </button>
+              <div className="hs-row">
+                <button className="hs-head" onClick={() => setCur(cur === s.id ? null : s.id)}>
+                  <span className="hs-icon">{s.icon}</span>
+                  <span className="hs-title">{s.title}</span>
+                  <span className="hs-chev">{cur === s.id ? "▾" : "▸"}</span>
+                </button>
+                <CopyButton s={s} zone={zone} />
+              </div>
               {cur === s.id && <Sheet s={s} zone={zone} />}
             </div>
           ))}

@@ -692,6 +692,10 @@ button, input, textarea { font-family: inherit; }
 .hs-icon { font-size: 20px; width: 28px; text-align: center; }
 .hs-title { flex: 1; font-weight: 700; font-size: 14.5px; }
 .hs-chev { opacity: .6; }
+.hs-row { display: flex; align-items: center; gap: 6px; }
+.hs-row .hs-head { flex: 1; min-width: 0; }
+.hs-copy { flex: none; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--border, rgba(127,127,127,.35)); background: rgba(127,127,127,.12); color: inherit; font: inherit; font-size: 12.5px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.hs-copy.done { background: rgba(34,197,94,.18); border-color: rgba(34,197,94,.5); }
 .hs-sheet { padding: 0 2px 14px; display: flex; flex-direction: column; gap: 8px; }
 .hs-intro { margin: 0; font-size: 14px; line-height: 1.55; }
 .hs-base { margin: 4px 0 0; font-weight: 600; font-size: 13.5px; }
