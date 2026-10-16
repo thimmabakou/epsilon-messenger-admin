@@ -409,7 +409,8 @@ export const HELP_SHEETS = [
       { t: "Paiement", d: "Le responsable envoie le total du contrat (formule de direct + stockage, voir la fiche du stockage) par MTN Mobile Money ou Airtel Money aux numéros d'Epsilon, puis transmet la référence du SMS de confirmation. Le paiement en espèces est possible, avec un reçu." },
       { t: "Création et activation (PDG)", d: "Dans le site : Epsilon TV → « Nouvelle chaîne » (nom, présentation, logo, numéro du responsable) → « Créer la chaîne ». Puis activer sa formule : choisir la formule et la durée, recopier la référence du paiement (ou cocher « Payé en espèces ») et confirmer avec le code PDG. La chaîne apparaît aussitôt dans l'onglet TV." },
       { t: "Publier des vidéos (différé)", d: "Le responsable ouvre l'onglet TV → sa chaîne (« Ma chaîne ») → « Publier une vidéo » : un titre, la vidéo (1 Go au maximum ; au-delà de 90 Mo elle part en plusieurs morceaux, avec le pourcentage affiché : il faut rester sur l'écran avec une bonne connexion), puis « Publier ». Il peut supprimer une vidéo à tout moment." },
-      { t: "Le direct", d: "Le bouton « Passer en direct » est déjà visible sur la chaîne, avec la mention « Bientôt disponible ». Dès son ouverture, le direct se lancera depuis le téléphone ou un studio. Pendant le direct, chaque minute regardée par chaque spectateur est décomptée de la formule." },
+      { t: "Le direct", d: "Onglet TV → Ma chaîne → « 🔴 Passer en direct » (le bouton montre les minutes restantes) : autoriser la caméra et le micro, taper un titre, puis « Démarrer le direct ». Les abonnés reçoivent une notification ; les spectateurs voient « EN DIRECT », écrivent des commentaires et envoient des ❤️. Le présentateur peut changer de caméra, couper le micro, et toucher « 🎞️ Régie » pour balancer une vidéo de la chaîne (reportage, publicité) : tout le monde la voit en même temps, puis l'image revient sur la caméra. Important : rester sur l'écran du direct (si on quitte Epsilon, la caméra du téléphone s'arrête). Chaque minute regardée par chaque spectateur est décomptée de la formule ; le direct s'arrête tout seul quand les minutes sont épuisées." },
+      { t: "Directs programmés", d: "Onglet « 🔴 Directs » de la chaîne → « Programmer un direct » : titre, jour et heure à la seconde (ex. 20:00:00), durée prévue. La page de pub qui précède se termine pile à l'heure ; les spectateurs voient « le direct va commencer » jusqu'à ce que le présentateur le lance." },
       { t: "Suivi et renouvellement", d: "Sur sa chaîne, le responsable voit sa formule, les jours restants et les minutes déjà consommées. L'application le prévient avant la fin. Sans renouvellement, la chaîne n'est plus visible, mais ses vidéos ne sont pas effacées." },
     ],
     tips: [
@@ -417,7 +418,7 @@ export const HELP_SHEETS = [
       "Pour diffuser des matchs ou des films, le responsable doit posséder les droits. Au moindre doute, demander l'avis du PDG avant d'ouvrir la chaîne.",
       "Une église ou une association qui veut seulement annoncer un événement n'a pas besoin d'une chaîne : orientez-la vers la publicité ou un communiqué (voir ces fiches).",
       "Numéro de canal : chaque chaîne a un numéro (canal 1, 2, 3…). Pour aider quelqu'un à trouver une chaîne, donnez-lui simplement ce numéro : dans l'onglet TV, il touche « 🔢 Aller au canal », tape le numéro, puis OK. Une nouvelle chaîne reçoit le numéro suivant ; le PDG peut le changer dans le site (Epsilon TV → « 🔢 Numéro de canal »).",
-      "Trois compartiments : quand le responsable publie une vidéo, il choisit 🎬 Émissions (films, émissions, contenus qui passent en boucle 24 h/24), 📢 Publicités (après CHAQUE émission, la chaîne fait un break et passe toutes ses pubs à la suite, puis l'émission suivante) ou ⏰ Programmées (il choisit le jour et l'heure, heure de Brazzaville). Une à deux minutes avant l'heure, la chaîne passe les pubs ; à l'heure pile, la vidéo programmée démarre ; ensuite, l'émission interrompue reprend là où elle s'était arrêtée. Une vidéo mal rangée se déplace avec le bouton « Ranger ».",
+      "Genres et diffusion : en publiant (ou avec « Ranger »), le responsable choisit le GENRE (🎬 Cinéma, 📺 Séries, 📰 Journal, 🎵 Musique, 🌍 Documentaires, 🎙️ Émissions) et la DIFFUSION : 🔁 en boucle (24 h/24, les uns après les autres), ⏰ à heure fixe (jour et heure à la seconde, heure de Brazzaville) ou 📢 publicité. Toutes les pubs ensemble forment la PAGE DE PUB (avec l'animation « Publicité » / « Fin de la publicité ») qui sépare les programmes. Films, séries et documentaires d'1 h et plus sont coupés par la pub toutes les 30 minutes, puis reprennent à la seconde près. La musique n'est jamais coupée, et il n'y a pas de pub entre deux chansons qui se suivent. Avant un rendez-vous à heure fixe, la page de pub est placée pour se terminer PILE à l'heure (ex. 3 min 09 s de pub avant 20:00:00 → elle commence à 19:56:51) ; ensuite le programme interrompu reprend là où il s'était arrêté. L'onglet « 📅 Grille » montre les 48 prochaines heures, seconde par seconde.",
       "Floutage : sous chaque vidéo de sa chaîne, le responsable touche « 🔲 Flouter », ajoute une zone et la fait glisser sur ce qu'il faut cacher (logo d'un partenaire, filigrane, plaque, nom). Le coin rose change la taille ; « Début ici » / « Fin ici » limitent le flou à un passage. Les spectateurs voient la zone floutée, à l'antenne et en replay. Pour des VISAGES qui bougent (reportage), conseiller CapCut (outil flou / mosaïque qui suit le visage), puis publier la vidéo exportée en MP4.",
       "Chaîne privée : sur demande du responsable, SEUL le PDG peut rendre une chaîne privée (site → Epsilon TV → « 🔒 Rendre privée »). Un code est créé (ex. EPS-7KQ4-M9XA) ; le responsable le voit dans « Gérer ma chaîne » et le donne à son public, qui touche « 🔐 Code privé » dans l'onglet TV et le tape. L'équipe Epsilon voit toujours les chaînes privées pour contrôler leur contenu. Le PDG peut changer le code (« 🔄 Nouveau code ») ou retirer tous les accès d'un coup.",
       "L'heure de Brazzaville s'affiche en direct sur l'écran de chaque chaîne (au début du bandeau INFO, ou en haut à gauche s'il n'y a pas de bandeau). Les pubs sont signalées par la mention PUBLICITÉ et ne peuvent pas être sautées. Toutes les vidéos (pubs comprises) comptent dans l'espace de stockage de la chaîne.",
@@ -461,6 +462,7 @@ export const HELP_SHEETS = [
       extra: [
         "Exemple Sur mesure : 36 000 minutes pour une église → 43 200 + 900 = 44 100 FCFA pour le mois.",
         "Exemple avec espace en plus : Bronze + 20 Go en plus → 24 900 + 1 800 = 26 700 FCFA pour le mois.",
+        "Option Epsilon TV Studio (gestion de la chaîne sur le site, en grand) : 10 000 FCFA par mois en plus. Exemple : Bronze + Studio → 24 900 + 10 000 = 34 900 FCFA pour le mois. Sans le Studio, la chaîne se gère gratuitement depuis le téléphone.",
       ],
     },
     steps: [
@@ -479,6 +481,39 @@ export const HELP_SHEETS = [
     problems: [
       { q: "« L'application refuse ma vidéo. »", a: "Soit la vidéo dépasse 1 Go, soit l'espace de la chaîne est plein. Regarder la ligne « Espace pour les vidéos » sur la chaîne, puis proposer de supprimer d'anciennes vidéos ou de vendre de l'espace en plus." },
       { q: "« Pourquoi je paie le stockage en plus du direct ? »", a: "Le direct, c'est la diffusion en temps réel. Le stockage, c'est la garde de vos vidéos jour et nuit pour que votre public les revoie quand il veut : ce sont deux services différents." },
+    ],
+  },
+
+  // ───────────────────────────── EPSILON TV STUDIO (site) ─────────────────────────────
+  {
+    id: "tv-studio",
+    icon: "🖥️",
+    title: "Epsilon TV Studio : gérer sa chaîne sur le site (ordinateur, tablette)",
+    who: "Chaînes Epsilon TV qui veulent une régie en grand",
+    intro:
+      "Epsilon TV Studio est le logiciel de gestion des chaînes, sur un site : epsilon-messenger-app.pages.dev/studio (lien direct dans l'application : Paramètres → « Epsilon TV Studio », ou Ma chaîne → « 🖥️ Epsilon TV Studio »). La chaîne s'y gère en grand : programmes par genre, grille à la seconde, pages de pub, directs programmés, bandeaux, floutage, statistiques et régie du direct. Gérer sa chaîne depuis le téléphone reste GRATUIT : le Studio est une option pour ceux qui veulent une meilleure vue et une meilleure gestion.",
+    prices: [
+      ["Epsilon TV Studio (accès au site)", "10 000 FCFA par mois"],
+      ["3 mois", "30 000 FCFA"],
+      ["6 mois", "60 000 FCFA"],
+      ["12 mois", "120 000 FCFA"],
+      ["Gestion depuis le téléphone (application)", "gratuite, comprise dans la formule"],
+    ],
+    steps: [
+      { t: "Ouvrir le site", d: "Dans l'application : Paramètres → « 📺 Epsilon TV Studio ↗ » (ou Ma chaîne → « 🖥️ Epsilon TV Studio »). Sur un ordinateur, taper l'adresse epsilon-messenger-app.pages.dev/studio." },
+      { t: "Se connecter", d: "Avec le compte Epsilon du responsable de la chaîne : même numéro, même code que dans l'application. Un compte sans chaîne voit « Accès refusé »." },
+      { t: "Payer l'abonnement", d: "Sans abonnement, le site affiche le prix (10 000 FCFA par mois, converti dans la monnaie du client) et les numéros Mobile Money d'Epsilon. Le responsable paie, puis écrit au Service client « Abonnement Studio — nom de la chaîne » avec le code du SMS." },
+      { t: "Activer (PDG)", d: "Site administrateur → Epsilon TV → la chaîne → « 🖥️ Studio (site) » : choisir 1, 3, 6 ou 12 mois, recopier le code du paiement (ou « Payé en espèces »), confirmer avec le code PDG. Le responsable recharge la page du Studio : sa régie s'ouvre." },
+      { t: "Régie du direct à deux", d: "Le journaliste lance le direct avec le TÉLÉPHONE (onglet TV → Ma chaîne → Passer en direct) et reste sur l'écran de la caméra. La régie, sur le site, voit le direct, les commentaires, et touche une vidéo pour la balancer à l'antenne (reportage, publicité), puis « 📷 Revenir à la caméra ». Elle peut aussi terminer le direct pour tout le monde." },
+    ],
+    tips: [
+      "Le Studio et l'application montrent la même chaîne : ce qui est fait sur l'un apparaît aussitôt sur l'autre.",
+      "Sur un ordinateur avec webcam, le direct peut aussi être lancé depuis le site (même bouton « Passer en direct »).",
+      "À la fin de l'abonnement, le site redemande le paiement ; la chaîne, elle, continue de passer normalement, et le responsable la gère depuis son téléphone.",
+    ],
+    problems: [
+      { q: "« Le site me dit Accès refusé. »", a: "Le compte connecté n'est pas celui du responsable de la chaîne. Se déconnecter (« Changer de compte ») et se connecter avec le numéro qui gère la chaîne." },
+      { q: "« J'ai payé mais le site demande toujours l'abonnement. »", a: "Vérifier dans le site administrateur (Epsilon TV → la chaîne) la ligne « Epsilon TV Studio ». Si le paiement est reçu, l'activer avec « 🖥️ Studio (site) », puis demander au client de recharger la page." },
     ],
   },
 ];

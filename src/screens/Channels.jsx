@@ -12,6 +12,7 @@ import { uploadMusicFile } from "../lib/files";
 import { Empty, Note, ScreenTitle, SecurityGate, Pills } from "../components/common";
 
 export const PRICE_PER_MINUTE = 1.2; // FCFA par minute regardée
+export const STUDIO_PRICE = 10000;   // Epsilon TV Studio (site de gestion des chaînes) : FCFA par mois (validé le 16/10/2026)
 const priceOf = (minutes) => Math.round((Number(minutes) || 0) * PRICE_PER_MINUTE);
 export const PLANS = {
   bronze: { label: "Bronze", price: 24000, minutes: 21000, gb: 10 },
@@ -99,6 +100,7 @@ export default function Channels() {
   const startPay = (c, kind) => {
     if (!allowed) return deny("PDG");
     if (kind === "recharge") setPay({ c, kind, minutes: 10000, amount: 12000, note: "", ref: "", cash: false });
+    else if (kind === "studio") setPay({ c, kind, months: 1, amount: STUDIO_PRICE, note: "", ref: "", cash: false });
     else if (kind === "stockage") setPay({ c, kind, gb: 10, amount: 10 * STORAGE_PRICE_GB, note: "", ref: "", cash: false });
     else { const plan = PLANS[c.plan] ? c.plan : "bronze"; setPay({ c, kind, plan, months: 1, amount: totalFor(plan, 100000, 1), minutes: 100000, note: "", ref: "", cash: false }); }
   };
@@ -119,6 +121,13 @@ export default function Channels() {
         if (e) throw new Error(/eg_tv_add_storage/.test(e.message) ? "Exécutez d'abord le fichier SQL 47 (stockage Epsilon TV) dans Supabase." : e.message);
         setPay(null);
       }, "💾 Espace ajouté à la chaîne jusqu'à la fin de sa formule."));
+    }
+    if (p.kind === "studio") {
+      return protect(`Activer Epsilon TV Studio pour « ${p.c.name} » — ${p.months} mois (${fmt(amount)} FCFA reçus)`, () => act(async () => {
+        const { error: e } = await supabase.rpc("eg_tv_studio_activate", { p_channel: p.c.id, p_months: p.months, p_amount: amount, p_note: p.note || null, ...refArgs });
+        if (e) throw new Error(/eg_tv_studio_activate/.test(e.message) ? "Exécutez d'abord le fichier SQL 70 (abonnement Studio) dans Supabase." : e.message);
+        setPay(null);
+      }, "🖥️ Epsilon TV Studio activé : le responsable peut gérer sa chaîne sur le site."));
     }
     if (p.kind === "recharge") {
       if (!minutes) return act(async () => { throw new Error("Indiquez le nombre de minutes."); });
@@ -165,7 +174,7 @@ export default function Channels() {
       <button className="action-button neutral" onClick={() => (allowed ? setShowReg(!showReg) : deny("PDG"))}>📋 Registre des codes</button>
       <button className="primary-button" onClick={() => (allowed ? setOpen(!open) : deny("PDG"))}>＋ Créer une chaîne</button>
     </ScreenTitle>
-    <Note icon="📺">Une chaîne n'apparaît dans l'application qu'après <b>activation d'une formule</b>, une fois le paiement reçu (Mobile Money ou espèces). Tarif : <b>1,20 FCFA par minute regardée</b> (1 spectateur pendant 1 minute ; Cloudflare nous coûte ≈ 0,60). Stockage du différé compris (90 FCFA le Go par mois) : Bronze 10 Go · Argent 30 Go · Platine 60 Go · Or 100 Go · Sur mesure 10 Go. Formules : <b>Bronze</b> 24 000 FCFA (21 000 min, +5 %) · <b>Argent</b> 120 000 FCFA (110 000 min, +10 %) · <b>Platine</b> 300 000 FCFA (287 500 min, +15 %) · <b>Or</b> 600 000 FCFA (600 000 min, +20 %) · <b>Sur mesure</b> 1,20 FCFA la minute · <b>Recharge</b> 12 000 FCFA (+10 000 min). À la fin de la période payée, la chaîne disparaît toute seule. 🔐 Réservé au PDG.</Note>
+    <Note icon="📺">Une chaîne n'apparaît dans l'application qu'après <b>activation d'une formule</b>, une fois le paiement reçu (Mobile Money ou espèces). Tarif : <b>1,20 FCFA par minute regardée</b> (1 spectateur pendant 1 minute ; Cloudflare nous coûte ≈ 0,60). Stockage du différé compris (90 FCFA le Go par mois) : Bronze 10 Go · Argent 30 Go · Platine 60 Go · Or 100 Go · Sur mesure 10 Go. Formules : <b>Bronze</b> 24 000 FCFA (21 000 min, +5 %) · <b>Argent</b> 120 000 FCFA (110 000 min, +10 %) · <b>Platine</b> 300 000 FCFA (287 500 min, +15 %) · <b>Or</b> 600 000 FCFA (600 000 min, +20 %) · <b>Sur mesure</b> 1,20 FCFA la minute · <b>Recharge</b> 12 000 FCFA (+10 000 min) · <b>🖥️ Epsilon TV Studio</b> (gestion sur le site) 10 000 FCFA par mois, gestion depuis le téléphone gratuite. À la fin de la période payée, la chaîne disparaît toute seule. 🔐 Réservé au PDG.</Note>
 
     {open && (
       <div className="ver-form">
@@ -201,6 +210,7 @@ export default function Channels() {
               <span className="field-hint">
                 Formule {PLANS[c.plan]?.label || c.plan} · {c.paid_until ? (left > 0 ? `jusqu'au ${dateOnly(c.paid_until)} (${left} j)` : `terminée le ${dateOnly(c.paid_until)}`) : "jamais activée"}
               </span>
+              <span className="field-hint">🖥️ Epsilon TV Studio : {c.studio_until && new Date(c.studio_until) > new Date() ? `actif jusqu'au ${dateOnly(c.studio_until)}` : "non abonné (gestion depuis le téléphone seulement)"}</span>
               <span className="field-hint">Minutes : {fmt(used)} / {fmt(quota)}{quota ? ` (${Math.round((used / quota) * 100)} %)` : ""}</span>
               {(c.ticker || []).length > 0 && <span className="field-hint">📰 Bandeaux{c.ticker_on === false ? " (masqués)" : ""} : {c.ticker.join(" • ")}</span>}
               <span className="field-hint">Espace vidéos : {(PLANS[c.plan]?.gb || 0) + Number(c.storage_extra_gb || 0)} Go{Number(c.storage_extra_gb || 0) ? ` (dont ${c.storage_extra_gb} Go en plus)` : ""}</span>
@@ -212,6 +222,7 @@ export default function Channels() {
               <button className="action-button primary" onClick={() => startPay(c, "formule")}>💳 {c.paid_until ? "Renouveler" : "Activer"}</button>
               <button className="action-button neutral" onClick={() => startPay(c, "recharge")}>➕ Recharge</button>
               <button className="action-button neutral" onClick={() => startPay(c, "stockage")}>💾 Espace en plus</button>
+              <button className="action-button neutral" onClick={() => startPay(c, "studio")}>🖥️ Studio (site)</button>
               <button className="action-button neutral" onClick={() => setHist(hist?.id === c.id ? null : c)}>🧾 Paiements</button>
               <button className="action-button neutral" onClick={() => setNo(c)}>🔢 Numéro de canal</button>
               <button className="action-button neutral" onClick={() => togglePause(c)}>{c.status === "active" ? "⏸ Pause" : "▶ Reprendre"}</button>
@@ -223,7 +234,7 @@ export default function Channels() {
                 {!payments.data ? <Loading error={payments.error} /> : payments.data.length === 0 ? <span className="field-hint">Aucun paiement enregistré.</span> : (
                   payments.data.map((p) => (
                     <div key={p.id} className="field-hint" style={{ padding: "4px 0", borderTop: "1px solid var(--line, #eee)" }}>
-                      {dateOnly(p.created_at)} · {p.kind === "recharge" ? "Recharge" : p.kind === "stockage" ? `Espace en plus ${p.storage_gb} Go` : `${PLANS[p.plan]?.label || p.plan} ${p.months} mois`} · {p.kind === "stockage" ? "" : `${fmt(p.minutes)} min · `} <b>{fmt(p.amount_fcfa)} FCFA</b>{p.pay_ref ? ` · code ${p.pay_ref}` : ""}{p.note ? ` · ${p.note}` : ""}
+                      {dateOnly(p.created_at)} · {p.kind === "recharge" ? "Recharge" : p.kind === "studio" ? `Epsilon TV Studio ${p.months} mois` : p.kind === "stockage" ? `Espace en plus ${p.storage_gb} Go` : `${PLANS[p.plan]?.label || p.plan} ${p.months} mois`} · {p.kind === "stockage" || p.kind === "studio" ? "" : `${fmt(p.minutes)} min · `} <b>{fmt(p.amount_fcfa)} FCFA</b>{p.pay_ref ? ` · code ${p.pay_ref}` : ""}{p.note ? ` · ${p.note}` : ""}
                     </div>
                   ))
                 )}
@@ -237,7 +248,7 @@ export default function Channels() {
     {pay && (
       <div className="modal-backdrop" onClick={() => setPay(null)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.45)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50, padding: 16 }}>
         <div className="ver-form" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 440, width: "100%", background: "var(--card, #fff)" }}>
-          <strong style={{ fontSize: 15 }}>{pay.kind === "recharge" ? `Recharge — ${pay.c.name}` : pay.kind === "stockage" ? `Espace en plus — ${pay.c.name}` : `${pay.c.paid_until ? "Renouveler" : "Activer"} — ${pay.c.name}`}</strong>
+          <strong style={{ fontSize: 15 }}>{pay.kind === "studio" ? `Epsilon TV Studio — ${pay.c.name}` : pay.kind === "recharge" ? `Recharge — ${pay.c.name}` : pay.kind === "stockage" ? `Espace en plus — ${pay.c.name}` : `${pay.c.paid_until ? "Renouveler" : "Activer"} — ${pay.c.name}`}</strong>
           {pay.kind === "formule" && (<>
             <span className="field-hint">Formule</span>
             <Pills options={Object.entries(PLANS).map(([k, v]) => [k, v.label])} value={pay.plan} onChange={setPlan} />
@@ -253,6 +264,11 @@ export default function Channels() {
           {pay.kind === "stockage" && (<>
             <span className="field-hint">Go d'espace en plus (90 FCFA le Go par mois, valable jusqu'à la fin de la formule en cours)</span>
             <input inputMode="numeric" value={pay.gb} onChange={(e) => { const g = digits(e.target.value); setPay({ ...pay, gb: g, amount: (Number(g) || 0) * STORAGE_PRICE_GB }); }} />
+          </>)}
+          {pay.kind === "studio" && (<>
+            <span className="field-hint">Accès au site de gestion de la chaîne (epsilon-messenger-app.pages.dev/studio) : {fmt(STUDIO_PRICE)} FCFA par mois. Gérer depuis le téléphone reste gratuit.</span>
+            <Pills options={MONTHS.map((m) => [m, `${m} mois`])} value={pay.months} onChange={(m) => setPay({ ...pay, months: m, amount: STUDIO_PRICE * m })} />
+            <span className="field-hint">Total à recevoir : <b>{fmt(STUDIO_PRICE * pay.months)} FCFA</b></span>
           </>)}
           {pay.kind === "recharge" && (<>
             <span className="field-hint">Minutes ajoutées (1,20 FCFA la minute regardée)</span>
