@@ -176,6 +176,102 @@ export const HELP_SHEETS = [
     ],
   },
 
+  // ───────────────────────────── COMMANDES ─────────────────────────────
+  {
+    id: "commandes",
+    icon: "📦",
+    title: "Commandes et suivi du colis",
+    who: "Acheteurs et vendeurs",
+    intro:
+      "Chaque commande passée sur Epsilon (fiche du produit, panier ou prix négocié) est enregistrée avec un numéro (ex. EPS-00012). L'acheteur et le vendeur suivent le colis étape par étape, sur un petit graphique du trajet, mis à jour en temps réel. Le vendeur coche les étapes ; seul l'acheteur peut dire « Commande reçue ».",
+    steps: [
+      { t: "Passer commande (acheteur)", d: "Sur la fiche du produit : « Acheter » → choisir la quantité → « Envoyer la commande ». Ou depuis le panier : « Confirmer ». Le vendeur reçoit la commande dans une discussion, avec la ligne « 📦 Suivi : Boutiques → Mes commandes (EPS-…) »." },
+      { t: "Trouver ses commandes", d: "Acheteur : onglet Boutiques → bouton 📦 à côté de « Ma boutique » (ou « Mes commandes » dans le panier) → onglet « Mes achats ». Vendeur : sa boutique → menu ⋮ → « 🚚 Commandes reçues » (onglet « Mes ventes »)." },
+      { t: "Faire avancer le colis (vendeur)", d: "Ouvrir la commande et toucher le bouton « ✅ Marquer : … » pour l'étape suivante. On peut ajouter un petit mot (numéro de suivi, nom du livreur). Chaque étape envoie un message au client, avec une notification." },
+      { t: "Les étapes selon la livraison", d: "En ville : commande passée → confirmée → le livreur est en route → reçue. À venir chercher : confirmée → prête → reçue. Par la poste : confirmée → expédiée → disponible à la poste → reçue. À l'étranger : confirmée → expédiée → au port / à l'aéroport de départ → arrivée au port / à l'aéroport → dédouanée → en route ou à la poste → reçue." },
+      { t: "Confirmer la réception (acheteur)", d: "Quand le colis est en main (devant le livreur, ou à la poste), toucher « 📦 J'ai reçu ma commande ». Ne jamais le faire avant d'avoir le colis : plus tard, avec le paiement sécurisé, c'est ce bouton qui versera l'argent au vendeur." },
+      { t: "Annuler", d: "L'acheteur peut annuler tant que le vendeur n'a pas confirmé. Le vendeur peut annuler tant que le colis n'est pas parti. Ensuite, il faut s'arranger dans la discussion ou contacter le Service client." },
+    ],
+    tips: [
+      "Pour l'instant, le paiement se règle directement entre l'acheteur et le vendeur (Mobile Money ou espèces). Bientôt : l'argent sera gardé par Epsilon et versé au vendeur seulement à « Commande reçue ».",
+      "Les conditions de vente du produit (livraison, envoi à l'étranger, douane, taxes) sont recopiées dans le message de commande.",
+      "On ne peut pas commander dans sa propre boutique.",
+    ],
+    problems: [
+      { q: "« Je ne vois pas ma commande dans Mes commandes. »", a: "Vérifier l'onglet (Mes achats / Mes ventes). Les commandes passées avant le 16/10/2026 n'ont pas de suivi : elles restent seulement en message dans la discussion." },
+      { q: "« Le vendeur n'avance pas mon colis. »", a: "Lui écrire avec le bouton « 💬 Écrire » de la commande. S'il ne répond pas, le client peut contacter le Service client avec le numéro EPS-… de la commande." },
+    ],
+  },
+
+  // ───────────────────────────── MONNAIES ET PAYS ─────────────────────────────
+  {
+    id: "monnaies",
+    icon: "💱",
+    title: "Pays, monnaies et prix convertis",
+    who: "Tous les utilisateurs, surtout hors du Congo",
+    intro:
+      "Epsilon est ouvert dans 14 pays : Congo, RDC, Sénégal, Mali, Burkina Faso, Niger, Côte d'Ivoire, Cameroun, Bénin, Tchad, Gabon, France, Belgique, États-Unis / Canada. Chaque boutique choisit sa monnaie ; chaque client voit les prix dans la sienne, convertis au taux du jour. Les prix fixés par les vendeurs ne changent jamais tout seuls.",
+    prices: [
+      ["Franc CFA (zone CFA)", "fixe : 1 € = 655,957 francs CFA"],
+      ["Franc congolais, dollar US, dollar canadien", "taux du jour, mis à jour chaque jour"],
+    ],
+    steps: [
+      { t: "S'inscrire depuis un autre pays", d: "Sur l'écran d'inscription, toucher le drapeau 🇨🇬 +242 à côté du numéro et choisir son pays. Le code arrive par e-mail, gratuitement, dans tous les pays." },
+      { t: "Choisir la monnaie de sa boutique (vendeur)", d: "Boutique → ⋮ → « Modifier la boutique » → « Monnaie de vos prix ». Attention : dès que la boutique a un produit, la monnaie ne peut plus changer." },
+      { t: "Lire un prix converti (client)", d: "Un prix venant d'une boutique d'une autre monnaie s'affiche avec « ≈ » (ex. « ≈ 0,99 € »), et le prix exact du vendeur en petit dessous (ex. « 650 FCFA »). La commande se règle au prix exact du vendeur." },
+      { t: "Changer la monnaie d'affichage", d: "Paramètres → « 💱 Monnaie des prix » : choisir une autre monnaie (ex. un Congolais en France qui veut voir en euros, un Canadien en dollars canadiens), ou « Celle de mon pays »." },
+    ],
+    tips: [
+      "Les tarifs d'Epsilon (abonnement, sponsoring, publicités, chaînes TV) sont en FCFA ; un vendeur étranger voit l'équivalent dans sa monnaie.",
+      "Dans le Service client, « 📘 Envoyer une fiche » convertit automatiquement les montants dans la monnaie du pays du client.",
+    ],
+    problems: [
+      { q: "« Le prix converti n'est pas exactement le même qu'hier. »", a: "C'est normal : le taux du dollar et du franc congolais change chaque jour. Le prix du vendeur, lui, ne change pas." },
+    ],
+  },
+
+  // ───────────────────────────── CONTACTS ─────────────────────────────
+  {
+    id: "contacts",
+    icon: "👥",
+    title: "Contacts : retrouver ses proches sur Epsilon",
+    who: "Tous les utilisateurs",
+    intro:
+      "Epsilon retrouve tout seul, dans le répertoire du téléphone, les personnes déjà inscrites (comme WhatsApp). La liste se met à jour à chaque ouverture de l'application, et avec le bouton « Actualiser mes contacts ».",
+    steps: [
+      { t: "Autoriser l'accès aux contacts", d: "À la première ouverture, Android demande l'autorisation : toucher « Autoriser ». Si elle a été refusée : Paramètres du téléphone → Applications → Epsilon → Autorisations → Contacts → Autoriser." },
+      { t: "Voir ses contacts", d: "Discussions → bouton de nouvelle discussion : en haut, « … contacts sur Epsilon », puis la liste. Les contacts pas encore inscrits sont plus bas, avec « Inviter »." },
+      { t: "Un nouveau contact enregistré dans le téléphone", d: "Fermer et rouvrir Epsilon, ou toucher « Actualiser mes contacts ». Il apparaît s'il est inscrit sur Epsilon avec CE numéro." },
+      { t: "Ajouter un contact à la main", d: "« Ajouter un contact » : nom + numéro (choisir le pays devant le numéro). Le message dit tout de suite si la personne est sur Epsilon ou non." },
+    ],
+    tips: [
+      "Les contacts sont reconnus quelle que soit l'écriture du numéro : 06 123 45 67, +242 06 123 45 67, 00242…",
+      "Le compteur d'abonnés d'une chaîne ou d'une boutique compte tout le monde, sans montrer qui sont les abonnés.",
+    ],
+    problems: [
+      { q: "« Mon ami est inscrit mais n'apparaît pas. »", a: "Vérifier qu'il s'est inscrit avec le même numéro que celui enregistré dans le téléphone (beaucoup ont deux puces MTN / Airtel). Puis fermer et rouvrir Epsilon." },
+      { q: "« Un message rouge apparaît en actualisant. »", a: "Faire une capture du message et l'envoyer au PDG : le détail (en petit) permet de corriger tout de suite." },
+    ],
+  },
+
+  // ───────────────────────────── PARTAGE ─────────────────────────────
+  {
+    id: "partage",
+    icon: "📤",
+    title: "Partager une photo, une vidéo ou un fichier",
+    who: "Tous les utilisateurs",
+    intro: "Une photo, une vidéo, un vocal ou un document reçu dans une discussion peut être envoyé vers WhatsApp, Facebook, Bluetooth, e-mail… comme sur les grands réseaux sociaux.",
+    steps: [
+      { t: "Ouvrir le menu du message", d: "Dans la discussion, appuyer longtemps sur la photo, la vidéo ou le fichier." },
+      { t: "Partager", d: "Toucher « Partager ». Epsilon affiche « ⏳ Préparation du partage… » le temps de récupérer le fichier, puis Android propose la liste des applications." },
+      { t: "Mettre l'application à jour si besoin", d: "Si Epsilon propose une mise à jour, accepter : le partage des fichiers demande la version d'Epsilon du 12/10/2026 ou plus récente. Ou : Paramètres → « Mises à jour de l'application »." },
+    ],
+    problems: [
+      { q: "« Le partage copie seulement un texte. »", a: "L'application du téléphone est trop ancienne : la mettre à jour (Paramètres → Mises à jour de l'application)." },
+      { q: "« Le fichier n'a pas pu être préparé. »", a: "Connexion trop faible pour une grosse vidéo : réessayer avec une meilleure connexion (Wi-Fi ou 4G)." },
+    ],
+  },
+
   // ───────────────────────────── PUBLICITÉS ─────────────────────────────
   {
     id: "publicite",
