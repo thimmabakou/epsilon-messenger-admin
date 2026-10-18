@@ -189,17 +189,47 @@ export const HELP_SHEETS = [
       { t: "Trouver ses commandes", d: "Acheteur : onglet Boutiques → bouton 📦 à côté de « Ma boutique » (ou « Mes commandes » dans le panier) → onglet « Mes achats ». Vendeur : sa boutique → menu ⋮ → « 🚚 Commandes reçues » (onglet « Mes ventes »)." },
       { t: "Faire avancer le colis (vendeur)", d: "Ouvrir la commande et toucher le bouton « ✅ Marquer : … » pour l'étape suivante. On peut ajouter un petit mot (numéro de suivi, nom du livreur). Chaque étape envoie un message au client, avec une notification." },
       { t: "Les étapes selon la livraison", d: "En ville : commande passée → confirmée → le livreur est en route → reçue. À venir chercher : confirmée → prête → reçue. Par la poste : confirmée → expédiée → disponible à la poste → reçue. À l'étranger : confirmée → expédiée → au port / à l'aéroport de départ → arrivée au port / à l'aéroport → dédouanée → en route ou à la poste → reçue." },
-      { t: "Confirmer la réception (acheteur)", d: "Quand le colis est en main (devant le livreur, ou à la poste), toucher « 📦 J'ai reçu ma commande ». Ne jamais le faire avant d'avoir le colis : plus tard, avec le paiement sécurisé, c'est ce bouton qui versera l'argent au vendeur." },
+      { t: "Confirmer la réception (acheteur)", d: "Quand le colis est en main (devant le livreur, ou à la poste), toucher « 📦 J'ai reçu ma commande ». Ne jamais le faire avant d'avoir le colis : si la commande a été payée par Epsilon, c'est ce bouton qui verse l'argent au vendeur." },
       { t: "Annuler", d: "L'acheteur peut annuler tant que le vendeur n'a pas confirmé. Le vendeur peut annuler tant que le colis n'est pas parti. Ensuite, il faut s'arranger dans la discussion ou contacter le Service client." },
     ],
     tips: [
-      "Pour l'instant, le paiement se règle directement entre l'acheteur et le vendeur (Mobile Money ou espèces). Bientôt : l'argent sera gardé par Epsilon et versé au vendeur seulement à « Commande reçue ».",
+      "Paiement au choix de l'acheteur : directement au vendeur (Mobile Money ou espèces), ou « 🔒 Payer par Epsilon » (voir la fiche Paiement sécurisé).",
       "Les conditions de vente du produit (livraison, envoi à l'étranger, douane, taxes) sont recopiées dans le message de commande.",
       "On ne peut pas commander dans sa propre boutique.",
     ],
     problems: [
       { q: "« Je ne vois pas ma commande dans Mes commandes. »", a: "Vérifier l'onglet (Mes achats / Mes ventes). Les commandes passées avant le 16/10/2026 n'ont pas de suivi : elles restent seulement en message dans la discussion." },
       { q: "« Le vendeur n'avance pas mon colis. »", a: "Lui écrire avec le bouton « 💬 Écrire » de la commande. S'il ne répond pas, le client peut contacter le Service client avec le numéro EPS-… de la commande." },
+    ],
+  },
+
+  // ───────────────────────────── PAIEMENT SÉCURISÉ ─────────────────────────────
+  {
+    id: "paiement-securise",
+    icon: "🔒",
+    title: "Paiement sécurisé par Epsilon",
+    who: "Acheteurs et vendeurs",
+    intro:
+      "L'acheteur peut payer sa commande à Epsilon au lieu du vendeur. Epsilon garde l'argent pendant la livraison, puis le verse au vendeur (moins 3 % de commission) quand l'acheteur confirme la réception. S'il y a un problème, l'argent reste bloqué et Epsilon tranche : remboursement ou paiement du vendeur. C'est au choix de l'acheteur : payer directement le vendeur reste possible (sans cette protection).",
+    steps: [
+      { t: "Payer par Epsilon (acheteur)", d: "Mes commandes → ouvrir la commande → « 🔒 Payer par Epsilon ». Choisir MTN MoMo ou Airtel Money, envoyer le montant exact au numéro Epsilon affiché (touchez-le pour le copier)." },
+      { t: "Donner le code du SMS (acheteur)", d: "Recopier le code de la transaction indiqué dans le SMS de confirmation, puis « J'ai payé — envoyer le code ». La commande affiche « ⏳ Paiement en vérification »." },
+      { t: "Vérification par Epsilon", d: "Sur le site : « Paiements sécurisés » → « À vérifier ». On recopie le code du SMS reçu sur le téléphone d'Epsilon : il doit être identique. La commande passe à « 🔒 Payée — argent gardé par Epsilon » chez l'acheteur et le vendeur." },
+      { t: "Expédier (vendeur)", d: "Attendre « 🔒 Payée » avant d'expédier, puis cocher les étapes comme d'habitude. La commande indique combien le vendeur recevra (montant moins 3 %)." },
+      { t: "Versement au vendeur", d: "Dès que l'acheteur touche « 📦 J'ai reçu ma commande », l'argent passe dans le solde du vendeur. Si l'acheteur ne fait rien, le versement se fait tout seul 3 jours après la dernière étape de livraison, sans réclamation." },
+      { t: "Retirer son argent (vendeur)", d: "Mes commandes → onglet « Mes ventes » → carte « 💼 Mon solde » → « Retirer » (500 FCFA minimum), choisir MTN ou Airtel et le numéro. Sur le site, la demande arrive dans « Versements à faire » : on envoie l'argent, on recopie le code de la transaction, puis « Payé »." },
+      { t: "Problème avec la commande (acheteur)", d: "Avant de confirmer la réception : « ⚠️ Signaler un problème » sur la commande, et expliquer. L'argent est bloqué. Sur le site, « Litiges » : on écoute les deux côtés, puis « Payer le vendeur » ou « Rembourser l'acheteur » (le remboursement arrive dans « Versements à faire »)." },
+    ],
+    tips: [
+      "Seules les commandes en FCFA peuvent être payées par Epsilon (Mobile Money Congo).",
+      "Un code de transaction ne peut servir qu'une seule fois, pour toujours.",
+      "Si la commande est annulée alors que l'argent est gardé, l'acheteur est remboursé automatiquement (le remboursement apparaît dans « Versements à faire »).",
+      "La commission et le délai du versement automatique se règlent sur le site (« Paiements sécurisés » → Réglages, PDG).",
+    ],
+    problems: [
+      { q: "« Mon paiement est refusé. »", a: "Le motif est écrit sur la commande. Le plus souvent, le code ne correspond pas : recopier exactement le code du SMS de confirmation et le renvoyer depuis la commande." },
+      { q: "« Je n'ai pas encore reçu mon argent (vendeur). »", a: "Vérifier sur la commande : l'argent est versé quand le client confirme la réception, ou automatiquement 3 jours après la livraison. Ensuite il faut demander un « Retrait » depuis « Mon solde »." },
+      { q: "« J'ai été remboursé mais je n'ai rien reçu. »", a: "Le remboursement est envoyé par Mobile Money par l'équipe Epsilon, en général le jour même. Vérifier dans « Paiements sécurisés » → « Versements à faire »." },
     ],
   },
 
