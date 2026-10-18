@@ -448,8 +448,8 @@ export const HELP_SHEETS = [
       "Pour diffuser des matchs ou des films, le responsable doit posséder les droits. Au moindre doute, demander l'avis du PDG avant d'ouvrir la chaîne.",
       "Une église ou une association qui veut seulement annoncer un événement n'a pas besoin d'une chaîne : orientez-la vers la publicité ou un communiqué (voir ces fiches).",
       "Numéro de canal : chaque chaîne a un numéro (canal 1, 2, 3…). Pour aider quelqu'un à trouver une chaîne, donnez-lui simplement ce numéro : dans l'onglet TV, il touche « 🔢 Aller au canal », tape le numéro, puis OK. Une nouvelle chaîne reçoit le numéro suivant ; le PDG peut le changer dans le site (Epsilon TV → « 🔢 Numéro de canal »).",
-      "Genres et diffusion : en publiant (ou avec « Ranger »), le responsable choisit le GENRE (🎬 Cinéma, 📺 Séries, 📰 Journal, 🎵 Musique, 🌍 Documentaires, 🎙️ Émissions) et la DIFFUSION : 🔁 en boucle (24 h/24, les uns après les autres), ⏰ à heure fixe (jour et heure à la seconde, heure de Brazzaville) ou 📢 publicité. Toutes les pubs ensemble forment la PAGE DE PUB (avec l'animation « Publicité » / « Fin de la publicité ») qui sépare les programmes. Films, épisodes de séries et documentaires de plus de 30 minutes ont une page de pub avant, une au MILIEU exact et une à la fin, puis reprennent à la seconde près. La musique n'est jamais coupée, et il n'y a pas de pub entre deux chansons qui se suivent. Avant un rendez-vous à heure fixe, la page de pub est placée pour se terminer PILE à l'heure (ex. 3 min 09 s de pub avant 20:00:00 → elle commence à 19:56:51) ; ensuite le programme interrompu reprend là où il s'était arrêté. L'onglet « 📅 Grille » montre les 48 prochaines heures, seconde par seconde.",
-      "Grille type de la journée : dans 📅 Grille → « Grille type », la chaîne décrit sa journée UNE fois, sans nommer les fichiers (ex. 19:00:00 → 3 épisodes de la série ; 09:00:00 → rediffusion des épisodes 1 et 2 de la veille ; 12:00:00 → épisode 3 ; 14:00:00 → documentaire ; 16:30:00 → film ; 00:00:00 → musique avec photo ; 05:00:00 → musique avec pub). L'application choisit les vidéos du bon genre (épisodes dans l'ordre, une série après l'autre) et calcule les durées toute seule, chaque jour. La musique remplit les trous sans jamais être coupée ; les espaces encore « libres » sont affichés en jaune, avec leurs heures, pour les compléter.",
+      "Genres et diffusion : en publiant (ou avec « Ranger »), le responsable choisit le GENRE (🎬 Cinéma, 📺 Séries, 😂 Comédie, 📰 Journal, 🎵 Musique, 🌍 Documentaires, 🎙️ Émissions) et la DIFFUSION : 🔁 en boucle (24 h/24, les uns après les autres), ⏰ à heure fixe (jour et heure à la seconde, heure de Brazzaville), 📢 publicité ou 🎛️ Régie (reportages, photos et documents gardés pour le direct, jamais diffusés seuls). Toutes les pubs ensemble forment la PAGE DE PUB (avec l'animation « Publicité » / « Fin de la publicité ») qui sépare les programmes. Films, épisodes de séries, comédies et documentaires de plus de 30 minutes ont une page de pub avant, une au MILIEU exact et une à la fin, puis reprennent à la seconde près. La musique n'est jamais coupée, et il n'y a pas de pub entre deux chansons qui se suivent. Avant un rendez-vous à heure fixe, la page de pub est placée pour se terminer PILE à l'heure (ex. 3 min 09 s de pub avant 20:00:00 → elle commence à 19:56:51) ; ensuite le programme interrompu reprend là où il s'était arrêté. L'onglet « 📅 Grille » montre les 48 prochaines heures, seconde par seconde.",
+      "Grille type de la journée : dans 📅 Grille → « Grille type », la chaîne décrit sa journée UNE fois, sans nommer les fichiers (ex. 19:00:00 → 3 épisodes de la série ; 09:00:00 → rediffusion des épisodes 1 et 2 de la veille ; 12:00:00 → épisode 3 ; 14:00:00 → documentaire ; 16:30:00 → film ; un créneau 😂 Comédie possible ; 00:00:00 → musique avec photo ; 05:00:00 → musique avec pub). L'application choisit les vidéos du bon genre (épisodes dans l'ordre, une série après l'autre) et calcule les durées toute seule, chaque jour. La musique remplit les trous sans jamais être coupée ; les espaces encore « libres » sont affichés en jaune, avec leurs heures, pour les compléter.",
       "Floutage : sous chaque vidéo de sa chaîne, le responsable touche « 🔲 Flouter », ajoute une zone et la fait glisser sur ce qu'il faut cacher (logo d'un partenaire, filigrane, plaque, nom). Le coin rose change la taille ; « Début ici » / « Fin ici » limitent le flou à un passage. Les spectateurs voient la zone floutée, à l'antenne et en replay. Pour des VISAGES qui bougent (reportage), conseiller CapCut (outil flou / mosaïque qui suit le visage), puis publier la vidéo exportée en MP4.",
       "Chaîne privée : sur demande du responsable, SEUL le PDG peut rendre une chaîne privée (site → Epsilon TV → « 🔒 Rendre privée »). Un code est créé (ex. EPS-7KQ4-M9XA) ; le responsable le voit dans « Gérer ma chaîne » et le donne à son public, qui touche « 🔐 Code privé » dans l'onglet TV et le tape. L'équipe Epsilon voit toujours les chaînes privées pour contrôler leur contenu. Le PDG peut changer le code (« 🔄 Nouveau code ») ou retirer tous les accès d'un coup.",
       "L'heure de Brazzaville s'affiche en direct sur l'écran de chaque chaîne (au début du bandeau INFO, ou en haut à gauche s'il n'y a pas de bandeau). Les pubs sont signalées par la mention PUBLICITÉ et ne peuvent pas être sautées. Toutes les vidéos (pubs comprises) comptent dans l'espace de stockage de la chaîne.",
@@ -532,10 +532,11 @@ export const HELP_SHEETS = [
     ],
     steps: [
       { t: "Ouvrir le site", d: "Dans l'application : Paramètres → « 📺 Epsilon TV Studio ↗ » (ou Ma chaîne → « 🖥️ Epsilon TV Studio »). Sur un ordinateur, taper l'adresse epsilon-messenger-app.pages.dev/studio." },
-      { t: "Se connecter", d: "Avec le compte Epsilon du responsable de la chaîne : même numéro, même code que dans l'application. Un compte sans chaîne voit « Accès refusé »." },
+      { t: "Se connecter", d: "Avec son PROPRE compte Epsilon (même numéro, même code que dans l'application) : le responsable de la chaîne, ou un membre de son équipe (régie, journaliste, statistiques — voir la fiche « Équipe d'une chaîne »). Un compte sans chaîne et hors équipe voit « Accès refusé »." },
       { t: "Payer l'abonnement", d: "Sans abonnement, le site affiche le prix (10 000 FCFA par mois, converti dans la monnaie du client) et les numéros Mobile Money d'Epsilon. Le responsable paie, puis écrit au Service client « Abonnement Studio — nom de la chaîne » avec le code du SMS." },
       { t: "Activer (PDG)", d: "Site administrateur → Epsilon TV → la chaîne → « 🖥️ Studio (site) » : choisir 1, 3, 6 ou 12 mois, recopier le code du paiement (ou « Payé en espèces »), confirmer avec le code PDG. Le responsable recharge la page du Studio : sa régie s'ouvre." },
-      { t: "Régie du direct à deux", d: "Le journaliste lance le direct avec le TÉLÉPHONE (onglet TV → Ma chaîne → Passer en direct) et reste sur l'écran de la caméra. La régie, sur le site, voit le direct, les commentaires, et touche une vidéo pour la balancer à l'antenne (reportage, publicité), puis « 📷 Revenir à la caméra ». Elle peut aussi terminer le direct pour tout le monde." },
+      { t: "Régie du direct à deux", d: "Le journaliste lance le direct avec le TÉLÉPHONE (onglet TV → la chaîne → Passer en direct) et reste sur l'écran de la caméra. Sur le site apparaît le pupitre de régie : à gauche l'aperçu de l'antenne, à droite les reportages, documents et photos de l'onglet 🎛️ Régie. Voir la fiche « Régie du direct » (curseur, vitesse, photo épinglée, documents, Retour antenne)." },
+      { t: "Logiciel de montage", d: "En haut du Studio : « ✂️ Montage ». Voir la fiche « Montage vidéo (Studio) »." },
     ],
     tips: [
       "Le Studio et l'application montrent la même chaîne : ce qui est fait sur l'un apparaît aussitôt sur l'autre.",
@@ -543,8 +544,90 @@ export const HELP_SHEETS = [
       "À la fin de l'abonnement, le site redemande le paiement ; la chaîne, elle, continue de passer normalement, et le responsable la gère depuis son téléphone.",
     ],
     problems: [
-      { q: "« Le site me dit Accès refusé. »", a: "Le compte connecté n'est pas celui du responsable de la chaîne. Se déconnecter (« Changer de compte ») et se connecter avec le numéro qui gère la chaîne." },
+      { q: "« Le site me dit Accès refusé. »", a: "Le compte connecté n'est ni le responsable de la chaîne, ni dans son équipe. Soit se connecter avec le numéro qui gère la chaîne, soit demander au responsable d'ajouter ce numéro dans « 👥 Équipe de la chaîne » (fiche « Équipe d'une chaîne »). L'abonnement Studio de la chaîne vaut pour toute l'équipe." },
       { q: "« J'ai payé mais le site demande toujours l'abonnement. »", a: "Vérifier dans le site administrateur (Epsilon TV → la chaîne) la ligne « Epsilon TV Studio ». Si le paiement est reçu, l'activer avec « 🖥️ Studio (site) », puis demander au client de recharger la page." },
+    ],
+  },
+
+  // ───────────────────────────── ÉQUIPE D'UNE CHAÎNE ─────────────────────────────
+  {
+    id: "tv-equipe",
+    icon: "👥",
+    title: "Équipe d'une chaîne : régie, journaliste, statistiques",
+    who: "Responsables de chaînes Epsilon TV et leurs collaborateurs",
+    intro:
+      "Le responsable d'une chaîne peut ajouter jusqu'à 10 personnes à son équipe. Chacune se connecte avec SON propre compte Epsilon (dans l'application ou sur Epsilon TV Studio) et retrouve la chaîne selon son rôle. Jamais de partage de code ou de compte.",
+    steps: [
+      { t: "Les trois rôles", d: "🎛️ RÉGIE : gère tout (programmes, grille, pubs, directs programmés, bandeaux, onglet Régie, pupitre du direct) et voit les statistiques. S'il n'y a personne aux statistiques, la régie fait tout le travail. 🎥 JOURNALISTE : lance le direct avec la caméra de son téléphone et peut se servir du pupitre de régie. 📊 STATISTIQUES : voit l'onglet 📊 Statistiques sans rien pouvoir modifier." },
+      { t: "Ajouter un membre (responsable)", d: "Application → TV → la chaîne → « 👥 Équipe de la chaîne » → taper le numéro Epsilon de la personne → choisir le rôle → « Ajouter ». Le message « ✅ … ajouté(e) » confirme." },
+      { t: "Le membre retrouve la chaîne", d: "Dans l'application (onglet TV → la chaîne, avec « Votre rôle dans l'équipe ») ou sur Epsilon TV Studio, connecté avec son propre compte." },
+      { t: "Changer de rôle ou retirer", d: "Même fenêtre : ajouter à nouveau le même numéro avec un autre rôle, ou « Retirer » à côté de son nom." },
+    ],
+    tips: [
+      "L'abonnement Studio (10 000 FCFA/mois) est un par chaîne : il vaut pour toute l'équipe.",
+      "Le PDG peut aussi ajouter un membre à n'importe quelle chaîne (même fenêtre, depuis son compte).",
+    ],
+    problems: [
+      { q: "« Aucun compte Epsilon avec ce numéro. »", a: "La personne doit d'abord s'inscrire dans l'application avec ce numéro, puis le responsable l'ajoute." },
+      { q: "« Mon collègue a Accès refusé sur le Studio. »", a: "Il n'est pas encore dans l'équipe, ou il s'est connecté avec un autre numéro. Vérifier la liste dans « 👥 Équipe de la chaîne »." },
+      { q: "« Le journaliste ne voit pas le bouton Passer en direct. »", a: "Vérifier son rôle (🎥 Journaliste ou 🎛️ Régie), qu'il est bien connecté avec le bon compte, et que la formule de la chaîne n'est pas expirée." },
+    ],
+  },
+
+  // ───────────────────────────── RÉGIE DU DIRECT ─────────────────────────────
+  {
+    id: "tv-regie",
+    icon: "🎛️",
+    title: "Régie du direct : reportages, photo épinglée, documents",
+    who: "Chaînes Epsilon TV (régie et journalistes)",
+    intro:
+      "Pendant un direct, la régie (sur le Studio ou sur le téléphone) peut balancer un reportage par-dessus la caméra, le piloter (curseur, pause, vitesse), épingler une photo, afficher un document, puis revenir à l'antenne. Seuls les fichiers rangés dans l'onglet 🎛️ Régie de la chaîne apparaissent, pour ne pas confondre avec les films ou la musique.",
+    steps: [
+      { t: "Préparer les fichiers (avant le direct)", d: "Application ou Studio → la chaîne → onglet « 🎛️ Régie » → « ＋ Ajouter à la régie ». On peut ajouter des vidéos (reportages), des PDF (chaque page devient une image, 40 pages au plus) et des photos (JPG, PNG). Ces fichiers ne passent JAMAIS seuls à l'antenne." },
+      { t: "Ouvrir le pupitre", d: "Sur le Studio : il s'affiche tout seul en haut quand la chaîne est en direct. Sur le téléphone du journaliste : bouton « 🎛️ Régie » en bas de l'écran du direct. Trois rubriques : 🎞️ Reportages, 📄 Documents, 🖼️ Photos (+ ajout rapide pendant le direct)." },
+      { t: "Balancer un reportage", d: "Toucher un reportage : tous les spectateurs le voient en même temps. Le curseur permet de revenir en arrière ou d'avancer jusqu'au passage important ; boutons ⏮ début, ↺ 10 s, ❚❚ arrêt sur image, 10 s ↻ ; vitesse de 0,5× à 3× (les spectateurs voient « Ralenti », « Accéléré » ou « Arrêt sur image »). À la fin, l'image revient toute seule sur la caméra ; « ⏹ Arrêter le reportage » le coupe avant." },
+      { t: "Épingler une photo (sans couper la caméra)", d: "Rubrique 🖼️ Photos → toucher une photo (ex. la personne dont on parle). Régler l'emplacement (9 positions, ou glisser la photo du doigt sur l'image), la taille, la forme ronde ou carrée, et le nom affiché dessous. Toucher une autre photo la remplace." },
+      { t: "Afficher un document (sans couper la caméra)", d: "Rubrique 📄 Documents → toucher un PDF ou une image. « 📌 Épinglé » : dans un coin (emplacement et taille réglables). « ⛶ Plein écran » : tout le monde lit, la caméra continue en petite fenêtre dans le coin. « Précédente / Suivante » pour tourner les pages." },
+      { t: "Enlever et revenir à l'antenne", d: "Toucher à nouveau l'élément affiché, ou « ✕ Enlever de l'écran » sur sa carte. Le grand bouton vert « 📷 Retour antenne » enlève TOUT d'un coup (reportage, photo, document) : il ne reste que la caméra." },
+    ],
+    tips: [
+      "Prérequis : fichiers SQL 73 et 74 exécutés (déjà fait le 18/10/2026).",
+      "Le journaliste peut piloter le pupitre depuis son téléphone, mais seuls le responsable et la régie peuvent ajouter des fichiers.",
+      "Un PDF se prépare avec une connexion Internet (les pages sont fabriquées au moment de l'ajout).",
+    ],
+    problems: [
+      { q: "« Mon reportage n'apparaît pas dans la régie. »", a: "Il est rangé dans un autre onglet (Cinéma, Émissions…). Sur la vidéo : « Ranger » → Diffusion « 🎛️ Régie (direct) »." },
+      { q: "« Impossible d'ouvrir le PDF. »", a: "Vérifier la connexion Internet et réessayer ; sinon exporter le document en images (JPG) et les ajouter comme documents." },
+      { q: "« La photo cache le visage du présentateur. »", a: "La déplacer (glisser du doigt, ou une autre des 9 positions) et réduire la taille." },
+    ],
+  },
+
+  // ───────────────────────────── MONTAGE VIDÉO ─────────────────────────────
+  {
+    id: "tv-montage",
+    icon: "✂️",
+    title: "Montage vidéo (Epsilon TV Studio)",
+    who: "Chaînes abonnées au Studio (responsable, régie, journaliste)",
+    intro:
+      "Le Studio contient un vrai logiciel de montage, seulement sur le site : on monte des morceaux de vidéo, des photos, des titres, des musiques et voix off, puis le site fabrique UN seul fichier MP4, à télécharger ou à publier sur la chaîne. Il n'a rien à voir avec le direct.",
+    steps: [
+      { t: "Ouvrir le montage", d: "Epsilon TV Studio, dans Google Chrome à jour (ordinateur ou Android) → onglet « ✂️ Montage » en haut." },
+      { t: "Importer", d: "« ＋ Importer » : vidéos, photos, musiques, voix off (plusieurs à la fois). Les vidéos et photos se rangent à la suite sur la timeline ; les sons se placent au curseur." },
+      { t: "Monter", d: "Toucher un élément de la timeline pour le régler à droite (ou en dessous sur téléphone). Tirer sur ses bords pour le raccourcir, le faire glisser pour changer l'ordre. « ✂ Couper » coupe au curseur (aussi la musique). « ⧉ Dupliquer », « 🗑 Supprimer ». ↶ / ↷ pour annuler ou rétablir." },
+      { t: "Habiller", d: "Transitions d'entrée (coupe franche, fondu au noir, fondu enchaîné), fondu au noir à la fin, volume de chaque morceau, « 🅣 Titre » (bandeau nom, grand titre, bandeau haut, générique), « 📺 Logo » de la chaîne incrusté dans un coin. Musique : volume, fondu d'entrée et de sortie." },
+      { t: "Exporter en MP4", d: "« ⤓ Exporter en MP4 » : choisir 720p ou 1080p, Standard ou Haute, 25 ou 30 images/s, puis « Fabriquer le MP4 ». Garder la page ouverte et au premier plan (sur ordinateur, environ la durée de la vidéo)." },
+      { t: "Télécharger ou publier", d: "« ⬇ Télécharger le MP4 », ou « 📤 Publier sur la chaîne » au choix : 🎛️ Régie (pour le direct), 🔁 Programme (avec son genre) ou 📢 Publicité. Publier est réservé au responsable et à la régie, 1 Go au plus." },
+    ],
+    tips: [
+      "Le projet est enregistré automatiquement sur l'appareil : on peut fermer la page et reprendre plus tard (📁 Projets). Il n'est pas partagé avec les autres appareils.",
+      "Raccourcis sur ordinateur : Espace = lecture, S = couper, Suppr = supprimer, ← → = image par image, Ctrl+Z = annuler.",
+      "Pour un long film, préférer un ordinateur et 720p Standard (environ 45 min pour 1 Go).",
+    ],
+    problems: [
+      { q: "« Ce navigateur ne sait pas fabriquer de MP4. »", a: "Ouvrir le Studio dans Google Chrome à jour (ordinateur ou Android)." },
+      { q: "« Un fichier ne peut pas être lu. »", a: "Préférer des vidéos MP4 (H.264), des photos JPG/PNG et des sons MP3/M4A." },
+      { q: "« Fichier trop lourd pour être publié. »", a: "Refaire l'export en 720p / Standard, ou télécharger le fichier." },
+      { q: "« Mes fichiers ont disparu du projet. »", a: "Le projet est lié à l'appareil (et au navigateur) où il a été fait. Sur un autre appareil, il faut réimporter les fichiers." },
     ],
   },
 ];
