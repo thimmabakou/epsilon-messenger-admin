@@ -553,6 +553,8 @@ export const HELP_SHEETS = [
       { t: "Suivi et renouvellement", d: "Sur sa chaîne, le responsable voit sa formule, les jours restants et les minutes déjà consommées. L'application le prévient avant la fin. Sans renouvellement, la chaîne n'est plus visible, mais ses vidéos ne sont pas effacées." },
     ],
     tips: [
+      "Formats de vidéo : MP4 (H.264) de préférence. Les fichiers AVI, WMV, FLV ou MPEG sont refusés à l'envoi, car les téléphones ne savent pas les lire ; une vidéo de ce format déjà publiée n'est jamais diffusée (⚠️ dans la liste des vidéos) : la convertir en MP4 et la republier.",
+      "Si une vidéo ne se lit pas ou reste bloquée chez un spectateur, la chaîne passe toute seule à la suite (pub ou programme suivant) au bout de quelques secondes : l'antenne ne reste jamais figée.",
       "Contenus interdits : piratage (films, matchs, émissions d'autres chaînes sans droits), violence, contenu sexuel, appels à la haine. Une chaîne qui ne respecte pas cela est mise en pause sans remboursement.",
       "Pour diffuser des matchs ou des films, le responsable doit posséder les droits. Au moindre doute, demander l'avis du PDG avant d'ouvrir la chaîne.",
       "Une église ou une association qui veut seulement annoncer un événement n'a pas besoin d'une chaîne : orientez-la vers la publicité ou un communiqué (voir ces fiches).",
