@@ -13,6 +13,7 @@ export const NAV_ITEMS = [
   { key: "channels", label: "Epsilon TV", icon: "📺" },
   { key: "ads", label: "Publicités", icon: "📣" },
   { key: "support", label: "Service client", icon: "🎧" },
+  { key: "ia", label: "Epsilon IA", icon: "🤖" },
   { key: "reports", label: "Signalements", icon: "🚩" },
   { key: "stats", label: "Statistiques", icon: "📊" },
   { key: "documents", label: "Documents", icon: "📄" },
@@ -25,7 +26,7 @@ export const NAV_ITEMS = [
 
 // Permission nécessaire pour voir chaque écran (null = tout le monde, "PDG" = PDG seulement)
 export const SECTION_PERMS = {
-  overview: null, users: "users.list", calls: "calls.view", marketplace: "market.manage", music: "PDG", ringtones: "PDG", channels: "PDG", ads: "PDG", support: "support.inbox",
+  overview: null, users: "users.list", calls: "calls.view", marketplace: "market.manage", music: "PDG", ringtones: "PDG", channels: "PDG", ads: "PDG", support: "support.inbox", ia: "support.inbox",
   shoppay: "shops.pay", escrow: "money.escrow", reports: "mod.view", stats: "stats.view", documents: "docs.prepare", admins: "admins.manage", versions: "ver.prepare",
   security: "PDG", settings: "settings.modules", requests: null, team: null,
 };

@@ -216,10 +216,10 @@ export default function Support({ nav, goto }) {
       {conv.tag === "contestation" && <Note icon="⚖️" style={{ marginBottom: 10 }}>Contestation d'une sanction. Vous pouvez dialoguer librement ; annuler ou modifier la sanction demande la permission « Annuler ou modifier une sanction ».</Note>}
       <div className="conv-messages" ref={msgBox} onScroll={(e) => { const b = e.currentTarget; atBottom.current = b.scrollHeight - b.scrollTop - b.clientHeight < 120; }}>
         {(msgs.data || []).map((m) => (
-          <div key={m.id} className={"conv-msg " + (m.sender === "user" ? "user" : m.sender === "system" ? "system" : "team")}>
+          <div key={m.id} className={"conv-msg " + (m.sender === "user" ? "user" : m.sender === "system" ? "system" : m.sender === "ai" ? "team ai" : "team")}>
             {m.kind === "voice" && m.media_url ? <audio className="conv-audio" src={m.media_url} controls preload="none" /> : m.body}
             <span className="conv-msg-when">
-              {m.sender === "team" ? "Équipe Epsilon · " : ""}{dateTime(m.created_at)}{m.edited_at ? " · modifié" : ""}
+              {m.sender === "team" ? "Équipe Epsilon · " : m.sender === "ai" ? "🤖 Epsilon IA (réponse automatique) · " : ""}{dateTime(m.created_at)}{m.edited_at ? " · modifié" : ""}
               {m.sender === "team" && (m.kind || "text") === "text" && (!m.author_id || m.author_id === me?.id || me?.isPdg) && (
                 <button className="conv-edit" onClick={() => startEdit(m)} title="Corriger cette réponse">✏️ Modifier</button>
               )}
@@ -273,7 +273,7 @@ export default function Support({ nav, goto }) {
             <Avatar url={c.user?.avatar_url} name={fullName(c.user)} />
             <div className="conv-main">
               <div className="conv-top"><strong>{fullName(c.user)}</strong><span className={"conv-tag " + c.tag}>{c.tag === "support" ? "Support" : "Contestation"}</span></div>
-              <div className="conv-preview">{c.last ? (c.last.sender === "team" ? "Vous : " : "") + c.last.body : ""}</div>
+              <div className="conv-preview">{c.last ? (c.last.sender === "team" ? "Vous : " : c.last.sender === "ai" ? "🤖 Epsilon IA : " : "") + c.last.body : ""}</div>
             </div>
             {c.unread_for_team > 0 && <span className="conv-unread">{c.unread_for_team}</span>}
           </button>

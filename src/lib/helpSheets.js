@@ -1,6 +1,8 @@
 // Fiches pratiques du Service client : pour guider au téléphone (ou par message) une personne qui ne s'en sort pas.
 // Chaque étape est écrite pour être lue telle quelle au client, ou copiée et envoyée dans sa discussion.
 // Les prix et les noms de boutons correspondent à l'application actuelle : à mettre à jour ici si ça change.
+// Epsilon IA (l'assistante du Service client) répond à partir de ces fiches : après une modification, refabriquer
+// sa copie dans le dépôt de l'application avec  node scripts/ia-docs.mjs ../epsilon-messenger-admin
 
 export const TV_PRICE_PER_MIN = 1.2; // FCFA par minute regardée (1 spectateur × 1 minute), validé par le PDG le 11/10/2026
 
@@ -279,6 +281,91 @@ export const HELP_SHEETS = [
     ],
     problems: [
       { q: "« Le prix converti n'est pas exactement le même qu'hier. »", a: "C'est normal : le taux du dollar et du franc congolais change chaque jour. Le prix du vendeur, lui, ne change pas." },
+    ],
+  },
+
+  // ───────────────────────────── COMPTE ET SÉCURITÉ ─────────────────────────────
+  {
+    id: "compte",
+    icon: "🔐",
+    title: "Compte : inscription, connexion, deux comptes et code secret",
+    who: "Tous les utilisateurs",
+    intro:
+      "Un compte Epsilon, c'est un numéro de téléphone (il identifie le compte) et une adresse e-mail (elle sert à recevoir le code de connexion et à récupérer le compte). Les discussions sont chiffrées de bout en bout et protégées par un code secret que seule la personne connaît.",
+    steps: [
+      { t: "S'inscrire", d: "Ouvrir l'application, entrer son numéro de téléphone et son adresse e-mail, puis « Continuer ». Un code à 6 chiffres arrive par e-mail : le taper dans l'application. Si l'e-mail contient un lien au lieu d'un code, toucher simplement ce lien." },
+      { t: "Créer son profil", d: "Prénom, nom, âge, sexe, ville, région et photo de profil, plus une petite phrase de statut (ex. « Disponible »). Toucher « Terminer »." },
+      { t: "Créer son code secret", d: "L'application demande un code secret pour protéger les discussions : au moins 8 caractères, avec des lettres et des chiffres. Le retaper, cocher « J'ai écrit mon code secret quelque part », puis « Activer le chiffrement »." },
+      { t: "Se connecter sur un nouveau téléphone", d: "Entrer le numéro du compte et son adresse e-mail, taper le code reçu par e-mail, puis entrer le code secret pour retrouver ses anciennes discussions. Sur le même téléphone, le code secret n'est jamais redemandé." },
+      { t: "Changer de code secret", d: "Paramètres → « Chiffrement de bout en bout » → entrer le nouveau code deux fois → « Enregistrer le nouveau code »." },
+      { t: "Avoir deux comptes sur le même téléphone", d: "Paramètres → « Changer de compte » → « Ajouter un compte ». 2 comptes au maximum. On passe de l'un à l'autre d'un toucher, sans se déconnecter." },
+      { t: "Se déconnecter ou retirer un compte", d: "« Se déconnecter » laisse le compte sur le téléphone (on y revient d'un toucher). « Retirer de ce téléphone » l'enlève de la liste, sans le supprimer : on peut revenir plus tard avec son numéro et le code reçu par e-mail." },
+    ],
+    tips: [
+      "Personne ne peut lire les discussions : ni Epsilon, ni un pirate. C'est pour ça que l'équipe ne peut PAS retrouver un code secret oublié. Conseiller de l'écrire sur papier, dans un carnet.",
+      "Une même adresse e-mail peut servir à plusieurs numéros (par exemple pour un proche qui n'a pas d'e-mail). C'est le numéro qui identifie le compte.",
+      "Le numéro et l'adresse e-mail ne sont pas visibles par les autres utilisateurs.",
+      "Langue : Paramètres → « Langue de l'application » (français, anglais, chinois, espagnol) ; elle s'applique à toute l'application. Thème : Paramètres → Apparence (clair, moyen, sombre).",
+      "Nouvelle version : un bandeau « Nouvelle version d'Epsilon disponible » apparaît dans Discussions. Toucher « Mettre à jour », puis « Installer ». Les discussions sont conservées.",
+      "Ne pas apparaître « en ligne » : Paramètres → « Masquer quand je suis en ligne ».",
+    ],
+    problems: [
+      { q: "« Je ne reçois pas le code. »", a: "Regarder dans les courriers indésirables (spam) de la boîte e-mail, vérifier que l'adresse est bien écrite, attendre une minute puis toucher « Renvoyer le code »." },
+      { q: "« J'ai oublié mon code secret. »", a: "Personne ne peut le retrouver, pas même Epsilon. Sur l'écran du code, toucher « J'ai oublié mon code » puis « Continuer sans mes anciens messages » : le compte repart avec un nouveau code, mais les anciens messages ne pourront plus être lus sur ce téléphone." },
+      { q: "« Ce numéro est déjà lié à une autre adresse e-mail. »", a: "Il faut entrer l'adresse e-mail utilisée à l'inscription de ce numéro. Si la personne ne s'en souvient plus, la passer à un conseiller." },
+      { q: "« Je ne peux pas ajouter un troisième compte. »", a: "2 comptes au maximum par téléphone : retirer d'abord l'un des deux (« Retirer de ce téléphone »)." },
+    ],
+  },
+
+  // ───────────────────────────── DISCUSSIONS, GROUPES, SIGNALER ─────────────────────────────
+  {
+    id: "discussions",
+    icon: "💬",
+    title: "Discussions et groupes : écrire, bloquer, signaler",
+    who: "Tous les utilisateurs",
+    intro:
+      "Les discussions marchent en temps réel : le message arrive tout de suite, et on voit quand l'autre est en train d'écrire. On peut envoyer du texte, des messages vocaux, des photos, des vidéos, des documents et des produits des boutiques. Les groupes réunissent jusqu'à 256 membres.",
+    steps: [
+      { t: "Commencer une discussion", d: "Onglet Discussions → bouton « + » en bas à droite → choisir un contact. Seules les personnes inscrites sur Epsilon apparaissent dans « Contacts sur Epsilon »." },
+      { t: "Envoyer une photo, une vidéo ou un vocal", d: "Dans la discussion : l'icône appareil photo (prendre une photo/vidéo ou choisir dans la galerie), le trombone (document ou produit), et le micro (garder le doigt pour un message vocal)." },
+      { t: "Créer un groupe", d: "Onglet Discussions → bouton « + » en bas à droite → « Nouveau groupe ». Donner un nom (et une photo si on veut), « Suivant », puis choisir les membres." },
+      { t: "Gérer un groupe", d: "Ouvrir le groupe → toucher son nom en haut (« Infos du groupe »). Les admins peuvent ajouter ou retirer des membres, changer le nom et la photo, nommer d'autres admins et supprimer un message pour tout le monde." },
+      { t: "Bloquer quelqu'un", d: "Ouvrir son profil (toucher son nom en haut de la discussion) → « Bloquer … ». Cette personne ne pourra plus vous envoyer de messages ; elle n'est pas prévenue. Pour annuler : même endroit → « Débloquer »." },
+      { t: "Signaler un message", d: "Garder le doigt sur le message → « Signaler » → choisir le motif → « Envoyer le signalement ». Le téléphone envoie à l'équipe ce message et les 10 messages précédents, rien d'autre de la discussion." },
+    ],
+    tips: [
+      "Un message commencé et pas envoyé est gardé (brouillon), même si on quitte l'application.",
+      "Pour un statut, un profil ou un produit : toucher « ⋮ » puis « Signaler ».",
+      "Le fond d'écran des discussions se change dans Paramètres → « Fond d'écran des discussions ».",
+    ],
+    problems: [
+      { q: "« Je ne trouve pas mon ami dans les contacts. »", a: "Son numéro doit être enregistré dans le téléphone et il doit être inscrit sur Epsilon. Bouton « + » des Discussions → « Mettre à jour mes contacts ». Sinon, l'inviter avec le bouton « Inviter »." },
+      { q: "« Message illisible sur ce téléphone. »", a: "Le compte a été ouvert sur un nouveau téléphone sans le code secret. Il faut entrer le bon code secret pour lire les anciens messages (voir la fiche Compte)." },
+      { q: "« Quelqu'un me harcèle. »", a: "Le bloquer depuis son profil, et signaler ses messages. L'équipe examine chaque signalement. En cas de danger, contacter aussi la police." },
+    ],
+  },
+
+  // ───────────────────────────── EPSILON IA ─────────────────────────────
+  {
+    id: "epsilon-ia",
+    icon: "🤖",
+    title: "Epsilon IA : l'assistante du Service client",
+    who: "Tous les utilisateurs (et l'équipe du Service client)",
+    intro:
+      "Epsilon IA est l'assistante automatique d'Epsilon. Elle répond tout de suite, jour et nuit, dans la discussion « Service client Epsilon », à partir de ces fiches pratiques, dans la langue de la personne. Quand la réponse n'est pas dans les fiches, ou quand il faut une décision humaine, elle passe la main à un conseiller.",
+    steps: [
+      { t: "Poser une question", d: "Ouvrir la discussion « Service client Epsilon » (épinglée en premier) et écrire sa question. Epsilon IA répond en quelques secondes ; ses messages portent la mention « 🤖 Epsilon IA »." },
+      { t: "Parler à un conseiller", d: "Sous la réponse d'Epsilon IA, toucher « 👤 Parler à un conseiller ». Un membre de l'équipe répond dans la même discussion dès que possible ; Epsilon IA se tait pendant 24 heures." },
+      { t: "Pour l'équipe : suivre Epsilon IA", d: "Site administrateur → « Epsilon IA » : l'allumer ou l'éteindre, voir les questions du jour, celles qu'elle a transmises et celles où la personne a demandé un conseiller. Une question sans réponse = une fiche à compléter." },
+    ],
+    tips: [
+      "Epsilon IA ne valide jamais un paiement, ne débloque pas un compte, ne traite pas un signalement et ne rembourse pas : elle transmet à l'équipe.",
+      "Elle ne répond pas aux messages vocaux : un conseiller les écoute.",
+      "Quand un conseiller répond dans une discussion, Epsilon IA se tait pendant 12 heures dans cette discussion.",
+      "Elle peut se tromper : en cas de doute, demander un conseiller.",
+    ],
+    problems: [
+      { q: "« L'IA ne m'a pas compris. »", a: "Reformuler la question en une phrase simple, ou toucher « 👤 Parler à un conseiller »." },
     ],
   },
 
