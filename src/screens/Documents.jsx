@@ -4,6 +4,7 @@ import { supabase, q, rpc } from "../lib/supabase";
 import { useAdmin, useLoad, Loading } from "../lib/admin";
 import { dateOnly, dateTime } from "../lib/format";
 import { Note, ScreenTitle } from "../components/common";
+import { DOC_TEMPLATES } from "../lib/docTemplates";
 
 export default function Documents() {
   const { me, act } = useAdmin();
@@ -71,7 +72,16 @@ export default function Documents() {
             <button className={"pill" + (!preview ? " active" : "")} onClick={() => setPreview(false)}>✏️ Modifier</button>
             <button className={"pill" + (preview ? " active" : "")} onClick={() => setPreview(true)}>👁️ Prévisualiser</button>
           </div>
-          {preview ? <div className="doc-preview-box">{text}</div> : <textarea value={text} onChange={(e) => setText(e.target.value)} />}
+          {DOC_TEMPLATES[doc.id] && (
+            <div className="field-hint" style={{ margin: "0 0 8px", display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+              <button className="action-button neutral" onClick={() => {
+                if (text.trim() && !window.confirm("Remplacer le texte actuel de l'éditeur par le modèle préparé ? (Rien n'est publié tant que vous ne touchez pas « Publier ».)")) return;
+                setText(DOC_TEMPLATES[doc.id]); setPreview(true); setSavedMsg("Modèle chargé : complétez les passages entre [crochets], relisez, puis enregistrez ou publiez.");
+              }}>📥 Charger le modèle préparé</button>
+              <span>Texte préparé d'après les fonctions réelles d'Epsilon. Complétez les passages entre [crochets] avant de publier.</span>
+            </div>
+          )}
+          {preview ? <div className="doc-preview-box" style={{ whiteSpace: "pre-wrap" }}>{text}</div> : <textarea value={text} onChange={(e) => setText(e.target.value)} />}
           <div className="doc-editor-actions" style={{ marginTop: 12 }}>
             <button className="action-button neutral" onClick={saveDraft}>💾 Enregistrer en brouillon</button>
             {me.isPdg

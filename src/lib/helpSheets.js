@@ -203,6 +203,28 @@ export const HELP_SHEETS = [
     ],
   },
 
+  // ───────────────────────────── DOCUMENTS OFFICIELS ─────────────────────────────
+  {
+    id: "documents-officiels",
+    icon: "📜",
+    title: "FAQ, conditions d'utilisation et confidentialité",
+    who: "Tous les utilisateurs",
+    intro:
+      "Les documents officiels d'Epsilon (FAQ, conditions d'utilisation, politique de confidentialité, règles de communauté, politique des boutiques et du paiement sécurisé) se lisent dans l'application. Ils sont préparés et publiés par le PDG sur le site administrateur (Documents).",
+    steps: [
+      { t: "Les lire dans l'application", d: "Paramètres → « 📜 Aide et documents » → choisir le document." },
+      { t: "Mettre à jour un document (équipe)", d: "Site administrateur → Documents → le document → « ✏️ Modifier » (ou « 📥 Charger le modèle préparé ») → « 💾 Enregistrer en brouillon ». Le public voit toujours la dernière version publiée." },
+      { t: "Publier (PDG)", d: "Même écran → « 🚀 Publier » avec une note de version. La nouvelle version apparaît aussitôt dans l'application." },
+    ],
+    tips: [
+      "Données personnelles : pour une demande d'accès, de correction ou de suppression, noter la demande, vérifier l'identité (numéro du compte) et transmettre au PDG ; réponse sous un mois.",
+      "Epsilon ne demande JAMAIS le code secret Mobile Money d'un client : le rappeler à toute personne qui dit avoir été contactée par un faux agent.",
+    ],
+    problems: [
+      { q: "« Le document dit : bientôt disponible. »", a: "Il n'a pas encore été publié par le PDG (Documents → Publier), ou le fichier SQL 77 n'est pas encore exécuté." },
+    ],
+  },
+
   // ───────────────────────────── PAIEMENT SÉCURISÉ ─────────────────────────────
   {
     id: "paiement-securise",
