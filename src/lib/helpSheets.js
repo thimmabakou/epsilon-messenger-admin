@@ -662,12 +662,12 @@ export const HELP_SHEETS = [
   {
     id: "tv-equipe",
     icon: "👥",
-    title: "Équipe d'une chaîne : régie, journaliste, statistiques",
+    title: "Équipe d'une chaîne : régie, journaliste, caméraman, statistiques",
     who: "Responsables de chaînes Epsilon TV et leurs collaborateurs",
     intro:
       "Le responsable d'une chaîne peut ajouter jusqu'à 10 personnes à son équipe. Chacune se connecte avec SON propre compte Epsilon (dans l'application ou sur Epsilon TV Studio) et retrouve la chaîne selon son rôle. Jamais de partage de code ou de compte.",
     steps: [
-      { t: "Les trois rôles", d: "🎛️ RÉGIE : gère tout (programmes, grille, pubs, directs programmés, bandeaux, onglet Régie, pupitre du direct) et voit les statistiques. S'il n'y a personne aux statistiques, la régie fait tout le travail. 🎥 JOURNALISTE : lance le direct avec la caméra de son téléphone et peut se servir du pupitre de régie. 📊 STATISTIQUES : voit l'onglet 📊 Statistiques sans rien pouvoir modifier." },
+      { t: "Les quatre rôles", d: "🎛️ RÉGIE : gère tout (programmes, grille, pubs, directs programmés, bandeaux, onglet Régie, pupitre du direct, choix des caméras) et voit les statistiques. S'il n'y a personne aux statistiques, la régie fait tout le travail. 🎥 JOURNALISTE : lance le direct avec la caméra de son téléphone et peut se servir du pupitre de régie et choisir les caméras. 📷 CAMÉRAMAN : son téléphone sert seulement de caméra pendant le direct (bouton « 📷 Servir de caméra »), rien d'autre. 📊 STATISTIQUES : voit l'onglet 📊 Statistiques sans rien pouvoir modifier." },
       { t: "Ajouter un membre (responsable)", d: "Application → TV → la chaîne → « 👥 Équipe de la chaîne » → taper le numéro Epsilon de la personne → choisir le rôle → « Ajouter ». Le message « ✅ … ajouté(e) » confirme." },
       { t: "Le membre retrouve la chaîne", d: "Dans l'application (onglet TV → la chaîne, avec « Votre rôle dans l'équipe ») ou sur Epsilon TV Studio, connecté avec son propre compte." },
       { t: "Changer de rôle ou retirer", d: "Même fenêtre : ajouter à nouveau le même numéro avec un autre rôle, ou « Retirer » à côté de son nom." },
@@ -680,6 +680,36 @@ export const HELP_SHEETS = [
       { q: "« Aucun compte Epsilon avec ce numéro. »", a: "La personne doit d'abord s'inscrire dans l'application avec ce numéro, puis le responsable l'ajoute." },
       { q: "« Mon collègue a Accès refusé sur le Studio. »", a: "Il n'est pas encore dans l'équipe, ou il s'est connecté avec un autre numéro. Vérifier la liste dans « 👥 Équipe de la chaîne »." },
       { q: "« Le journaliste ne voit pas le bouton Passer en direct. »", a: "Vérifier son rôle (🎥 Journaliste ou 🎛️ Régie), qu'il est bien connecté avec le bon compte, et que la formule de la chaîne n'est pas expirée." },
+    ],
+  },
+
+  // ───────────────────────────── DIRECT À PLUSIEURS TÉLÉPHONES ─────────────────────────────
+  {
+    id: "tv-multicam",
+    icon: "🎥",
+    title: "Direct à plusieurs téléphones (multi-caméras)",
+    who: "Chaînes Epsilon TV sans matériel de tournage (responsable, régie, journaliste, caméramans)",
+    intro:
+      "Une chaîne peut faire son direct avec jusqu'à 4 téléphones comme caméras, sans acheter de kit. Chaque téléphone envoie son image ; la régie (sur ordinateur avec Epsilon TV Studio, ou sur le téléphone du journaliste) voit toutes les caméras en petits écrans et choisit celle qui passe à l'antenne, et de quel téléphone vient le son. Les spectateurs ne reçoivent toujours qu'une seule image : leur consommation ne change pas.",
+    steps: [
+      { t: "Préparer l'équipe", d: "Application → TV → la chaîne → « 👥 Équipe de la chaîne » : ajouter chaque personne qui tiendra un téléphone, avec le rôle 📷 Caméraman (ou Journaliste / Régie). Chacun se connecte avec SON compte Epsilon." },
+      { t: "Brancher les téléphones-caméras", d: "Sur chaque téléphone : Epsilon → TV → la chaîne → « 📷 Servir de caméra » → donner un nom à la caméra (Plan large, Public, Tribune…) → « 📷 Rejoindre le direct comme caméra ». Le téléphone affiche CAMÉRA 1, 2, 3 ou 4. Le poser sur un support ou un trépied, chargeur branché si possible." },
+      { t: "Régie sur ordinateur (conseillé)", d: "Epsilon TV Studio → « 🎥 Régie multi-caméras » → « Ouvrir ». Toutes les caméras connectées apparaissent. Avant le direct : toucher la caméra de départ, écrire le titre, puis « 🔴 Démarrer le direct avec la caméra … ». Pendant le direct : cliquer une caméra (ou touches 1 à 4 du clavier) pour la mettre à l'antenne ; « 🎤 Prendre le son » pour choisir de quel téléphone vient le son. Le pupitre (reportages, photo épinglée, documents) reste en dessous." },
+      { t: "Régie sur téléphone", d: "Le journaliste lance le direct comme d'habitude (« 🔴 Passer en direct ») : son téléphone devient lui aussi une caméra. Pendant le direct, bouton « 🎥 Caméras » : toucher une caméra pour la mettre à l'antenne, « 🎤 Prendre le son » pour le son." },
+      { t: "Ce que voient les caméramans", d: "Un cadre rouge et « ● À L'ANTENNE » quand leur image est diffusée ; « Prête » sinon ; « 🎤 Votre micro est le son du direct » quand leur micro est utilisé. « Quitter » pour arrêter." },
+    ],
+    tips: [
+      "4 caméras au plus par direct. Le passage d'une caméra à l'autre prend environ une demi-seconde chez les spectateurs.",
+      "Chaque téléphone-caméra envoie environ 300 Mo par heure : Wi-Fi ou bonne 4G conseillés.",
+      "Le son reste sur un seul micro (choisi par la régie), pour éviter l'écho et les sauts de son à chaque changement d'image.",
+      "Si l'ordinateur de la régie se ferme, le direct continue tant qu'une caméra est branchée : rouvrir le Studio pour reprendre la régie. Si la caméra à l'antenne se déconnecte, une autre caméra prend le relais toute seule.",
+      "Les minutes de direct sont décomptées comme d'habitude (par spectateur), quel que soit le nombre de caméras.",
+    ],
+    problems: [
+      { q: "« Direct à plusieurs caméras pas encore activé (fichiers SQL 79). »", a: "Le PDG doit exécuter les fichiers SQL 79 (parties 1 à 3) dans Supabase." },
+      { q: "« Il y a déjà 4 caméras connectées. »", a: "Faire quitter une caméra (bouton « Quitter » sur son téléphone), ou attendre 40 secondes qu'une caméra éteinte libère sa place." },
+      { q: "« Le bouton Servir de caméra n'apparaît pas. »", a: "Vérifier que la personne est dans l'équipe de la chaîne (rôle 📷 Caméraman, Journaliste ou Régie), connectée avec le bon compte, et que la formule de la chaîne n'est pas expirée." },
+      { q: "« La caméra à l'antenne ne répond plus. »", a: "Le téléphone a perdu le réseau ou a quitté Epsilon : la régie passe sur une autre caméra, puis le caméraman relance « Servir de caméra »." },
     ],
   },
 
