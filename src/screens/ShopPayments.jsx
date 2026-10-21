@@ -8,6 +8,7 @@ import { useAdmin, useLoad, Loading } from "../lib/admin";
 import { dateOnly, dateTime, fmt, fullName } from "../lib/format";
 import { Empty, Note, Pills, ScreenTitle } from "../components/common";
 import PayCodeCheck from "../components/PayCodeCheck";
+import { printReport, money, dayTime } from "../lib/printDoc";
 
 const TABS = [["en_attente", "En attente"], ["validee", "Validés"], ["refusee", "Refusés"]];
 const KIND = { ouverture: "Ouverture", mensuel: "Mois", sponsor: "🚀 Sponsoring d'un produit (7 jours, portée ×4)" };
@@ -50,7 +51,21 @@ export default function ShopPayments() {
   const confirmReject = () => act(async () => { await rpc({ p_payment: reject.p.id, p_ok: false, p_reason: reject.reason || null }); setReject(null); }, "❌ Paiement refusé. Le commerçant voit le motif dans sa boutique.");
 
   return (<>
-    <ScreenTitle eyebrow="COMMERCE" title="Paiements des boutiques" />
+    <ScreenTitle eyebrow="COMMERCE" title="Paiements des boutiques">
+      {data && <button className="action-button neutral" onClick={() => printReport({
+        title: `Paiements des boutiques — ${TABS.find((t) => t[0] === tab)?.[1]}`,
+        subtitle: `${list.length} paiement(s)`,
+        landscape: true,
+        blocks: [{ table: {
+          cols: ["Déclaré le", "Boutique", "Ville", "Commerçant", "Téléphone", "Objet", "Montant", "Code Mobile Money", "Décision", "Motif"],
+          align: ["c", "", "", "", "", "", "r", "c", "c", ""],
+          rows: list.map((p) => [dayTime(p.created_at), p.shop?.name || "supprimée", p.shop?.city, p.owner ? fullName(p.owner) : "—", p.owner?.phone,
+            p.kind === "sponsor" ? `Sponsoring · ${p.product?.name || "produit"}` : `${(KIND[p.kind] || p.kind)} · ${(PLAN[p.plan] || p.plan || "").replace(" ⭐", "")}`,
+            money(p.amount_fcfa), p.pay_ref, dayTime(p.decided_at), p.reject_reason]),
+          foot: ["", "", "", "", "", "Total", money(list.reduce((s, p) => s + Number(p.amount_fcfa || 0), 0)), "", "", ""],
+        } }],
+      })}>🖨️ Imprimer</button>}
+    </ScreenTitle>
     <Note icon="💳">Ouverture <b>600 FCFA</b> (1er mois) · puis chaque mois <b>1 000 FCFA</b> (Standard) ou <b>3 000 FCFA</b> (Pro, plus de visibilité) · sponsoring d'un produit <b>200 FCFA</b> (7 jours, portée 400 km au lieu de 100). Pour valider, <b>recopiez le code reçu dans le SMS</b> du téléphone d'Epsilon : il doit être identique au code du commerçant (la case devient verte). Vérifiez aussi le <b>montant</b>. Un code validé ne peut plus jamais resservir. Chaque décision est inscrite au journal de sécurité.</Note>
     <Pills options={TABS.map(([k, l]) => [k, `${l} (${count(k)})`])} value={tab} onChange={setTab} />
     {!data && <Loading error={error} />}

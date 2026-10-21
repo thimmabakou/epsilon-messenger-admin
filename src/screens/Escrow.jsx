@@ -11,6 +11,7 @@ import { useAdmin, useLoad, Loading } from "../lib/admin";
 import { dateTime, fmt } from "../lib/format";
 import { Empty, Note, Pills, ScreenTitle, sqlHint } from "../components/common";
 import PayCodeCheck from "../components/PayCodeCheck";
+import { printReport, money, dayTime } from "../lib/printDoc";
 
 const PERM = "money.escrow";
 const OP = { mtn: "MTN MoMo", airtel: "Airtel Money" };
@@ -46,7 +47,24 @@ export default function Escrow() {
   const rpc = (name, args) => async () => { const { error: e } = await supabase.rpc(name, args); if (e) throw new Error(e.message); };
 
   return (<>
-    <ScreenTitle eyebrow="COMMERCE" title="Paiements sécurisés" />
+    <ScreenTitle eyebrow="COMMERCE" title="Paiements sécurisés">
+      {data && <button className="action-button neutral" onClick={() => {
+        const tabName = TABS.find((t) => t[0] === tab)?.[1];
+        const summary = { kv: [["Argent gardé", money(data.held)], ["Dû aux vendeurs", money(data.owed)], ["Versements à faire", money(data.to_pay)],
+          ["Commissions gagnées", money(data.commissions)], ["Total reçu", money(data.received)], ["Total versé", money(data.paid_out)]] };
+        const table = tab === "versements"
+          ? { cols: ["Demandé le", "Type", "Bénéficiaire", "Opérateur", "Numéro", "Commande", "Montant"], align: ["c", "", "", "", "", "c", "r"],
+              rows: L.versements.map((p) => [dayTime(p.created_at), p.kind === "remboursement" ? "Remboursement" : "Retrait", p.name, OP[p.op] || p.op, p.phone, p.order_id ? code(p.order_id) : "—", money(p.amount)]),
+              foot: ["", "", "", "", "", "Total", money(L.versements.reduce((s, p) => s + Number(p.amount || 0), 0))] }
+          : { cols: ["Commande", "Boutique", "Acheteur", "Vendeur", "Articles", "Montant", "Opérateur · code", "Déclaré le", "État"], align: ["c", "", "", "", "", "r", "", "c", ""],
+              rows: L[tab].map((o) => [code(o.id), o.shop_name, `${o.buyer?.name || "—"} (${o.buyer?.phone || "—"})`, `${o.seller?.name || "—"} (${o.seller?.phone || "—"})`, items(o),
+                money(o.pay_amount || o.total), `${OP[o.pay_op] || o.pay_op || "—"} · ${o.pay_ref || "—"}`, dayTime(o.pay_declared_at),
+                o.pay_status === "versee" ? `Versé ${money(o.seller_amount)} (commission ${money(o.commission)})` : o.pay_status === "litige" ? `Litige : ${o.dispute_reason || ""}` : o.pay_status === "refusee" ? `Refusé ${o.pay_reject_reason || ""}` : o.pay_status]),
+              foot: ["", "", "", "", "Total", money(L[tab].reduce((s, o) => s + Number(o.pay_amount || o.total || 0), 0)), "", "", ""] };
+        printReport({ title: `Paiements sécurisés — ${tabName}`, subtitle: `${(tab === "versements" ? L.versements : L[tab]).length} ligne(s)`, landscape: true,
+          blocks: [{ h: "Situation de la caisse" }, summary, { h: tabName }, { table }] });
+      }}>🖨️ Imprimer</button>}
+    </ScreenTitle>
     <Note icon="🔒">L'acheteur paie au <b>numéro Epsilon</b> et donne le code de son SMS. Après vérification (les deux codes identiques), l'argent est <b>gardé par Epsilon</b>. Il est versé au vendeur, moins la commission de <b>{data?.settings?.pct ?? 3} %</b>, quand l'acheteur touche « Commande reçue », ou automatiquement <b>{data?.settings?.days ?? 3} jours</b> après la livraison sans réclamation. En cas de litige, c'est vous qui tranchez.</Note>
     {!data && <Loading error={error} />}
     {data && (<>

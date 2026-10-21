@@ -29,6 +29,7 @@ import Security from "../screens/Security";
 import Settings from "../screens/Settings";
 import Team from "../screens/Team";
 import { teamUnread } from "../lib/team";
+import { printScreen } from "../lib/printDoc";
 
 const SCREENS = { overview: Overview, users: Users, calls: Calls, marketplace: Marketplace, shoppay: ShopPayments, escrow: Escrow, music: Music, ringtones: Ringtones, channels: Channels, ads: Ads, support: Support, ia: EpsilonIA, reports: Reports, stats: Stats, documents: Documents, admins: Admins, versions: Versions, requests: Requests, security: Security, settings: Settings, team: Team };
 
@@ -85,6 +86,8 @@ function Shell({ me, section, nav, goto, onLogout, reloadMe }) {
           <div className="admin-user">
             <div className="who"><strong>{me.name}</strong><span>{me.isPdg ? "PDG · toutes les permissions" : `Administrateur · ${me.perms.length} permission(s)`}</span></div>
             <div className="u-avatar" style={{ width: 34, height: 34, fontSize: 12 }}>{me.isPdg ? "👑" : initials(me.name)}</div>
+            <button className="logout-btn print-btn" title="Imprimer la page affichée (choix de l'imprimante ou « Enregistrer en PDF »)"
+              onClick={() => { const it = NAV_ITEMS.find((x) => x.key === current); printScreen(document.querySelector(".admin-main"), it ? it.label : "Administration", `Imprimé par ${me.name}`); }}>🖨️ Imprimer</button>
             <button className="logout-btn" onClick={onLogout}>Se déconnecter</button>
           </div>
         </header>

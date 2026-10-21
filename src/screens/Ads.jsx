@@ -8,6 +8,7 @@ import { useAdmin, useLoad, Loading } from "../lib/admin";
 import { dateOnly, fmt, fullName } from "../lib/format";
 import { Empty, Note, ScreenTitle, SecurityGate, Pills } from "../components/common";
 import PayCodeCheck from "../components/PayCodeCheck";
+import { printReport, money, day } from "../lib/printDoc";
 
 const TABS = [["pending", "En attente"], ["active", "En ligne"], ["ended", "Terminées"], ["rejected", "Refusées"]];
 const stateOf = (a) => (a.status === "active" ? (new Date(a.ends_at) > new Date() ? "active" : "ended") : a.status);
@@ -71,7 +72,17 @@ export default function Ads() {
   const payLocked = !editPay && !!(data?.pay.momo_number || data?.pay.airtel_number);
 
   return (<>
-    <ScreenTitle eyebrow="CONTENU" title="Publicités — Epsilon Market" />
+    <ScreenTitle eyebrow="CONTENU" title="Publicités — Epsilon Market">
+      {data && <button className="action-button neutral" onClick={() => printReport({
+        title: `Publicités Epsilon Market — ${TABS.find((t) => t[0] === tab)?.[1]}`, subtitle: `${rows.length} publicité(s)`, landscape: true,
+        blocks: [{ table: {
+          cols: ["Demandée le", "Boutique", "Produit", "Commerçant", "Téléphone", "Durée", "Prix", "Code Mobile Money", "Fin", "Vues", "Touches", "Motif"],
+          align: ["c", "", "", "", "", "c", "r", "c", "c", "r", "r", ""],
+          rows: rows.map((a) => [day(a.created_at), a.shop?.name, a.product?.name || "toute la boutique", a.owner ? fullName(a.owner) : "—", a.owner?.phone, `${a.days} j`, money(a.price_fcfa), a.pay_ref, day(a.ends_at), fmt(a.views || 0), fmt(a.clicks || 0), a.reject_reason]),
+          foot: ["", "", "", "", "", "Total", money(rows.reduce((s, a) => s + Number(a.price_fcfa || 0), 0)), "", "", "", "", ""],
+        } }],
+      })}>🖨️ Imprimer</button>}
+    </ScreenTitle>
     <Note icon="📣">Prix : <b>2 jours 500 FCFA</b> · <b>5 jours 1 000 FCFA</b> · <b>1 semaine 1 500 FCFA</b>. Pour valider, <b>recopiez le code reçu dans le SMS</b> du téléphone d'Epsilon : il doit être identique au code du commerçant (la case devient verte), et vérifiez le montant. Un code validé ne peut plus jamais resservir. La publicité démarre à la validation et s'arrête seule à la fin. 🔐 Réservé au PDG.</Note>
 
     {pay && payLocked && (

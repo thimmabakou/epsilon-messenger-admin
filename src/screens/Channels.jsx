@@ -10,6 +10,7 @@ import PrivateCodes, { CodesRegistry } from "../components/PrivateCodes";
 import { COUNTRIES, dateOnly, fmt, fullName } from "../lib/format";
 import { uploadMusicFile } from "../lib/files";
 import { Empty, Note, ScreenTitle, SecurityGate, Pills } from "../components/common";
+import { printChannelList, printCodesRegistry, printPayments, printReceipt, printContract } from "../lib/printTv";
 
 export const PRICE_PER_MINUTE = 1.2; // FCFA par minute regardée
 export const STUDIO_PRICE = 10000;   // Epsilon TV Studio (site de gestion des chaînes) : FCFA par mois (validé le 16/10/2026)
@@ -172,6 +173,8 @@ export default function Channels() {
   return (<>
     <ScreenTitle eyebrow="CONTENU" title="Epsilon TV — Chaînes">
       <button className="action-button neutral" onClick={() => (allowed ? setShowReg(!showReg) : deny("PDG"))}>📋 Registre des codes</button>
+      {data && <button className="action-button neutral" onClick={() => printChannelList(rows, PLANS)}>🖨️ Liste des chaînes</button>}
+      {data && <button className="action-button neutral" onClick={() => (allowed ? printCodesRegistry(rows) : deny("PDG"))}>🖨️ Registre des codes</button>}
       <button className="primary-button" onClick={() => (allowed ? setOpen(!open) : deny("PDG"))}>＋ Créer une chaîne</button>
     </ScreenTitle>
     <Note icon="📺">Une chaîne n'apparaît dans l'application qu'après <b>activation d'une formule</b>, une fois le paiement reçu (Mobile Money ou espèces). Tarif : <b>1,20 FCFA par minute regardée</b> (1 spectateur pendant 1 minute ; Cloudflare nous coûte ≈ 0,60). Stockage du différé compris (90 FCFA le Go par mois) : Bronze 10 Go · Argent 30 Go · Platine 60 Go · Or 100 Go · Sur mesure 10 Go. Formules : <b>Bronze</b> 24 000 FCFA (21 000 min, +5 %) · <b>Argent</b> 120 000 FCFA (110 000 min, +10 %) · <b>Platine</b> 300 000 FCFA (287 500 min, +15 %) · <b>Or</b> 600 000 FCFA (600 000 min, +20 %) · <b>Sur mesure</b> 1,20 FCFA la minute · <b>Recharge</b> 12 000 FCFA (+10 000 min) · <b>🖥️ Epsilon TV Studio</b> (gestion sur le site) 10 000 FCFA par mois, gestion depuis le téléphone gratuite. À la fin de la période payée, la chaîne disparaît toute seule. 🔐 Réservé au PDG.</Note>
@@ -224,6 +227,10 @@ export default function Channels() {
               <button className="action-button neutral" onClick={() => startPay(c, "stockage")}>💾 Espace en plus</button>
               <button className="action-button neutral" onClick={() => startPay(c, "studio")}>🖥️ Studio (site)</button>
               <button className="action-button neutral" onClick={() => setHist(hist?.id === c.id ? null : c)}>🧾 Paiements</button>
+              <button className="action-button neutral" onClick={() => act(async () => {
+                const list = await q(supabase.from("tv_payments").select("*").eq("channel_id", c.id).order("created_at"));
+                await printContract(c, list, { plans: PLANS, pricePerMinute: PRICE_PER_MINUTE, studioPrice: STUDIO_PRICE, storagePriceGb: STORAGE_PRICE_GB });
+              })}>📄 Contrat d'abonnement</button>
               <button className="action-button neutral" onClick={() => setNo(c)}>🔢 Numéro de canal</button>
               <button className="action-button neutral" onClick={() => togglePause(c)}>{c.status === "active" ? "⏸ Pause" : "▶ Reprendre"}</button>
               {(c.ticker || []).length > 0 && <button className="action-button neutral" onClick={() => clearTicker(c)}>🧹 Retirer les bandeaux</button>}
@@ -231,9 +238,11 @@ export default function Channels() {
             </div>
             {hist?.id === c.id && (
               <div style={{ gridColumn: "1 / -1", width: "100%", marginTop: 8 }}>
+                {payments.data?.length > 0 && <button className="action-button neutral" style={{ marginBottom: 6 }} onClick={() => printPayments(c, payments.data)}>🖨️ Imprimer l'historique</button>}
                 {!payments.data ? <Loading error={payments.error} /> : payments.data.length === 0 ? <span className="field-hint">Aucun paiement enregistré.</span> : (
                   payments.data.map((p) => (
                     <div key={p.id} className="field-hint" style={{ padding: "4px 0", borderTop: "1px solid var(--line, #eee)" }}>
+                      <button className="link-button" style={{ float: "right" }} onClick={() => printReceipt(c, p)}>🧾 Reçu</button>
                       {dateOnly(p.created_at)} · {p.kind === "recharge" ? "Recharge" : p.kind === "studio" ? `Epsilon TV Studio ${p.months} mois` : p.kind === "stockage" ? `Espace en plus ${p.storage_gb} Go` : `${PLANS[p.plan]?.label || p.plan} ${p.months} mois`} · {p.kind === "stockage" || p.kind === "studio" ? "" : `${fmt(p.minutes)} min · `} <b>{fmt(p.amount_fcfa)} FCFA</b>{p.pay_ref ? ` · code ${p.pay_ref}` : ""}{p.note ? ` · ${p.note}` : ""}
                     </div>
                   ))

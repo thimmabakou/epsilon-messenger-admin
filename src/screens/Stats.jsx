@@ -6,6 +6,9 @@ import { CITY_COORDS, COUNTRY_COORDS } from "../lib/constants";
 import { fmt } from "../lib/format";
 import { ScreenTitle } from "../components/common";
 import { BarChart, ColumnChart, LineChart, StatsMap, VizTable } from "../components/charts";
+import MonthlyReport from "../components/MonthlyReport";
+import StatsProducts from "./StatsProducts";
+import { printReport, num } from "../lib/printDoc";
 
 const PERIODS = { "7j": ["7 derniers jours", 7], "30j": ["30 derniers jours", 30], lancement: ["Depuis le lancement", 3650] };
 const MONTHS = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
@@ -45,7 +48,22 @@ function buildSeries(daily, period, total) {
   return { labels, values, cumul };
 }
 
+// Deux pages : statistiques des abonnés (inscrits, villes, âges, rapport mensuel) et des produits vendus
 export default function Stats() {
+  const [page, setPage] = useState("abonnes");
+  return (
+    <div className="stats-root">
+      <ScreenTitle eyebrow="TABLEAU DE BORD" title="Statistiques" />
+      <div className="stats-switch">
+        <button className={page === "abonnes" ? "on" : ""} onClick={() => setPage("abonnes")}>👥 Statistiques des abonnés</button>
+        <button className={page === "produits" ? "on" : ""} onClick={() => setPage("produits")}>🛍️ Statistiques des produits vendus</button>
+      </div>
+      {page === "abonnes" ? <SubscriberStats /> : <StatsProducts />}
+    </div>
+  );
+}
+
+function SubscriberStats() {
   const [period, setPeriod] = useState("30j");
   const [level, setLevel] = useState("afrique");
   const [city, setCity] = useState(null);
@@ -53,7 +71,7 @@ export default function Stats() {
 
   const all = useLoad(() => rpc("stats_summary", { p_days: PERIODS[period][1] }), [period]);
   const zone = useLoad(() => city ? rpc("stats_summary", { p_days: PERIODS[period][1], p_city: city }) : Promise.resolve(null), [period, city]);
-  if (!all.data) return (<><ScreenTitle eyebrow="TABLEAU DE BORD" title="Statistiques" /><Loading error={all.error} /></>);
+  if (!all.data) return <Loading error={all.error} />;
 
   const s = all.data;
   const byCountry = s.by_country || [];
@@ -71,12 +89,27 @@ export default function Stats() {
   const rank = level === "afrique" ? countries : cities;
   const maxRank = Math.max(1, ...rank.map((r) => r.users));
 
+  const doPrint = () => printReport({
+    title: "Statistiques des abonnés", subtitle: `${PERIODS[period][0]} · ${zoneName}`,
+    blocks: [
+      { kv: [["Utilisateurs inscrits", num(zoneTotal)], ["Nouveaux inscrits sur la période", num(newUsers)],
+        ["Utilisateurs actifs (7 jours)", `${num(z.active_users)} (${z.total_users ? Math.round(z.active_users / z.total_users * 100) : 0} %)`],
+        ["Appels au service client", num(s.support_calls)], ["Publications marketplace", num(s.market_products)]] },
+      { h: level === "afrique" ? "Utilisateurs par pays" : "Utilisateurs par ville" },
+      { table: { cols: [level === "afrique" ? "Pays" : "Ville", "Utilisateurs", "Part"], align: ["", "r", "r"],
+        rows: rank.map((r) => [r.name, num(r.users), `${Math.round(r.users / Math.max(1, rank.reduce((a, b) => a + b.users, 0)) * 100)} %`]) } },
+      { h: "Utilisateurs par tranche d'âge" }, { table: { cols: ["Tranche d'âge", "Utilisateurs"], align: ["", "r"], rows: ages.map(([a, n]) => [a, num(n)]) } },
+      { h: `Nouveaux inscrits par ${period === "lancement" ? "mois" : "jour"}` },
+      { table: { cols: ["Période", "Nouveaux inscrits", "Inscrits au total"], align: ["", "r", "r"], rows: series.labels.map((l, i) => [l, num(series.values[i]), num(series.cumul[i])]) } },
+    ],
+  });
+
   return (
-    <div className="stats-root">
-      <ScreenTitle eyebrow="TABLEAU DE BORD" title="Statistiques" />
+    <>
       <div className="stats-filters">
         <span className="label">Période</span>
         {Object.entries(PERIODS).map(([k, [l]]) => <button key={k} className={"pill" + (period === k ? " active" : "")} onClick={() => setPeriod(k)}>{l}</button>)}
+        <button className="action-button neutral" onClick={doPrint}>🖨️ Imprimer</button>
       </div>
       <nav className="crumbs" aria-label="Zone">
         <button className={"crumb" + (level === "afrique" ? " current" : "")} onClick={() => zoom("afrique")}>Afrique</button>
@@ -146,6 +179,8 @@ export default function Stats() {
           <p className="map-hint" style={{ padding: "30px 10px", textAlign: "center" }}>Ces graphiques s'afficheront quand l'application Epsilon Messenger enverra ses statistiques d'appels et de partages. Les conversations privées, elles, ne sont jamais lues.</p>
         </div>
       </section>
-    </div>
+
+      <MonthlyReport />
+    </>
   );
 }

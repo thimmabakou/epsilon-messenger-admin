@@ -3,6 +3,40 @@
 import { useEffect, useMemo, useState } from "react";
 import { HELP_SHEETS, sheetAsText } from "../lib/helpSheets";
 import { CLIENT_ZONES, convertDeep, conversionNote, loadRates } from "../lib/money";
+import { printReport } from "../lib/printDoc";
+
+// Imprimer une fiche (tarifs, étapes, problèmes) en tableaux A4, dans la monnaie choisie
+function sheetBlocks(raw, zone) {
+  const s = convertDeep(raw, zone);
+  const note = conversionNote(zone);
+  const steps = (list) => ({ table: { cols: ["Étape", "Détail"], rows: list.map((st) => [st.t, st.d]) } });
+  const blocks = [];
+  if (note) blocks.push({ note });
+  blocks.push({ text: s.intro });
+  if (s.who) blocks.push({ kv: [["Pour", s.who]] });
+  if (s.prices) blocks.push({ h: "Prix" }, { table: { cols: ["Article", "Prix"], align: ["", "r"], rows: s.prices, num: false } });
+  if (s.pricing) {
+    blocks.push({ h: "Tarifs" }, { note: s.pricing.base }, { table: { cols: s.pricing.head, rows: s.pricing.rows, num: false } });
+    if (s.pricing.extra?.length) blocks.push({ text: s.pricing.extra.map((e) => `• ${e}`).join("\n") });
+    (s.pricing.tables || []).forEach((t) => blocks.push({ h: t.title }, { table: { cols: t.head, rows: t.rows, num: false } }));
+    if (s.pricing.note) blocks.push({ note: s.pricing.note });
+    if (s.pricing.examples?.length) blocks.push({ h: "Exemples concrets" }, { text: s.pricing.examples.map((e) => `• ${e}`).join("\n") });
+  }
+  blocks.push({ h: "Étape par étape" }, steps(s.steps));
+  if (s.debate) blocks.push({ h: s.debate.title }, { text: s.debate.intro }, steps(s.debate.steps));
+  if (s.tips?.length) blocks.push({ h: "Bon à savoir" }, { text: s.tips.map((t) => `• ${t}`).join("\n") });
+  if (s.problems?.length) blocks.push({ h: "Quand ça bloque" }, { table: { cols: ["Le client dit…", "Ce qu'il faut faire"], rows: s.problems.map((p) => [p.q, p.a]) } });
+  return blocks;
+}
+export function printSheet(raw, zone) {
+  return printReport({ title: `${raw.icon || ""} ${raw.title}`.trim(), subtitle: "Fiche pratique du Service client · Epsilon Messenger", blocks: sheetBlocks(raw, zone) });
+}
+// Le classeur complet : sommaire puis une fiche par page
+export function printAllSheets(zone) {
+  const blocks = [{ h: "Sommaire" }, { table: { cols: ["Fiche", "Pour"], rows: HELP_SHEETS.map((x) => [`${x.icon || ""} ${x.title}`, x.who]) } }];
+  HELP_SHEETS.forEach((x) => blocks.push({ pageBreak: true }, { h: `${x.icon || ""} ${x.title}` }, ...sheetBlocks(x, zone)));
+  return printReport({ title: "Classeur des fiches pratiques", subtitle: `${HELP_SHEETS.length} fiches · Service client Epsilon Messenger`, blocks });
+}
 
 // Fiche prête à envoyer à un client : montants dans sa monnaie (+ phrase sur le taux du jour)
 export function sheetForClient(s, zoneId) {
@@ -48,7 +82,7 @@ function Sheet({ s: raw, zone }) {
   const note = conversionNote(zone);
   return (
     <div className="hs-sheet">
-      <div className="mp-actions"><CopyButton s={raw} zone={zone} big /></div>
+      <div className="mp-actions"><CopyButton s={raw} zone={zone} big /><button className="action-button neutral" onClick={() => printSheet(raw, zone)}>🖨️ Imprimer la fiche</button></div>
       {note && <p className="hs-base">{note}</p>}
       <p className="hs-intro">{s.intro}</p>
       <span className="field-hint">Pour : {s.who}</span>
@@ -136,6 +170,7 @@ export default function HelpSheets() {
     <div className="ver-form" style={{ marginBottom: 16 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
         <strong style={{ fontSize: 14, flex: 1 }}>📘 Fiches pratiques (guider un client)</strong>
+        {open && <button className="action-button neutral" onClick={() => printAllSheets(zone)}>🖨️ Imprimer tout le classeur</button>}
         <button className="action-button neutral" onClick={() => setOpen(!open)}>{open ? "Fermer" : "Ouvrir les fiches"}</button>
       </div>
       <span className="field-hint">Quand un client appelle parce qu'il ne s'en sort pas, ouvrez la fiche du sujet et lisez-lui les étapes une par une, en attendant qu'il ait fini chaque étape avant de passer à la suivante. S'il ne comprend toujours pas, touchez « 📋 Copier » à côté de la fiche, puis collez-la dans sa discussion : il pourra la relire tranquillement, autant de fois qu'il faut.</span>

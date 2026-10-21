@@ -671,6 +671,7 @@ export const HELP_SHEETS = [
     steps: [
       { t: "Dans l'application", d: "Paramètres → « 📜 Aide et documents » → ouvrir le document → « 🖨️ Imprimer » (à côté de la version). Sur Android, il faut la dernière version de l'application (bouton « Mettre à jour »)." },
       { t: "Sur le site administrateur", d: "Documents publics → ouvrir le document → « 🖨️ Imprimer » (imprime le texte affiché ; s'il n'est pas publié, la page indique « Brouillon — non publié »). Dans l'historique, le petit 🖨️ imprime une ancienne version." },
+      { t: "Tout le reste du site administrateur", d: "Chaque page a maintenant son bouton 🖨️ : « 🖨️ Imprimer » en haut à droite (la page affichée, sans boutons) ; Epsilon TV — Chaînes : « 🖨️ Liste des chaînes », « 🖨️ Registre des codes », « 📄 Contrat d'abonnement » (à signer en deux exemplaires), et dans « 🧾 Paiements » l'historique et un « 🧾 Reçu » avec sa souche ; Utilisateurs, Paiements des boutiques, Paiements sécurisés, Publicités : la liste en tableau ; Statistiques : « 👥 abonnés » (avec le 📅 rapport mensuel) et « 🛍️ produits vendus » ; Service client : chaque fiche pratique et tout le classeur." },
       { t: "Choisir l'imprimante", d: "En haut de la fenêtre d'impression : « Sélectionner une imprimante » (Android) ou « Destination » (ordinateur). Choisir l'imprimante, le nombre de copies, puis Imprimer." },
     ],
     tips: [

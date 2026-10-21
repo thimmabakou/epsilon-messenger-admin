@@ -5,6 +5,7 @@ import { useAdmin, useLoad, Loading } from "../lib/admin";
 import { ageRange, ago, countryLabel, dateOnly, dateTime, fullName, maskPhone, shortId, statusLabel } from "../lib/format";
 import { Avatar, Empty, History, Note, Pills, ScreenTitle } from "../components/common";
 import SanctionPanel from "../components/SanctionPanel";
+import { printReport, day, dayTime } from "../lib/printDoc";
 
 const KIND_LABEL = { avertissement: "Avertissement envoyé", suspension: "Compte suspendu", retrait_contenu: "Contenu retiré", retrait_produit: "Produit retiré" };
 
@@ -96,7 +97,18 @@ export default function Users({ nav, goto }) {
   }
 
   return (<>
-    <ScreenTitle eyebrow="COMPTES" title="Utilisateurs" />
+    <ScreenTitle eyebrow="COMPTES" title="Utilisateurs">
+      {data && <button className="action-button neutral" onClick={() => printReport({
+        title: "Registre des utilisateurs",
+        subtitle: `${list.length} compte(s)${status !== "Tous" ? ` · ${status}` : ""}${city !== "Toutes" ? ` · ${city}` : ""}${query.trim() ? ` · recherche « ${query.trim()} »` : ""} — sur ${users.length} inscrit(s)`,
+        landscape: true,
+        blocks: [{ table: {
+          cols: ["Identifiant", "Nom", "Téléphone", "Ville", "Âge", "Statut", "Inscrit le", "Dernière visite"],
+          align: ["", "", "", "", "c", "c", "c", "c"],
+          rows: list.map((u) => [shortId(u.id), fullName(u), can("users.detail") ? u.phone : maskPhone(u.phone), u.city, ageRange(u.birth_year), statusLabel(u.status), day(u.created_at), dayTime(u.last_seen_at)]),
+        } }],
+      })}>🖨️ Imprimer la liste</button>}
+    </ScreenTitle>
     <section className="users-summary">
       <div className="u-sum"><span>Total inscrits</span><strong>{users.length}</strong></div>
       <div className="u-sum ok"><span>Actifs</span><strong>{cnt("actif")}</strong></div>
