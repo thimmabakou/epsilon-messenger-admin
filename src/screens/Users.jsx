@@ -1,5 +1,6 @@
 // Utilisateurs : recherche, fiche détaillée, avertir / suspendre / réactiver
-import { useMemo, useState } from "react";
+import { useState } from "react";
+import { PlaceNav, Pager, continentOf, countryName, sqlMissing84 } from "../components/Classeur";
 import { supabase, q, rpc } from "../lib/supabase";
 import { useAdmin, useLoad, Loading } from "../lib/admin";
 import { ageRange, ago, countryLabel, dateOnly, dateTime, fullName, maskPhone, shortId, statusLabel } from "../lib/format";
@@ -11,24 +12,50 @@ const KIND_LABEL = { avertissement: "Avertissement envoyé", suspension: "Compte
 
 export default function Users({ nav, goto }) {
   const { can, deny, act } = useAdmin();
+  const [typed, setTyped] = useState("");
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("Tous");
-  const [city, setCity] = useState("Toutes");
+  const [place, setPlace] = useState({ cont: "", cc: "", city: "" });
+  const [page, setPage] = useState(1);
   const [selId, setSelId] = useState(nav.userId || null);
   const [panel, setPanel] = useState(null);
+  const SIZE = 20;
+  const ST = { Tous: "", Actif: "actif", Averti: "averti", Suspendu: "suspendu" };
 
-  const { data, error } = useLoad(() => q(supabase.from("profiles")
-    .select("id,first_name,last_name,phone,avatar_url,city,birth_year,status,suspended_until,created_at,last_seen_at")
-    .order("created_at", { ascending: false }).limit(1000)));
-  const users = data || [];
-  const cities = useMemo(() => ["Toutes", ...[...new Set(users.map((u) => u.city).filter(Boolean))].sort()], [users]);
-  const list = users.filter((u) => {
-    const s = query.trim().toLowerCase();
-    return (status === "Tous" || statusLabel(u.status) === status) && (city === "Toutes" || u.city === city) &&
-      (!s || fullName(u).toLowerCase().includes(s) || shortId(u.id).toLowerCase().includes(s) || (u.phone || "").includes(s) || (u.city || "").toLowerCase().includes(s));
+  // Classeur : continent › pays › ville (nombres calculés par la base), puis la liste en feuilles de 20
+  const placesQ = useLoad(() => rpc("eg_users_places"));
+  const places = placesQ.data || [];
+  const ccArg = place.cc || (place.cont ? [...new Set(places.filter((p) => continentOf(p.cc) === place.cont).map((p) => p.cc))].join(",") || "-" : "");
+  const args = { p_cc: ccArg || null, p_city: place.city || null, p_status: ST[status] || null, p_q: query || null };
+  const { data, error } = useLoad(() => rpc("eg_users_find", { ...args, p_page: page, p_size: SIZE }), [JSON.stringify(args), page]);
+  const list = data?.rows || [];
+  const missing = sqlMissing84(error) || sqlMissing84(placesQ.error);
+  const sumOf = (k) => places.reduce((n, p) => n + Number(p[k] || 0), 0);
+  const one = useLoad(async () => (selId ? (await q(supabase.from("profiles")
+    .select("id,first_name,last_name,phone,country_code,avatar_url,city,birth_year,status,suspended_until,created_at,last_seen_at").eq("id", selId).limit(1)))[0] || null : null), [selId]);
+  const sel = one.data && one.data.id === selId ? one.data : null;
+  const cnt = (st) => sumOf(st === "actif" ? "actifs" : st === "averti" ? "avertis" : "suspendus");
+  const printUsers = (onlyPage) => act(async () => {
+    let rows = list, total = data?.total || 0;
+    if (!onlyPage) {
+      rows = [];
+      for (let p = 1; p <= 20; p++) {
+        const r = await rpc("eg_users_find", { ...args, p_page: p, p_size: 500 });
+        rows.push(...r.rows); total = r.total;
+        if (rows.length >= r.total || !r.rows.length) break;
+      }
+    }
+    const where = place.city || (place.cc ? countryName(place.cc) : place.cont || "toutes les régions");
+    await printReport({
+      title: "Registre des utilisateurs", landscape: true,
+      subtitle: `${where}${status !== "Tous" ? ` · ${status}` : ""}${query ? ` · recherche « ${query} »` : ""} — ${onlyPage ? `feuille ${page}, ` : ""}${rows.length} sur ${total}`,
+      blocks: [{ table: {
+        cols: ["Identifiant", "Nom", "Téléphone", "Ville", "Pays", "Âge", "Statut", "Inscrit le", "Dernière visite"],
+        align: ["", "", "", "", "", "c", "c", "c", "c"],
+        rows: rows.map((u) => [shortId(u.id), fullName(u), u.phone, u.city, countryName(u.cc), ageRange(u.birth_year), statusLabel(u.status), day(u.created_at), dayTime(u.last_seen_at)]),
+      } }],
+    });
   });
-  const sel = users.find((u) => u.id === selId);
-  const cnt = (st) => users.filter((u) => u.status === st).length;
 
   const detail = useLoad(async () => {
     if (!selId) return null;
@@ -57,7 +84,8 @@ export default function Users({ nav, goto }) {
   };
 
   let detailView;
-  if (!sel) detailView = <Empty icon="👥" text="Sélectionnez un utilisateur pour voir sa fiche" />;
+  if (selId && !sel) detailView = <Loading error={one.error} />;
+  else if (!sel) detailView = <Empty icon="👥" text="Sélectionnez un utilisateur pour voir sa fiche" />;
   else {
     const d = detail.data || {};
     const st = statusLabel(sel.status);
@@ -87,7 +115,7 @@ export default function Users({ nav, goto }) {
             <button className="action-button warning" onClick={() => open("warn")}>⚠️ Avertir</button>
             <button className="action-button danger" onClick={() => open("suspend")}>🚫 Suspendre</button>
             {sel.status === "averti" && <button className="action-button ok" onClick={reactivate}>↩️ Lever l'avertissement</button>}
-            {d.reports > 0 && <button className="action-button neutral" onClick={() => goto("reports")}>🚩 Voir les signalements</button>}
+            {d.reports > 0 && <button className="action-button neutral" onClick={() => goto("reports", { q: sel.phone || fullName(sel) })}>🚩 Voir les signalements</button>}
             <button className="action-button neutral" onClick={() => goto("support", { userId: sel.id })}>💬 Conversation service client</button>
           </div>
           {panel && <SanctionPanel key={panel} mode={panel} onConfirm={confirm} onCancel={() => setPanel(null)} />}
@@ -98,38 +126,36 @@ export default function Users({ nav, goto }) {
 
   return (<>
     <ScreenTitle eyebrow="COMPTES" title="Utilisateurs">
-      {data && <button className="action-button neutral" onClick={() => printReport({
-        title: "Registre des utilisateurs",
-        subtitle: `${list.length} compte(s)${status !== "Tous" ? ` · ${status}` : ""}${city !== "Toutes" ? ` · ${city}` : ""}${query.trim() ? ` · recherche « ${query.trim()} »` : ""} — sur ${users.length} inscrit(s)`,
-        landscape: true,
-        blocks: [{ table: {
-          cols: ["Identifiant", "Nom", "Téléphone", "Ville", "Âge", "Statut", "Inscrit le", "Dernière visite"],
-          align: ["", "", "", "", "c", "c", "c", "c"],
-          rows: list.map((u) => [shortId(u.id), fullName(u), can("users.detail") ? u.phone : maskPhone(u.phone), u.city, ageRange(u.birth_year), statusLabel(u.status), day(u.created_at), dayTime(u.last_seen_at)]),
-        } }],
-      })}>🖨️ Imprimer la liste</button>}
+      {data && <button className="action-button neutral" onClick={() => printUsers(true)}>🖨️ Cette feuille</button>}
+      {data && <button className="action-button neutral" onClick={() => printUsers(false)}>🖨️ Registre complet</button>}
     </ScreenTitle>
+    {missing && <p className="field-hint">⚠️ Exécutez d'abord le fichier SQL 84 (parties 1, 2 et 3) dans Supabase.</p>}
     <section className="users-summary">
-      <div className="u-sum"><span>Total inscrits</span><strong>{users.length}</strong></div>
+      <div className="u-sum"><span>Total inscrits</span><strong>{sumOf("total")}</strong></div>
       <div className="u-sum ok"><span>Actifs</span><strong>{cnt("actif")}</strong></div>
       <div className="u-sum warn"><span>Avertis</span><strong>{cnt("averti")}</strong></div>
       <div className="u-sum bad"><span>Suspendus</span><strong>{cnt("suspendu")}</strong></div>
     </section>
-    <div className="users-toolbar">
-      <label className="users-search"><span>🔍</span><input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Rechercher par nom, identifiant, numéro ou ville" autoComplete="off" /></label>
-      <Pills options={["Tous", "Actif", "Averti", "Suspendu"]} value={status} onChange={setStatus} />
-      <select className="users-city" value={city} onChange={(e) => setCity(e.target.value)}>{cities.map((c) => <option key={c}>{c}</option>)}</select>
-    </div>
+    {placesQ.data && <PlaceNav places={places} value={place} onChange={(v) => { setPlace(v); setPage(1); }} extra="suspendus" extraLabel="suspendu(s)" />}
+    <form className="cl-search" onSubmit={(e) => { e.preventDefault(); setQuery(typed.trim()); setPage(1); }}>
+      <span>🔍</span>
+      <input value={typed} onChange={(e) => setTyped(e.target.value)} inputMode="search" placeholder={`Numéro de téléphone, nom ou identifiant EM-…${place.city ? ` à ${place.city}` : place.cc ? ` (${countryName(place.cc)})` : ""}`} autoComplete="off" />
+      {query && <button type="button" className="cl-clear" onClick={() => { setTyped(""); setQuery(""); setPage(1); }}>✕</button>}
+      <button type="submit" className="action-button primary">Rechercher</button>
+    </form>
+    <div className="cl-filters"><Pills options={["Tous", "Actif", "Averti", "Suspendu"]} value={status} onChange={(v) => { setStatus(v); setPage(1); }} /></div>
     <div className="users-layout">
       <div className="reports-list">
-        {!data ? <Loading error={error} /> : list.length === 0 && <p className="reports-empty">{users.length ? "Aucun utilisateur ne correspond à cette recherche." : "Aucun utilisateur inscrit pour le moment."}</p>}
+        {data && <Pager page={page} total={data.total} size={SIZE} onPage={setPage} label="compte(s)" />}
+        {!data ? (!missing && <Loading error={error} />) : list.length === 0 && <p className="reports-empty">Aucun utilisateur ne correspond à cette recherche.</p>}
         {list.map((u) => (
           <button key={u.id} className={"user-row" + (u.id === selId ? " active" : "")} onClick={() => { setSelId(u.id); setPanel(null); }}>
             <Avatar url={u.avatar_url} name={fullName(u)} />
-            <div className="u-main"><strong>{fullName(u)}</strong><span>{shortId(u.id)} · {countryLabel(u.phone, u.country_code).split(" ")[0]} {u.city || "—"}</span></div>
+            <div className="u-main"><strong>{fullName(u)}</strong><span>{shortId(u.id)} · {u.phone || "—"}</span><span>📍 {u.city || "Ville inconnue"} · {countryName(u.cc)}</span></div>
             <span className={"u-status " + statusLabel(u.status)}>{statusLabel(u.status)}</span>
           </button>
         ))}
+        {data && data.total > SIZE && <Pager page={page} total={data.total} size={SIZE} onPage={setPage} label="compte(s)" />}
       </div>
       <div className="report-detail">{detailView}</div>
     </div>
