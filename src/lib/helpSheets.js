@@ -660,6 +660,30 @@ export const HELP_SHEETS = [
     ],
   },
 
+  // ───────────────────────────── IMPRIMER UN DOCUMENT ─────────────────────────────
+  {
+    id: "imprimer-documents",
+    icon: "🖨️",
+    title: "Imprimer les documents officiels (conditions, confidentialité, règles…)",
+    who: "Utilisateurs de l'application et équipe du site administrateur",
+    intro:
+      "Les documents officiels d'Epsilon s'impriment maintenant directement. Le bouton « 🖨️ Imprimer » ouvre la fenêtre d'impression du téléphone ou de l'ordinateur : on y choisit l'imprimante (Wi-Fi, USB ou Bluetooth) ou « Enregistrer en PDF ». La page imprimée est propre : logo Epsilon, titre, version, texte, date d'impression — sans menus ni boutons.",
+    steps: [
+      { t: "Dans l'application", d: "Paramètres → « 📜 Aide et documents » → ouvrir le document → « 🖨️ Imprimer » (à côté de la version). Sur Android, il faut la dernière version de l'application (bouton « Mettre à jour »)." },
+      { t: "Sur le site administrateur", d: "Documents publics → ouvrir le document → « 🖨️ Imprimer » (imprime le texte affiché ; s'il n'est pas publié, la page indique « Brouillon — non publié »). Dans l'historique, le petit 🖨️ imprime une ancienne version." },
+      { t: "Choisir l'imprimante", d: "En haut de la fenêtre d'impression : « Sélectionner une imprimante » (Android) ou « Destination » (ordinateur). Choisir l'imprimante, le nombre de copies, puis Imprimer." },
+    ],
+    tips: [
+      "« Enregistrer en PDF » permet d'envoyer le document par WhatsApp ou par e-mail.",
+      "Le format est A4.",
+    ],
+    problems: [
+      { q: "« Mon imprimante n'apparaît pas sur le téléphone. »", a: "Brancher le téléphone sur le même Wi-Fi que l'imprimante, puis installer le service d'impression de la marque depuis le Play Store (HP Print Service Plugin, Canon Print Service, Epson Print Enabler… ou « Mopria Print Service » pour la plupart des marques). Ensuite : Paramètres du téléphone → Impression → activer ce service." },
+      { q: "« Mon imprimante n'apparaît pas sur l'ordinateur. »", a: "Vérifier qu'elle est allumée, branchée (USB) ou sur le même réseau, et installée dans l'ordinateur (Windows : Paramètres → Imprimantes et scanners → Ajouter)." },
+      { q: "« Le bouton ne fait rien dans l'application. »", a: "Mettre à jour l'application (bouton « Mettre à jour » ou epsilon-messenger-app.pages.dev/epsilon.apk)." },
+    ],
+  },
+
   // ───────────────────────────── TV EN ARRIÈRE-PLAN / PETITE FENÊTRE ─────────────────────────────
   {
     id: "tv-arriere-plan",

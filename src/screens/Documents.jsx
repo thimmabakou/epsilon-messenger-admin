@@ -5,6 +5,7 @@ import { useAdmin, useLoad, Loading } from "../lib/admin";
 import { dateOnly, dateTime } from "../lib/format";
 import { Note, ScreenTitle } from "../components/common";
 import { DOC_TEMPLATES } from "../lib/docTemplates";
+import { printDoc } from "../lib/printDoc";
 
 export default function Documents() {
   const { me, act } = useAdmin();
@@ -84,6 +85,11 @@ export default function Documents() {
           {preview ? <div className="doc-preview-box" style={{ whiteSpace: "pre-wrap" }}>{text}</div> : <textarea value={text} onChange={(e) => setText(e.target.value)} />}
           <div className="doc-editor-actions" style={{ marginTop: 12 }}>
             <button className="action-button neutral" onClick={saveDraft}>💾 Enregistrer en brouillon</button>
+            <button className="action-button neutral" title="Ouvre la fenêtre d'impression : choisissez l'imprimante (ou « Enregistrer en PDF »)" onClick={() => {
+              const last = doc.versions[doc.versions.length - 1];
+              const pub = last && last.body === text;
+              printDoc({ title: doc.title, subtitle: pub ? `Version ${last.version} · publiée le ${dateOnly(last.published_at)}` : "Brouillon — non publié", body: text });
+            }}>🖨️ Imprimer</button>
             {me.isPdg
               ? <button className="action-button primary" onClick={publish}>🚀 Publier</button>
               : <button className="action-button neutral" disabled title="Réservé au PDG">🔒 Publier (réservé au PDG)</button>}
@@ -93,7 +99,8 @@ export default function Documents() {
           <div className="doc-versions">
             <span className="label">Historique des versions</span>
             {doc.versions.length === 0 ? <p className="reports-empty" style={{ padding: "6px 0" }}>Jamais publié.</p> :
-              doc.versions.slice().reverse().map((v) => <div key={v.id} className="history-row"><strong>v{v.version} — {v.note || "Publication"}</strong><span>PDG · {dateTime(v.published_at)}</span></div>)}
+              doc.versions.slice().reverse().map((v) => <div key={v.id} className="history-row"><strong>v{v.version} — {v.note || "Publication"}</strong><span>PDG · {dateTime(v.published_at)}{" "}
+                <button className="link-button" title="Imprimer cette version" onClick={() => printDoc({ title: doc.title, subtitle: `Version ${v.version} · publiée le ${dateOnly(v.published_at)}`, body: v.body })}>🖨️</button></span></div>)}
           </div>
         </div>
       )}
