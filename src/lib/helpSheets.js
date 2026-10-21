@@ -660,6 +660,32 @@ export const HELP_SHEETS = [
     ],
   },
 
+  // ───────────────────────────── TV EN ARRIÈRE-PLAN / PETITE FENÊTRE ─────────────────────────────
+  {
+    id: "tv-arriere-plan",
+    icon: "⧉",
+    title: "Regarder Epsilon TV en arrière-plan et en petite fenêtre",
+    who: "Tous les spectateurs d'Epsilon TV (application Android)",
+    intro:
+      "Comme sur YouTube : une chaîne continue de jouer quand on quitte l'application, dans une petite fenêtre flottante par-dessus les autres applications (Facebook, WhatsApp…), et le son continue même téléphone en veille. Un lecteur apparaît dans les notifications et sur l'écran verrouillé. Il faut la dernière version de l'application (bouton « Mettre à jour »).",
+    steps: [
+      { t: "Petite fenêtre", d: "Pendant qu'une chaîne joue, appuyer sur le bouton ⧉ (sous ⛶, en haut à gauche de l'image), ou simplement quitter l'application avec le bouton/geste Accueil : l'image passe dans une petite fenêtre. On peut la déplacer avec le doigt et aller dans d'autres applications." },
+      { t: "Revenir dans Epsilon TV", d: "Toucher la petite fenêtre puis l'icône d'agrandissement (↗ / carré), ou toucher la notification « Epsilon TV » : on revient en grand dans l'onglet TV, sur la même chaîne." },
+      { t: "Écouter téléphone en veille", d: "Éteindre l'écran pendant qu'une chaîne joue : le son continue (journal, émission, musique). Pour économiser la batterie, c'est l'idéal." },
+      { t: "Le lecteur dans les notifications", d: "Tirer la barre de notifications (ou regarder l'écran verrouillé) : ⏸ Pause / ▶ Lecture, et « Arrêter ». « Arrêter » coupe tout ; dans l'onglet TV, « ▶ Reprendre la chaîne » relance l'antenne." },
+    ],
+    tips: [
+      "Fermer la petite fenêtre (✕) n'arrête pas forcément le son : utiliser « Arrêter » dans la notification.",
+      "Les directs se regardent aussi en petite fenêtre et en arrière-plan.",
+      "Sur ordinateur (navigateur), le bouton ⧉ ouvre la vidéo dans une petite fenêtre du navigateur, si celui-ci le permet.",
+    ],
+    problems: [
+      { q: "« Je ne vois pas le bouton ⧉ / ça ne passe pas en petite fenêtre. »", a: "Mettre à jour l'application (bouton « Mettre à jour » ou epsilon-messenger-app.pages.dev/epsilon.apk). Sur certains téléphones : Paramètres → Applications → Epsilon → « Image dans l'image » (ou « Picture-in-picture ») → Autoriser. Il faut Android 8 ou plus récent." },
+      { q: "« Le son s'arrête quand j'éteins l'écran. »", a: "Vérifier la dernière version, puis Paramètres → Applications → Epsilon → Batterie → « Sans restriction » (certaines marques comme Tecno, Itel, Infinix, Xiaomi coupent les applications pour économiser la batterie)." },
+      { q: "« Je ne vois pas le lecteur dans les notifications. »", a: "Autoriser les notifications d'Epsilon (Paramètres → Applications → Epsilon → Notifications) et vérifier que le canal « Epsilon TV en arrière-plan » est activé." },
+    ],
+  },
+
   // ───────────────────────────── ÉQUIPE D'UNE CHAÎNE ─────────────────────────────
   {
     id: "tv-equipe",
