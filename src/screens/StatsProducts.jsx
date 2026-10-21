@@ -1,4 +1,4 @@
-// Statistiques des PRODUITS VENDUS (fichier SQL 83, partie 2) : les produits les plus vendus, dans quelles
+// Statistiques des PRODUITS VENDUS (fichier SQL 83, parties 2 et 3) : les produits les plus vendus, dans quelles
 // régions, par catégorie, par boutique, par mois — et les abonnements vendus (Epsilon TV, boutiques, publicités).
 import { useState } from "react";
 import { rpc } from "../lib/supabase";
@@ -51,7 +51,11 @@ export default function StatsProducts() {
   const [per, setPer] = useState("mois");
   const [city, setCity] = useState("");
   const [from, to, perLabel] = range(per);
-  const res = useLoad(() => rpc("eg_stats_products", { p_from: from, p_to: to, p_city: city || null }), [per, city]);
+  const res = useLoad(async () => {
+    const args = { p_from: from, p_to: to, p_city: city || null };
+    const [prod, subs] = await Promise.all([rpc("eg_stats_products", args), rpc("eg_stats_subs", args)]);
+    return { ...prod, ...subs };
+  }, [per, city]);
   const d = res.data;
   const tbl = d ? tables(d) : [];
   const subtitle = `${perLabel}${city ? ` · ${city}` : " · toutes les régions"}`;
@@ -79,7 +83,7 @@ export default function StatsProducts() {
         {d && <button className="action-button neutral" onClick={doPrint}>🖨️ Imprimer</button>}
       </div>
       {!d && (sqlMissing(res.error)
-        ? <p className="field-hint">⚠️ Exécutez d'abord le fichier SQL 83 (statistiques mensuelles, parties 1 et 2) dans Supabase.</p>
+        ? <p className="field-hint">⚠️ Exécutez d'abord le fichier SQL 83 (statistiques mensuelles, parties 1, 2 et 3) dans Supabase.</p>
         : <Loading error={res.error} />)}
       {d && (<>
         <section className="stats-hero">

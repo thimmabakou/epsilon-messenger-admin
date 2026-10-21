@@ -8,7 +8,7 @@ import { printReport, money, num } from "../lib/printDoc";
 
 const MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
 export const monthLabel = (k) => { const [y, m] = String(k).split("-").map(Number); return `${MOIS[m - 1] || "?"} ${y}`; };
-export const sqlMissing = (e) => /eg_stats_(monthly|products)|Could not find the function|schema cache/i.test(e?.message || "");
+export const sqlMissing = (e) => /eg_stats_(monthly|products|subs)|Could not find the function|schema cache/i.test(e?.message || "");
 const revenue = (r) => Number(r.abo_boutiques_fcfa || 0) + Number(r.publicites_fcfa || 0) + Number(r.abo_tv_fcfa || 0) + Number(r.commissions || 0);
 
 // Les deux tableaux (écran et papier) : colonnes [titre, valeur, est-ce de l'argent ?]
@@ -58,7 +58,7 @@ export default function MonthlyReport() {
         {rows.length > 0 && <button className="action-button neutral" onClick={() => printMonthly(rows, n)}>🖨️ Imprimer le rapport</button>}
       </div>
       {!res.data && (sqlMissing(res.error)
-        ? <p className="field-hint">⚠️ Exécutez d'abord le fichier SQL 83 (statistiques mensuelles, parties 1 et 2) dans Supabase.</p>
+        ? <p className="field-hint">⚠️ Exécutez d'abord le fichier SQL 83 (statistiques mensuelles, parties 1, 2 et 3) dans Supabase.</p>
         : <Loading error={res.error} />)}
       {rows.length > 0 && TABLES.map((t) => (
         <div key={t.title} className="mr-block">
