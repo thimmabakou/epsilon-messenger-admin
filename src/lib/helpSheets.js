@@ -697,6 +697,8 @@ export const HELP_SHEETS = [
       { t: "Petite fenêtre", d: "Pendant qu'une chaîne joue, appuyer sur le bouton ⧉ (sous ⛶, en haut à gauche de l'image), ou simplement quitter l'application avec le bouton/geste Accueil : l'image passe dans une petite fenêtre. On peut la déplacer avec le doigt et aller dans d'autres applications." },
       { t: "Revenir dans Epsilon TV", d: "Toucher la petite fenêtre puis l'icône d'agrandissement (↗ / carré), ou toucher la notification « Epsilon TV » : on revient en grand dans l'onglet TV, sur la même chaîne." },
       { t: "Écouter téléphone en veille", d: "Éteindre l'écran pendant qu'une chaîne joue : le son continue (journal, émission, musique). Pour économiser la batterie, c'est l'idéal." },
+      { t: "La télécommande (sous l'écran)", d: "Sous la chaîne, après « Gérer ma chaîne » / « Toutes les vidéos » : un rond transparent. ▲ CH+ et ▼ CH− changent de chaîne (le nom de la chaîne suivante est écrit au-dessus) ; ◀ VOL− et ▶ VOL+ baissent ou montent le son par paliers de 10 % ; le bouton du milieu coupe ou remet le son. 100 % = le volume du téléphone : pour aller plus fort, utiliser aussi les boutons du téléphone. Avec une seule chaîne, ▲▼ sont grisés." },
+      { t: "Plein écran", d: "Bouton ⛶ en haut à gauche de l'image : le téléphone passe à l'horizontale, les barres d'Android se cachent et toute l'image tient dans l'écran, avec le bandeau INFO en bas. ⛶ ou la touche « retour » pour sortir (application à jour nécessaire)." },
       { t: "Le lecteur dans les notifications", d: "Tirer la barre de notifications (ou regarder l'écran verrouillé) : ⏸ Pause / ▶ Lecture, et « Arrêter ». « Arrêter » coupe tout ; dans l'onglet TV, « ▶ Reprendre la chaîne » relance l'antenne." },
     ],
     tips: [
