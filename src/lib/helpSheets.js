@@ -149,6 +149,36 @@ export const HELP_SHEETS = [
     ],
   },
 
+  // ───────────────────────────── PARTAGE SUR FACEBOOK ─────────────────────────────
+  {
+    id: "partage-facebook",
+    icon: "📣",
+    title: "Partager ses produits sur Facebook (et WhatsApp)",
+    who: "Propriétaires de boutique (et tous les clients)",
+    intro:
+      "Chaque produit a son propre lien (exemple : epsilon-messenger-app.pages.dev/p/12). Publié sur Facebook ou WhatsApp, il s'affiche avec la photo, le nom et le prix. L'acheteur qui touche le lien arrive sur le produit, puis « Commander » ouvre Epsilon directement dans la discussion avec le vendeur. Ça marche pour toutes les boutiques, sans rien régler.",
+    steps: [
+      { t: "Ouvrir le produit", d: "Dans la boutique (ou l'onglet Boutiques), toucher le produit à partager pour ouvrir sa fiche." },
+      { t: "Toucher « Partager dans une discussion »", d: "Une liste s'ouvre. Tout en haut : « Autres applications (WhatsApp, Facebook, Bluetooth, e-mail…) »." },
+      { t: "Choisir « Autres applications », puis Facebook", d: "Android propose la liste des applications : choisir Facebook (ou WhatsApp, Messenger…). Attendre quelques secondes : l'aperçu apparaît avec la photo, « Nom du produit — prix » et epsilon-messenger-app.pages.dev." },
+      { t: "Écrire son texte et publier", d: "Facebook ne laisse pas les applications écrire à la place de la personne : la case « Quoi de neuf ? » est vide. Le vendeur écrit ce qu'il veut (exemple : « Disponible à Brazzaville, livraison possible »), puis Suivant → Publier." },
+      { t: "Partager la VIDÉO du produit (pour qu'elle joue dans le fil)", d: "Si le produit a une vidéo, la liste propose aussi « Partager la vidéo ». Epsilon envoie la vidéo ET copie le lien du produit (message « Lien du produit copié »). Dans Facebook, appuyer longtemps dans la case du texte → « Coller » pour ajouter le lien, puis publier. Cette option n'apparaît que si le vendeur a autorisé le téléchargement des médias du produit." },
+      { t: "Ce que voit l'acheteur", d: "Il touche la publication → la page du produit s'ouvre (photo, prix, boutique) → « 🛒 Commander / Discuter avec le vendeur ». Facebook affiche alors « Vous quittez notre application » : toucher CONTINUER. Epsilon s'ouvre sur le produit (après connexion ou inscription si besoin), il touche « Acheter » et la commande arrive dans la discussion du vendeur." },
+    ],
+    tips: [
+      "Si l'acheteur n'a pas l'application, la page lui propose « Télécharger l'application Epsilon », ou le produit s'ouvre dans le navigateur.",
+      "L'ouverture directe dans l'application demande la version Android d'Epsilon du 31/10/2026 ou plus récente. Avec une version plus ancienne, le produit s'ouvre dans le navigateur (ça marche quand même).",
+      "Un produit retiré, en brouillon ou d'une boutique suspendue affiche « Ce produit n'est plus disponible ».",
+      "Si le vendeur change la photo ou le prix, Facebook peut garder l'ancien aperçu quelques heures sur les publications déjà faites. La page du produit, elle, montre toujours le bon prix.",
+    ],
+    problems: [
+      { q: "« Facebook n'affiche pas la photo, seulement le lien. »", a: "Attendre 5 à 10 secondes avant de publier, le temps que l'aperçu se charge. Si le produit n'a pas de photo (seulement une vidéo), c'est le logo de la boutique qui s'affiche : ajouter une photo au produit." },
+      { q: "« Je ne vois pas « Partager la vidéo ». »", a: "Le produit n'a pas de vidéo, ou le vendeur a bloqué le téléchargement des médias (modifier le produit → Autorisations → Téléchargement autorisé)." },
+      { q: "« Le bouton Commander ouvre le navigateur au lieu de l'application. »", a: "L'application Epsilon du client est trop ancienne : la mettre à jour (Paramètres → Mises à jour de l'application, ou epsilon-messenger-app.pages.dev/epsilon.apk)." },
+      { q: "« Une erreur est survenue » en envoyant la commande. »", a: "Souvent une coupure de réseau : réessayer avec une meilleure connexion. La commande part au deuxième essai." },
+    ],
+  },
+
   // ───────────────────────────── PORTÉE ET SPONSORING ─────────────────────────────
   {
     id: "portee",
