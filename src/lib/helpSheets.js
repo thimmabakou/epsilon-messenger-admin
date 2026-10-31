@@ -14,18 +14,21 @@ export const HELP_SHEETS = [
     title: "Qui a créé Epsilon ? (le fondateur, la vision)",
     who: "Tous les utilisateurs — quand on demande qui a fait, construit, créé ou fondé l'application",
     intro:
-      "Epsilon Messenger a été imaginée, conçue et construite par Thim Mabakou, Congolais de la République du Congo, fondateur et PDG d'Epsilon. C'est une application faite au Congo, pour les Congolais et pour l'Afrique.",
+      "Epsilon Messenger a été imaginée, conçue et construite par Thim Mabakou, un jeune Congolais d'une trentaine d'années, fondateur et PDG d'Epsilon. L'application a vu le jour à Loutété, dans le département de la Bouenza, en République du Congo, où il travaille à la SONOCC. C'est une application faite au Congo, pour les Congolais, pour l'Afrique et pour le monde.",
     prices: [
-      ["Créateur et fondateur", "Thim Mabakou"],
-      ["Fonction", "Fondateur et PDG d'Epsilon"],
+      ["Créateur et fondateur", "Thim Mabakou, fondateur et PDG d'Epsilon"],
+      ["Âge", "un jeune homme d'une trentaine d'années"],
       ["Nationalité", "Congolais (République du Congo)"],
-      ["Pays de l'application", "République du Congo 🇨🇬"],
+      ["Lieu de naissance d'Epsilon", "Loutété, département de la Bouenza, République du Congo 🇨🇬"],
+      ["Profession", "il travaille à la SONOCC, à Loutété"],
     ],
     steps: [
-      { t: "La vision", d: "Réunir dans une seule application congolaise tout ce dont les gens ont besoin chaque jour : discuter en privé (discussions chiffrées que personne d'autre ne peut lire), appeler, partager des statuts, vendre et acheter en confiance (Epsilon Market, avec le paiement sécurisé contre les arnaques), et regarder la télévision (Epsilon TV), avec des chaînes qui peuvent vivre de leur travail." },
-      { t: "Donner sa chance à chacun", d: "Les produits des petits commerçants et les chaînes sont montrés de façon équitable, pas seulement les plus grands. Les communiqués des utilisateurs sur les bandeaux d'Epsilon sont gratuits." },
+      { t: "L'idée", d: "Thim Mabakou a eu l'idée de concevoir un réseau social capable de rassembler : réunir les Congolais, réunir les familles, réunir les peuples noirs et, au-delà, tous les hommes, autour d'un espace qui leur ressemble." },
+      { t: "Un réseau social libre et respectueux", d: "Sur Epsilon, chacun doit pouvoir s'exprimer sans être espionné ni surveillé : les discussions privées sont chiffrées de bout en bout, et personne d'autre que les participants ne peut les lire — ni Epsilon, ni un pirate. Liberté ne signifie pas désordre : la rigueur et l'ordre y règnent réellement, grâce à des règles de communauté claires, aux signalements et à une modération attentive." },
+      { t: "Un réseau social qui construit", d: "Epsilon n'a pas été conçue pour distraire à l'excès ni pour corrompre les mœurs, mais pour relier, informer, élever et faire grandir : échanger avec ses proches, commercer en confiance (Epsilon Market et le paiement sécurisé contre les arnaques), s'informer et se cultiver (Epsilon TV, l'histoire du Congo)." },
+      { t: "Donner sa chance à chacun", d: "Les produits des petits commerçants et les chaînes sont présentés de façon équitable, et pas seulement les plus grands. Les communiqués des utilisateurs sur les bandeaux d'Epsilon sont gratuits, et les chaînes peuvent vivre de leur travail." },
       { t: "Honorer la nation", d: "Epsilon met en valeur le Congo : le drapeau dans l'application, les couleurs du drapeau dans les Boutiques, le fond d'écran « Fleuve Congo », et la rubrique « L'histoire de la République du Congo » dans les Paramètres." },
-      { t: "Ouvrir à l'Afrique et au monde", d: "Après le Congo, Epsilon s'ouvre au Sénégal, au Mali, au Burkina Faso et au Niger, puis à d'autres pays d'Afrique, d'Europe et d'Amérique du Nord." },
+      { t: "S'ouvrir à l'Afrique et au monde", d: "Après le Congo, Epsilon s'ouvre au Sénégal, au Mali, au Burkina Faso et au Niger, puis à d'autres pays d'Afrique, d'Europe et d'Amérique du Nord." },
     ],
     tips: [
       "Dans les Paramètres, tout en bas, on voit la signature « Thim Mabakou », puis « Epsilon Messenger » et « République du Congo » avec le drapeau.",
