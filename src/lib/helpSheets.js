@@ -415,6 +415,8 @@ export const HELP_SHEETS = [
       { t: "Pour l'équipe : suivre Epsilon IA", d: "Site administrateur → « Epsilon IA » : l'allumer ou l'éteindre, voir les questions du jour, celles qu'elle a transmises et celles où la personne a demandé un conseiller. Une question sans réponse = une fiche à compléter." },
     ],
     tips: [
+      "Epsilon IA connaît aussi les documents de la rubrique « L'histoire de la République du Congo » (Empire Kongo, Royaume Téké, Mabiala Ma Nganga, Kimpa Vita, Antoine Ier et Ambuila, Réveil de Ngouédi, Branham, Seymour, Bosworth) : elle répond aux questions d'histoire avec ces textes, cite le document et invite à le lire dans Paramètres. Ce qui n'est pas dans ces documents, elle dit qu'elle ne l'a pas encore, sans inventer.",
+      "Elle sait aussi qui a créé Epsilon (fiche « Qui a créé Epsilon ? »).",
       "Epsilon IA ne valide jamais un paiement, ne débloque pas un compte, ne traite pas un signalement et ne rembourse pas : elle transmet à l'équipe.",
       "Elle ne répond pas aux messages vocaux : un conseiller les écoute.",
       "Quand un conseiller répond dans une discussion, Epsilon IA se tait pendant 12 heures dans cette discussion.",
