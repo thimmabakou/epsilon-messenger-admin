@@ -7,6 +7,32 @@
 export const TV_PRICE_PER_MIN = 1.2; // FCFA par minute regardée (1 spectateur × 1 minute), validé par le PDG le 11/10/2026
 
 export const HELP_SHEETS = [
+  // ───────────────────────────── QUI A CRÉÉ EPSILON ─────────────────────────────
+  {
+    id: "createur",
+    icon: "🇨🇬",
+    title: "Qui a créé Epsilon ? (le fondateur, la vision)",
+    who: "Tous les utilisateurs — quand on demande qui a fait, construit, créé ou fondé l'application",
+    intro:
+      "Epsilon Messenger a été imaginée, conçue et construite par Thim Mabakou, Congolais de la République du Congo, fondateur et PDG d'Epsilon. C'est une application faite au Congo, pour les Congolais et pour l'Afrique.",
+    prices: [
+      ["Créateur et fondateur", "Thim Mabakou"],
+      ["Fonction", "Fondateur et PDG d'Epsilon"],
+      ["Nationalité", "Congolais (République du Congo)"],
+      ["Pays de l'application", "République du Congo 🇨🇬"],
+    ],
+    steps: [
+      { t: "La vision", d: "Réunir dans une seule application congolaise tout ce dont les gens ont besoin chaque jour : discuter en privé (discussions chiffrées que personne d'autre ne peut lire), appeler, partager des statuts, vendre et acheter en confiance (Epsilon Market, avec le paiement sécurisé contre les arnaques), et regarder la télévision (Epsilon TV), avec des chaînes qui peuvent vivre de leur travail." },
+      { t: "Donner sa chance à chacun", d: "Les produits des petits commerçants et les chaînes sont montrés de façon équitable, pas seulement les plus grands. Les communiqués des utilisateurs sur les bandeaux d'Epsilon sont gratuits." },
+      { t: "Honorer la nation", d: "Epsilon met en valeur le Congo : le drapeau dans l'application, les couleurs du drapeau dans les Boutiques, le fond d'écran « Fleuve Congo », et la rubrique « L'histoire de la République du Congo » dans les Paramètres." },
+      { t: "Ouvrir à l'Afrique et au monde", d: "Après le Congo, Epsilon s'ouvre au Sénégal, au Mali, au Burkina Faso et au Niger, puis à d'autres pays d'Afrique, d'Europe et d'Amérique du Nord." },
+    ],
+    tips: [
+      "Dans les Paramètres, tout en bas, on voit la signature « Thim Mabakou », puis « Epsilon Messenger » et « République du Congo » avec le drapeau.",
+      "Pour joindre l'équipe d'Epsilon : la discussion « Service client Epsilon », épinglée en premier dans l'application.",
+    ],
+  },
+
   // ───────────────────────────── STATUTS ─────────────────────────────
   {
     id: "statuts",
