@@ -721,6 +721,31 @@ export const HELP_SHEETS = [
     ],
   },
 
+  // ───────────────────────────── HORS CONNEXION ─────────────────────────────
+  {
+    id: "hors-connexion",
+    icon: "📴",
+    title: "Utiliser Epsilon sans connexion (mode hors ligne)",
+    who: "Tous les utilisateurs",
+    intro:
+      "Epsilon s'ouvre même sans connexion Internet (pas de crédit, pas de réseau, mode avion). On retrouve ses discussions, les derniers messages, ses contacts, ses appels et les statuts déjà chargés. Un bandeau en bas indique « Hors connexion ». Dès que la connexion revient, tout s'actualise tout seul.",
+    steps: [
+      { t: "Ouvrir Epsilon une première fois avec connexion", d: "Epsilon garde ses fichiers et les dernières données dans le téléphone pendant qu'on l'utilise avec Internet. Après la mise à jour, il suffit de l'ouvrir une fois connecté." },
+      { t: "Sans connexion", d: "Ouvrir Epsilon comme d'habitude : la liste des discussions s'affiche. Toucher une discussion pour relire les messages (les 150 derniers de chaque discussion déjà ouverte avec connexion). Les contacts et le journal des appels sont aussi là." },
+      { t: "Envoyer un message", d: "Sans connexion, le message ne part pas : Epsilon affiche « Pas de connexion : le message n'est pas parti ». Il faut le renvoyer quand le réseau revient. Les appels, la télévision et les boutiques demandent aussi une connexion." },
+      { t: "Quand la connexion revient", d: "Le bandeau disparaît, les nouveaux messages arrivent et les discussions se mettent à jour, sans rien toucher." },
+    ],
+    tips: [
+      "Une discussion jamais ouverte sur ce téléphone n'a pas de messages gardés : il faut l'ouvrir une fois avec connexion.",
+      "Les photos déjà vues (profils, logos) restent visibles ; les vidéos demandent une connexion.",
+      "Les messages gardés restent dans le téléphone seulement : ils restent privés.",
+    ],
+    problems: [
+      { q: "« Sans connexion, Epsilon affiche une page d'erreur. »", a: "Epsilon n'a pas encore été ouverte une fois avec connexion depuis la mise à jour : l'ouvrir avec Internet, attendre quelques secondes, puis réessayer sans connexion." },
+      { q: "« Je ne vois pas les messages d'une discussion hors connexion. »", a: "Cette discussion n'a pas encore été ouverte avec connexion sur ce téléphone. L'ouvrir une fois quand le réseau revient." },
+    ],
+  },
+
   // ───────────────────────────── IMPRIMER UN DOCUMENT ─────────────────────────────
   {
     id: "imprimer-documents",
