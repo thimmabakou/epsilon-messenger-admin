@@ -418,6 +418,7 @@ export const HELP_SHEETS = [
       { t: "Pour l'équipe : suivre Epsilon IA", d: "Site administrateur → « Epsilon IA » : l'allumer ou l'éteindre, voir les questions du jour, celles qu'elle a transmises et celles où la personne a demandé un conseiller. Une question sans réponse = une fiche à compléter." },
     ],
     tips: [
+      "Epsilon IA est courtoise : au début d'un échange, elle salue la personne par son prénom (« Bonjour …, j'espère que vous allez bien ! » ou « Bonsoir » le soir), vouvoie, remercie, et termine en proposant son aide.",
       "Epsilon IA connaît aussi les documents de la rubrique « L'histoire de la République du Congo » (Empire Kongo, Royaume Téké, Mabiala Ma Nganga, Kimpa Vita, Antoine Ier et Ambuila, Réveil de Ngouédi, Branham, Seymour, Bosworth) : elle répond aux questions d'histoire avec ces textes, cite le document et invite à le lire dans Paramètres. Ce qui n'est pas dans ces documents, elle dit qu'elle ne l'a pas encore, sans inventer.",
       "Elle sait aussi qui a créé Epsilon (fiche « Qui a créé Epsilon ? »).",
       "Epsilon IA ne valide jamais un paiement, ne débloque pas un compte, ne traite pas un signalement et ne rembourse pas : elle transmet à l'équipe.",
@@ -732,7 +733,7 @@ export const HELP_SHEETS = [
     steps: [
       { t: "Ouvrir Epsilon une première fois avec connexion", d: "Il faut la dernière version de l'application (bouton « Mettre à jour »). Epsilon garde ses fichiers et les dernières données dans le téléphone pendant qu'on l'utilise avec Internet : après la mise à jour, il suffit de l'ouvrir une fois connecté. Ça marche aussi quand le réseau est là mais sans crédit." },
       { t: "Sans connexion", d: "Ouvrir Epsilon comme d'habitude : la liste des discussions s'affiche. Toucher une discussion pour relire les messages (les 150 derniers de chaque discussion déjà ouverte avec connexion). Les contacts et le journal des appels sont aussi là." },
-      { t: "Envoyer un message", d: "Sans connexion, le message ne part pas : Epsilon affiche « Pas de connexion : le message n'est pas parti ». Il faut le renvoyer quand le réseau revient. Les appels, la télévision et les boutiques demandent aussi une connexion." },
+      { t: "Envoyer un message", d: "On peut écrire et envoyer un message sans connexion : il reste dans la discussion avec une petite horloge 🕒, gardé dans le téléphone, et part TOUT SEUL dès que la connexion revient (Wi-Fi, données ou crédit), dans l'ordre où on les a écrits — même si on a quitté la discussion entre-temps. Epsilon doit rester ouverte ou en arrière-plan ; si on l'a fermée, les messages partent à la prochaine ouverture. Les appels, la télévision et les boutiques demandent une connexion." },
       { t: "Quand la connexion revient", d: "Le bandeau disparaît, les nouveaux messages arrivent et les discussions se mettent à jour, sans rien toucher." },
     ],
     tips: [
