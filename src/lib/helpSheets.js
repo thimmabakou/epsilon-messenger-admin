@@ -418,7 +418,7 @@ export const HELP_SHEETS = [
       { t: "Pour l'équipe : suivre Epsilon IA", d: "Site administrateur → « Epsilon IA » : l'allumer ou l'éteindre, voir les questions du jour, celles qu'elle a transmises et celles où la personne a demandé un conseiller. Une question sans réponse = une fiche à compléter." },
     ],
     tips: [
-      "Epsilon IA est courtoise : au début d'un échange, elle salue la personne par son prénom (« Bonjour …, j'espère que vous allez bien ! » ou « Bonsoir » le soir), vouvoie, remercie, et termine en proposant son aide.",
+      "Epsilon IA est courtoise, comme une hôtesse d'accueil : à un simple « Bonjour », elle répond « Bonjour …, comment allez-vous ? » (ou « Bonsoir » le soir), sans rien ajouter. Quand la personne répond qu'elle va bien, elle s'en réjouit et demande « En quoi puis-je vous être utile aujourd'hui ? ». Après avoir répondu à une question, elle propose la suite : « Puis-je vous aider pour autre chose ? ». Elle ne pose jamais deux questions à la fois et vouvoie toujours.",
       "Epsilon IA connaît aussi les documents de la rubrique « L'histoire de la République du Congo » (Empire Kongo, Royaume Téké, Mabiala Ma Nganga, Kimpa Vita, Antoine Ier et Ambuila, Réveil de Ngouédi, Branham, Seymour, Bosworth) : elle répond aux questions d'histoire avec ces textes, cite le document et invite à le lire dans Paramètres. Ce qui n'est pas dans ces documents, elle dit qu'elle ne l'a pas encore, sans inventer.",
       "Elle sait aussi qui a créé Epsilon (fiche « Qui a créé Epsilon ? »).",
       "Epsilon IA ne valide jamais un paiement, ne débloque pas un compte, ne traite pas un signalement et ne rembourse pas : elle transmet à l'équipe.",
