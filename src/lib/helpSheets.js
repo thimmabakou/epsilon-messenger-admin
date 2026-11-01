@@ -747,6 +747,34 @@ export const HELP_SHEETS = [
     ],
   },
 
+  // ───────────────────────────── RÉSEAU : TROIS PALIERS ─────────────────────────────
+  {
+    id: "reseau-paliers",
+    icon: "📶",
+    title: "Réseau faible ou aucun réseau : connexion faible et téléphone à téléphone",
+    who: "Tous les utilisateurs de l'application Android (zones rurales, 2G, coupures)",
+    intro:
+      "Epsilon s'adapte tout seul au réseau, en trois paliers : 1) Internet normal ; 2) connexion faible (2G, réseau qui rame, peu de crédit) : les messages passent en priorité et les photos/vidéos se chargent d'un toucher ; 3) aucun réseau du tout : les messages texte passent de téléphone Epsilon en téléphone Epsilon, par Bluetooth et Wi-Fi direct, jusqu'au correspondant. Tout est automatique ; on peut aussi choisir dans Paramètres → « 📶 Réseau ».",
+    steps: [
+      { t: "Connexion faible (automatique)", d: "Quand le réseau est très lent, un bandeau orange l'annonce quelques secondes. Dans les discussions, les photos et vidéos affichent « Toucher pour charger » avec leur poids (ex. 240 Ko) ; les messages texte et vocaux passent normalement. Réglage : Paramètres → Réseau → palier 2 : Automatique, Toujours ou Jamais." },
+      { t: "Aucun réseau : téléphone à téléphone (automatique)", d: "Quand il n'y a plus du tout de réseau, Epsilon allume tout seul le mode « téléphone à téléphone » : un bandeau violet « 📡 Aucun réseau — mode téléphone à téléphone actif » indique combien de téléphones Epsilon sont à proximité. La première fois, Android demande « Appareils à proximité » (et la position sur certains téléphones) : il faut répondre « Autoriser »." },
+      { t: "Envoyer un message sans réseau", d: "Écrire et envoyer comme d'habitude. Le message part vers les téléphones Epsilon proches (10 à 100 m), qui le passent à d'autres, de proche en proche, jusqu'au correspondant. Il reste chiffré : les téléphones qui le transportent ne peuvent pas le lire. Il garde aussi son horloge 🕒 et partira par Internet dès son retour ; le correspondant ne le verra qu'une fois." },
+      { t: "Recevoir un message sans réseau", d: "Une notification « 📡 Message reçu sans réseau » arrive ; dans la discussion, le message porte un petit 📡." },
+      { t: "Aider les autres (relais)", d: "Paramètres → Réseau → palier 3 → « Toujours actif » : le téléphone transporte aussi les messages des autres, même quand il a Internet (notification « 📡 Mode sans réseau actif »). Utile dans une église, un marché, un village : plus il y a de relais, plus loin vont les messages." },
+    ],
+    tips: [
+      "Seulement les messages texte en mode téléphone à téléphone (pas de photos, vocaux ni appels).",
+      "La discussion doit avoir été ouverte au moins une fois avec Internet sur ce téléphone (pour connaître sa clé de chiffrement).",
+      "Il faut l'application Android à jour et les services Google sur le téléphone. Ça ne marche pas avec un iPhone ni sur le site.",
+      "Les messages transportés restent au plus 72 heures sur les téléphones relais.",
+    ],
+    problems: [
+      { q: "« Le mode téléphone à téléphone ne s'allume pas. »", a: "Vérifier : application à jour ; Paramètres → Réseau → palier 3 sur « Automatique » ou « Toujours » ; Bluetooth activé ; autorisation « Appareils à proximité » donnée (Paramètres du téléphone → Applications → Epsilon → Autorisations)." },
+      { q: "« Mon message n'arrive pas sans réseau. »", a: "Il faut des téléphones Epsilon (mode actif) entre les deux personnes, à moins de 100 m les uns des autres. Sinon, il attend : il partira par Internet dès son retour." },
+      { q: "« Les photos ne s'affichent plus, il y a « Toucher pour charger ». »", a: "C'est le mode connexion faible : toucher la photo pour la charger, ou Paramètres → Réseau → palier 2 → « Jamais »." },
+    ],
+  },
+
   // ───────────────────────────── IMPRIMER UN DOCUMENT ─────────────────────────────
   {
     id: "imprimer-documents",
