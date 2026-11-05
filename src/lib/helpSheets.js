@@ -79,7 +79,7 @@ export const HELP_SHEETS = [
     intro:
       "Les appels passent par Internet (données mobiles ou Wi-Fi), pas par le crédit téléphonique. Ils sont gratuits sur Epsilon, mais consomment des données : la vidéo en consomme beaucoup plus que l'audio.",
     steps: [
-      { t: "Ouvrir le profil depuis les appels", d: "Dans l'onglet Appels, toucher la photo d'une personne ouvre son profil (le bouton 📞 / 🎥 à droite la rappelle). Pendant un appel, toucher sa photo (ou sa petite photo en haut pendant un appel vidéo) réduit l'appel en petite fenêtre et ouvre son profil ; dans un appel de groupe, toucher la case d'un participant." },
+      { t: "Ouvrir le profil depuis les appels", d: "Dans l'onglet Appels, toucher la photo d'une personne ouvre son profil, et toucher l'icône d'un groupe (appel de groupe) ouvre la fiche du groupe (le bouton 📞 / 🎥 à droite rappelle). Pendant un appel, toucher sa photo (ou sa petite photo en haut pendant un appel vidéo) réduit l'appel en petite fenêtre et ouvre son profil ; dans un appel de groupe, toucher la case d'un participant." },
       { t: "Appel audio à une personne", d: "Ouvrez la discussion avec la personne. En haut à droite, touchez le combiné 📞. Son téléphone sonne ; dès qu'elle décroche, vous vous entendez." },
       { t: "Appel vidéo à une personne", d: "Dans la même discussion, touchez la caméra 🎥 en haut à droite. La personne apparaît en grand, et vous en petit dans un coin." },
       { t: "Les boutons pendant l'appel", d: "Micro (couper / remettre votre voix), Haut-parleur, Caméra (couper / remettre l'image), Changer de caméra (avant / arrière), Raccrocher (rouge). On peut sortir de l'écran d'appel pour écrire dans une discussion : une petite barre en haut permet d'y revenir." },
