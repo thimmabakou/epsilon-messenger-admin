@@ -422,6 +422,7 @@ export const HELP_SHEETS = [
       "Epsilon IA est l'assistante automatique d'Epsilon. Elle répond tout de suite, jour et nuit, dans la discussion « Service client Epsilon », à partir de ces fiches pratiques, dans la langue de la personne. Quand la réponse n'est pas dans les fiches, ou quand il faut une décision humaine, elle passe la main à un conseiller.",
     steps: [
       { t: "Poser une question", d: "Ouvrir la discussion « Service client Epsilon » (épinglée en premier) et écrire sa question. Epsilon IA répond en quelques secondes ; ses messages portent la mention « 🤖 Epsilon IA »." },
+      { t: "Poser sa question par message vocal", d: "Dans la même discussion, garder le doigt sur le micro 🎤, parler (2 minutes au plus), puis relâcher. Epsilon IA écoute le vocal, le met en texte et répond par écrit en quelques secondes. Parler calmement, dans un endroit sans bruit, de préférence en français : le lingala et le kituba sont encore mal compris." },
       { t: "Parler à un conseiller", d: "Sous la réponse d'Epsilon IA, toucher « 👤 Parler à un conseiller ». Un membre de l'équipe répond dans la même discussion dès que possible ; Epsilon IA se tait pendant 24 heures." },
       { t: "Pour l'équipe : suivre Epsilon IA", d: "Site administrateur → « Epsilon IA » : l'allumer ou l'éteindre, voir les questions du jour, celles qu'elle a transmises et celles où la personne a demandé un conseiller. Une question sans réponse = une fiche à compléter." },
     ],
@@ -430,12 +431,15 @@ export const HELP_SHEETS = [
       "Epsilon IA connaît aussi les documents de la rubrique « L'histoire de la République du Congo » (Empire Kongo, Royaume Téké, Mabiala Ma Nganga, Kimpa Vita, Antoine Ier et Ambuila, Réveil de Ngouédi, Branham, Seymour, Bosworth) : elle répond aux questions d'histoire avec ces textes, cite le document et invite à le lire dans Paramètres. Ce qui n'est pas dans ces documents, elle dit qu'elle ne l'a pas encore, sans inventer.",
       "Elle sait aussi qui a créé Epsilon (fiche « Qui a créé Epsilon ? »).",
       "Epsilon IA ne valide jamais un paiement, ne débloque pas un compte, ne traite pas un signalement et ne rembourse pas : elle transmet à l'équipe.",
-      "Elle ne répond pas aux messages vocaux : un conseiller les écoute.",
+      "Messages vocaux : Epsilon IA répond aux vocaux de 2 minutes au plus (par écrit pour le moment). Un vocal plus long est écouté par un conseiller. Sur le site administrateur, chaque vocal transcrit affiche le texte entendu sous le lecteur (📝 « … ») : le conseiller sait ce qui a été dit sans l'écouter.",
+      "Si le vocal est inaudible (bruit, voix trop basse), Epsilon IA demande gentiment de répéter ou d'écrire la question.",
       "Quand un conseiller répond dans une discussion, Epsilon IA se tait pendant 12 heures dans cette discussion.",
       "Elle peut se tromper : en cas de doute, demander un conseiller.",
     ],
     problems: [
       { q: "« L'IA ne m'a pas compris. »", a: "Reformuler la question en une phrase simple, ou toucher « 👤 Parler à un conseiller »." },
+      { q: "« Epsilon IA a mal compris mon vocal. »", a: "Regarder le texte entendu sous le vocal (site administrateur). Conseiller à la personne de parler plus lentement, près du téléphone, dans un endroit calme, ou d'écrire sa question." },
+      { q: "« Epsilon IA n'a pas répondu à mon vocal. »", a: "Le vocal dépasse 2 minutes, ou un conseiller s'occupe déjà de la discussion : l'équipe l'écoute et répond. La version de l'application doit aussi être à jour." },
     ],
   },
 

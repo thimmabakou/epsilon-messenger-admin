@@ -218,6 +218,10 @@ export default function Support({ nav, goto }) {
         {(msgs.data || []).map((m) => (
           <div key={m.id} className={"conv-msg " + (m.sender === "user" ? "user" : m.sender === "system" ? "system" : m.sender === "ai" ? "team ai" : "team")}>
             {m.kind === "voice" && m.media_url ? <audio className="conv-audio" src={m.media_url} controls preload="none" /> : m.body}
+            {/* Vocal transcrit par Epsilon IA : on lit ce qui a été dit sans devoir l'écouter */}
+            {m.kind === "voice" && m.transcript && (
+              <div style={{ fontSize: 13, fontStyle: "italic", opacity: 0.85, marginTop: 4, whiteSpace: "pre-wrap" }}>📝 « {m.transcript} »</div>
+            )}
             <span className="conv-msg-when">
               {m.sender === "team" ? "Équipe Epsilon · " : m.sender === "ai" ? "🤖 Epsilon IA (réponse automatique) · " : ""}{dateTime(m.created_at)}{m.edited_at ? " · modifié" : ""}
               {m.sender === "team" && (m.kind || "text") === "text" && (!m.author_id || m.author_id === me?.id || me?.isPdg) && (
