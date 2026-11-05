@@ -45,6 +45,7 @@ export const HELP_SHEETS = [
     intro:
       "Un statut, c'est une photo, une vidéo, un texte sur fond de couleur ou une chanson que la personne partage avec ses contacts. Il reste visible 24 heures, puis il disparaît tout seul.",
     steps: [
+      { t: "Ouvrir le profil depuis un statut", d: "En regardant un statut, toucher la photo ou le nom de la personne en haut : son profil s'ouvre. Dans « Vu par », toucher une personne ouvre aussi son profil." },
       { t: "Ouvrir l'onglet Statuts", d: "En bas de l'écran (ou en haut selon le téléphone), touchez « Statuts ». Tout en haut, vous voyez « Mon statut »." },
       { t: "Commencer un nouveau statut", d: "Touchez « Mon statut ». Un écran s'ouvre avec, en bas, une barre pour écrire et des boutons pour la photo et la vidéo." },
       { t: "Choisir le genre de statut", d: "Pour un texte : écrivez directement dans la barre du bas, puis changez la couleur du fond avec la palette en haut. Pour une photo ou une vidéo déjà dans le téléphone : touchez « Galerie (photos et vidéos) ». Pour en faire une tout de suite : « Prendre une photo » ou « Filmer une vidéo ». On peut mélanger plusieurs photos et vidéos d'un coup." },
@@ -78,6 +79,7 @@ export const HELP_SHEETS = [
     intro:
       "Les appels passent par Internet (données mobiles ou Wi-Fi), pas par le crédit téléphonique. Ils sont gratuits sur Epsilon, mais consomment des données : la vidéo en consomme beaucoup plus que l'audio.",
     steps: [
+      { t: "Ouvrir le profil depuis les appels", d: "Dans l'onglet Appels, toucher la photo d'une personne ouvre son profil (le bouton 📞 / 🎥 à droite la rappelle). Pendant un appel, toucher sa photo (ou sa petite photo en haut pendant un appel vidéo) réduit l'appel en petite fenêtre et ouvre son profil ; dans un appel de groupe, toucher la case d'un participant." },
       { t: "Appel audio à une personne", d: "Ouvrez la discussion avec la personne. En haut à droite, touchez le combiné 📞. Son téléphone sonne ; dès qu'elle décroche, vous vous entendez." },
       { t: "Appel vidéo à une personne", d: "Dans la même discussion, touchez la caméra 🎥 en haut à droite. La personne apparaît en grand, et vous en petit dans un coin." },
       { t: "Les boutons pendant l'appel", d: "Micro (couper / remettre votre voix), Haut-parleur, Caméra (couper / remettre l'image), Changer de caméra (avant / arrière), Raccrocher (rouge). On peut sortir de l'écran d'appel pour écrire dans une discussion : une petite barre en haut permet d'y revenir." },
@@ -387,6 +389,7 @@ export const HELP_SHEETS = [
     intro:
       "Les discussions marchent en temps réel : le message arrive tout de suite, et on voit quand l'autre est en train d'écrire. On peut envoyer du texte, des messages vocaux, des photos, des vidéos, des documents et des produits des boutiques. Les groupes réunissent jusqu'à 256 membres.",
     steps: [
+      { t: "Toucher la photo de quelqu'un", d: "Dans la liste des discussions, une photo entourée d'un anneau coloré veut dire que la personne a publié un statut pas encore vu : le premier toucher sur sa photo ouvre son statut. Quand tout est vu (anneau gris), toucher la photo ouvre son profil. Dans un groupe, toucher la petite photo à côté d'un message ouvre le profil de la personne." },
       { t: "Commencer une discussion", d: "Onglet Discussions → bouton « + » en bas à droite → choisir un contact. Seules les personnes inscrites sur Epsilon apparaissent dans « Contacts sur Epsilon »." },
       { t: "Envoyer une photo, une vidéo ou un vocal", d: "Dans la discussion : le trombone ouvre six grandes icônes en couleur — Galerie, Photo, Vidéo, Document, Audio et Produit ; l'icône appareil photo propose directement Photo, Vidéo ou Galerie ; et le micro (rond violet) sert au message vocal. Quand on écoute un vocal, un effet lumineux « néon » (ligne brillante, lentille bleue et pulsations roses) danse au rythme de la voix, et le bouton rond lecture / pause s'entoure d'un anneau lumineux qui tourne pendant l'écoute ; toucher ou glisser sur cet effet pour avancer ou reculer. Pendant l'envoi, le pourcentage s'affiche (« Vidéo · envoi… 45 % ») ; à la réception d'un fichier chiffré, le pourcentage du téléchargement s'affiche aussi. Une grosse vidéo prend du temps avec un réseau lent : rester dans la discussion jusqu'à 100 %." },
       { t: "Créer un groupe", d: "Onglet Discussions → bouton « + » en bas à droite → « Nouveau groupe ». Donner un nom (et une photo si on veut), « Suivant », puis choisir les membres." },
