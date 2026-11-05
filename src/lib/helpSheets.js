@@ -732,6 +732,22 @@ export const HELP_SHEETS = [
 
   // ───────────────────────────── HORS CONNEXION ─────────────────────────────
   {
+    id: "ordinateur-iphone",
+    icon: "💻",
+    title: "Epsilon sur ordinateur (Windows, macOS) et sur iPhone",
+    who: "Tous les utilisateurs",
+    intro:
+      "Epsilon existe aussi sur ordinateur : Windows 10/11 et Mac (puces Apple et Intel). On y retrouve le même compte, les mêmes discussions, statuts, appels, boutiques et chaînes TV que sur le téléphone. Page de téléchargement : epsilon-messenger-app.pages.dev/telecharger.html (aussi dans Paramètres → « Epsilon sur ordinateur et iPhone »). L'application se met à jour toute seule.",
+    steps: [
+      { t: "Installer sur Windows", d: "Télécharger « Epsilon-Messenger-Windows.exe », l'ouvrir et suivre les étapes. Si Windows affiche « Windows a protégé votre ordinateur » : « Informations complémentaires » puis « Exécuter quand même » (normal pour une nouvelle application). L'icône Epsilon apparaît sur le bureau et dans le menu Démarrer." },
+      { t: "Installer sur Mac", d: "Télécharger « Epsilon-Messenger-macOS.dmg », l'ouvrir et glisser Epsilon dans « Applications ». Au premier lancement, le Mac peut dire « développeur non identifié » : faire clic droit (ou Ctrl + clic) sur Epsilon → « Ouvrir » → « Ouvrir ». Ensuite il s'ouvre normalement. Autoriser la caméra et le micro quand le Mac le demande (appels, vocaux)." },
+      { t: "Se connecter", d: "Se connecter avec le même numéro que sur le téléphone, puis entrer son code secret (chiffrement de bout en bout) pour retrouver ses discussions." },
+      { t: "L'écran sur ordinateur", d: "À gauche, une barre d'icônes : Discussions, Statuts, Appels, Boutiques, TV, puis Paramètres et sa photo. Au milieu, la liste des discussions ; à droite, la discussion ouverte. La TV et les boutiques s'affichent en grand. Entrée envoie le message, Maj + Entrée va à la ligne. La même présentation s'affiche aussi en ouvrant Epsilon dans un navigateur sur un grand écran." },
+      { t: "iPhone et iPad", d: "En attendant la version App Store : ouvrir epsilon-messenger-app.pages.dev dans Safari, toucher Partager (⬆) puis « Sur l'écran d'accueil ». L'icône Epsilon apparaît comme une application. L'affichage est le même que sur Android." },
+      { t: "Ce qui ne marche pas partout", d: "Le mode « téléphone à téléphone » sans réseau n'existe que sur Android (ni ordinateur, ni iPhone). Tout le reste fonctionne." },
+    ],
+  },
+  {
     id: "hors-connexion",
     icon: "📴",
     title: "Utiliser Epsilon sans connexion (mode hors ligne)",
