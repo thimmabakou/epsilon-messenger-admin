@@ -363,6 +363,7 @@ export const HELP_SHEETS = [
     ],
     tips: [
       "Personne ne peut lire les discussions : ni Epsilon, ni un pirate. C'est pour ça que l'équipe ne peut PAS retrouver un code secret oublié. Conseiller de l'écrire sur papier, dans un carnet.",
+      "Les photos, vidéos, messages vocaux, musiques et documents envoyés dans les discussions sont AUSSI chiffrés de bout en bout : chaque fichier est chiffré dans le téléphone avant l'envoi, avec sa propre clé, qui voyage cachée dans le message chiffré. Les serveurs ne gardent que des données illisibles ; seuls les membres de la discussion peuvent voir le fichier. (Les fichiers envoyés avant novembre 2026 ne sont pas concernés.) Partager ou « Ouvrir avec… » un document chiffré demande la dernière version de l'application Android.",
       "Une même adresse e-mail peut servir à plusieurs numéros (par exemple pour un proche qui n'a pas d'e-mail). C'est le numéro qui identifie le compte.",
       "Le numéro et l'adresse e-mail ne sont pas visibles par les autres utilisateurs.",
       "Langue : Paramètres → « Langue de l'application » (français, anglais, chinois, espagnol) ; elle s'applique à toute l'application. Thème : Paramètres → Apparence (clair, moyen, sombre).",
