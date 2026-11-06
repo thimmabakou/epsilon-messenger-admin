@@ -10,7 +10,7 @@ import PayCodeCheck from "../components/PayCodeCheck";
 import { printReport, money, dayTime, day } from "../lib/printDoc";
 
 const TABS = [["en_attente", "En attente"], ["validee", "Validés"], ["refusee", "Refusés"], ["orgs", "Entreprises"]];
-const PLAN = { mensuel: "Mensuel (30 jours)", annuel: "Annuel (365 jours) ⭐" };
+const PLAN = { premium: "Premium (20 $ / mois)", mensuel: "Mensuel (30 jours)", annuel: "Annuel (365 jours) ⭐" };
 
 export default function BizPayments() {
   const { can, deny, act } = useAdmin();
@@ -27,13 +27,14 @@ export default function BizPayments() {
     const ids = orgs.map((o) => o.id);
     const seats = ids.length ? q(supabase.from("biz_seats").select("id,org_id,name,kind,active,is_owner,post_id").in("org_id", ids)) : [];
     // Conseils de direction ouverts (succession du dirigeant) — absents si la partie 5 du fichier 87 n'est pas exécutée
+    const docs = ids.length ? await supabase.from("biz_docs").select("id,org_id,kind,title,number,visibility,mime").in("org_id", ids).then((r) => r.data || [], () => []) : [];
     const councils = ids.length ? await supabase.from("biz_council").select("*").eq("status", "ouvert").in("org_id", ids).then((r) => r.data || []) : [];
     const owners = [...new Set(orgs.map((o) => o.owner_id))];
     const [S, users] = await Promise.all([seats, owners.length ? q(supabase.from("profiles").select("id,first_name,last_name,phone").in("id", owners)) : []]);
     const U = Object.fromEntries(users.map((u) => [u.id, u]));
     const O = Object.fromEntries(orgs.map((o) => [o.id, { ...o, owner: U[o.owner_id], seats: S.filter((x) => x.org_id === o.id && x.kind === "poste" && x.active).length,
       people: S.filter((x) => x.org_id === o.id && x.kind === "membre" && x.active).length,
-      council: councils.find((c) => c.org_id === o.id), seatName: (id) => S.find((x) => x.id === id)?.name || "—" }]));
+      council: councils.find((c) => c.org_id === o.id), docs: docs.filter((x) => x.org_id === o.id), seatName: (id) => S.find((x) => x.id === id)?.name || "—" }]));
     return { pays: pays.map((p) => ({ ...p, org: O[p.org_id] })), orgs: Object.values(O) };
   });
   const list = tab === "orgs" ? [] : (data?.pays || []).filter((p) => p.status === tab);
@@ -78,6 +79,21 @@ export default function BizPayments() {
               if (r === "votes") throw new Error("Tous les membres n'ont pas encore reconnu le successeur.");
               reload?.();
             }, "✅ Succession confirmée : le successeur occupe le poste le plus élevé.")}>Confirmer sur pièces</button></span>}
+          <span className="field-hint">{o.tier === "premium" ? "👑 Premium (20 ordinateurs)" : "Standard (8 ordinateurs)"}{o.activity ? ` · ${o.activity}` : ""}{o.verified_at ? " · ✔ Papiers vérifiés" : ""}</span>
+          {o.docs.length > 0 && <span className="field-hint">📑 Documents : {o.docs.map((x) => `${x.title}${x.number ? ` (${x.number})` : ""} [${x.visibility}]`).join(" · ")}</span>}
+          <span className="field-hint">
+            {o.docs.map((x) => <button key={x.id} className="action-button neutral" style={{ marginRight: 6 }} onClick={() => act(async () => {
+              const { data: ses } = await supabase.auth.getSession();
+              const r = await fetch(`https://epsilon-messenger-app.pages.dev/api/biz?doc=${x.id}`, { headers: { authorization: `Bearer ${ses?.session?.access_token || ""}` } });
+              if (!r.ok) throw new Error("Document introuvable");
+              window.open(URL.createObjectURL(await r.blob()), "_blank");
+            })}>📄 {x.title}</button>)}
+            <button className="action-button neutral" onClick={() => window.confirm(o.verified_at ? "Retirer le badge « Papiers vérifiés » ?" : "Confirmer : vous avez vérifié les documents officiels de cette entreprise (registre du commerce, numéro fiscal…) ?") && act(async () => {
+              const { error: e } = await supabase.rpc("eg_biz_verify", { p_org: o.id, p_ok: !o.verified_at });
+              if (e) throw new Error(e.message);
+              reload?.();
+            }, o.verified_at ? "Badge retiré." : "✔ Entreprise marquée « papiers vérifiés ».")}>{o.verified_at ? "Retirer le badge ✔" : "✔ Papiers vérifiés"}</button>
+          </span>
           <span className="field-hint">{active(o) ? `✅ Abonnement actif jusqu'au ${dateOnly(o.paid_until)}` : o.paid_until ? `⛔ Expiré depuis le ${dateOnly(o.paid_until)}` : "⏳ Jamais payé"} · créée le {dateOnly(o.created_at)}</span>
         </div></div>))}</div>
     ))}
