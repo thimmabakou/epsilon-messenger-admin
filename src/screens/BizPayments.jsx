@@ -1,6 +1,7 @@
 // Epsilon Business : les entreprises abonnées et leurs paiements (mensuel 1 200 FCFA ≈ 2 $, annuel 12 000 FCFA ≈ 20 $).
 // Le dirigeant paie par Mobile Money et donne la référence du SMS ; ici on recopie le code reçu sur le téléphone
 // d'Epsilon (il doit être identique), puis on valide (30 jours ou 1 an de plus) ou on refuse.
+import { certifState, bizCountryName } from "../lib/bizLegal.js";
 import { useState } from "react";
 import { supabase, q } from "../lib/supabase";
 import { useAdmin, useLoad, Loading } from "../lib/admin";
@@ -10,6 +11,12 @@ import PayCodeCheck from "../components/PayCodeCheck";
 import { printReport, money, dayTime, day } from "../lib/printDoc";
 
 const TABS = [["en_attente", "En attente"], ["validee", "Validés"], ["refusee", "Refusés"], ["orgs", "Entreprises"]];
+// Où vérifier les papiers en ligne, selon le pays de l'entreprise
+const VERIFY_AT = {
+  fr: "https://annuaire-entreprises.data.gouv.fr", be: "https://kbopub.economie.fgov.be",
+  us: "Site du Secretary of State de l'État (« Business Search »)", ca: "https://ised-isde.canada.ca/cc/lgcy/fdrlCrpSrch.html (fédéral) ou registre de la province",
+  cg: "ACPCE (Agence congolaise pour la création des entreprises)", ci: "CEPICI — https://cepici.gouv.ci", cd: "Guichet unique de création d'entreprise (GUCE)",
+};
 const PLAN = { premium: "Premium (20 $ / mois)", mensuel: "Mensuel (30 jours)", annuel: "Annuel (365 jours) ⭐" };
 
 export default function BizPayments() {
@@ -27,7 +34,7 @@ export default function BizPayments() {
     const ids = orgs.map((o) => o.id);
     const seats = ids.length ? q(supabase.from("biz_seats").select("id,org_id,name,kind,active,is_owner,post_id").in("org_id", ids)) : [];
     // Conseils de direction ouverts (succession du dirigeant) — absents si la partie 5 du fichier 87 n'est pas exécutée
-    const docs = ids.length ? await supabase.from("biz_docs").select("id,org_id,kind,title,number,visibility,mime").in("org_id", ids).then((r) => r.data || [], () => []) : [];
+    const docs = ids.length ? await supabase.from("biz_docs").select("id,org_id,kind,title,number,visibility,mime,req").in("org_id", ids).then((r) => r.data || [], () => []) : [];
     const councils = ids.length ? await supabase.from("biz_council").select("*").eq("status", "ouvert").in("org_id", ids).then((r) => r.data || []) : [];
     const owners = [...new Set(orgs.map((o) => o.owner_id))];
     const [S, users] = await Promise.all([seats, owners.length ? q(supabase.from("profiles").select("id,first_name,last_name,phone").in("id", owners)) : []]);
@@ -35,7 +42,9 @@ export default function BizPayments() {
     const O = Object.fromEntries(orgs.map((o) => [o.id, { ...o, owner: U[o.owner_id], seats: S.filter((x) => x.org_id === o.id && x.kind === "poste" && x.active).length,
       people: S.filter((x) => x.org_id === o.id && x.kind === "membre" && x.active).length,
       council: councils.find((c) => c.org_id === o.id), docs: docs.filter((x) => x.org_id === o.id), seatName: (id) => S.find((x) => x.id === id)?.name || "—" }]));
-    return { pays: pays.map((p) => ({ ...p, org: O[p.org_id] })), orgs: Object.values(O) };
+    // Les demandes de badge en premier
+    const list = Object.values(O).sort((a, b) => (b.verify_requested_at && !b.verified_at ? 1 : 0) - (a.verify_requested_at && !a.verified_at ? 1 : 0));
+    return { pays: pays.map((p) => ({ ...p, org: O[p.org_id] })), orgs: list };
   });
   const list = tab === "orgs" ? [] : (data?.pays || []).filter((p) => p.status === tab);
   const count = (k) => (k === "orgs" ? (data?.orgs || []).length : (data?.pays || []).filter((p) => p.status === k).length);
@@ -80,6 +89,10 @@ export default function BizPayments() {
               reload?.();
             }, "✅ Succession confirmée : le successeur occupe le poste le plus élevé.")}>Confirmer sur pièces</button></span>}
           <span className="field-hint">{o.tier === "premium" ? "👑 Premium (20 ordinateurs)" : "Standard (8 ordinateurs)"}{o.activity ? ` · ${o.activity}` : ""}{o.verified_at ? " · ✔ Papiers vérifiés" : ""}</span>
+          {o.verify_requested_at && !o.verified_at && (() => { const cs = certifState(o.country, o.docs); return (
+            <span className="field-hint">🏅 <b>Badge demandé le {dateOnly(o.verify_requested_at)}</b> — pays : {bizCountryName(o.country) || "—"}.
+              {" "}Documents exigés : {cs.list.filter((x) => x.req).map((x) => `${x.doc ? "✅" : "❌"} ${x.name}`).join(" · ")}.
+              {VERIFY_AT[o.country] ? ` Vérifier en ligne : ${VERIFY_AT[o.country]}` : ""}</span>); })()}
           {o.docs.length > 0 && <span className="field-hint">📑 Documents : {o.docs.map((x) => `${x.title}${x.number ? ` (${x.number})` : ""} [${x.visibility}]`).join(" · ")}</span>}
           <span className="field-hint">
             {o.docs.map((x) => <button key={x.id} className="action-button neutral" style={{ marginRight: 6 }} onClick={() => act(async () => {
@@ -93,6 +106,11 @@ export default function BizPayments() {
               if (e) throw new Error(e.message);
               reload?.();
             }, o.verified_at ? "Badge retiré." : "✔ Entreprise marquée « papiers vérifiés ».")}>{o.verified_at ? "Retirer le badge ✔" : "✔ Papiers vérifiés"}</button>
+            {o.verify_requested_at && !o.verified_at && <button className="action-button neutral" style={{ marginLeft: 6 }} onClick={() => window.confirm("Refuser la demande de badge (documents faux, illisibles ou manquants) ?") && act(async () => {
+              const { error: e } = await supabase.rpc("eg_biz_verify", { p_org: o.id, p_ok: false });
+              if (e) throw new Error(e.message);
+              reload?.();
+            }, "Demande de badge refusée.")}>✖ Refuser la demande</button>}
           </span>
           <span className="field-hint">{active(o) ? `✅ Abonnement actif jusqu'au ${dateOnly(o.paid_until)}` : o.paid_until ? `⛔ Expiré depuis le ${dateOnly(o.paid_until)}` : "⏳ Jamais payé"} · créée le {dateOnly(o.created_at)}</span>
         </div></div>))}</div>
