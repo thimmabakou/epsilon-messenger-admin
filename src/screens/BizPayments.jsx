@@ -71,7 +71,7 @@ export default function BizPayments() {
           foot: ["", "", "", "", "Total", money(list.reduce((s, p) => s + Number(p.amount_fcfa || 0), 0)), "", "", ""] } }],
       })}>🖨️ Imprimer</button>}
     </ScreenTitle>
-    <Note icon="💼">Abonnement <b>mensuel 1 200 FCFA</b> (≈ 2 $, 30 jours) ou <b>annuel 12 000 FCFA</b> (≈ 20 $, 365 jours). Il permet de connecter <b>jusqu'à 8 ordinateurs</b> (sièges) au compte de l'entreprise. Pour valider, <b>recopiez le code reçu dans le SMS</b> du téléphone d'Epsilon : il doit être identique à celui du dirigeant. Vérifiez aussi le <b>montant</b>.</Note>
+    <Note icon="💼">Trois formules : <b>Standard mensuel 1 200 FCFA</b> (≈ 2 $, 30 jours), <b>Standard annuel 12 000 FCFA</b> (≈ 20 $, 365 jours) — <b>8 ordinateurs</b> ; <b>Premium 12 000 FCFA par mois</b> (≈ 20 $, 30 jours) — <b>20 ordinateurs</b>. Attention : annuel et Premium ont le même montant, vérifiez bien la formule demandée. Pour valider, <b>recopiez le code reçu dans le SMS</b> du téléphone d'Epsilon : il doit être identique à celui du dirigeant. Vérifiez aussi le <b>montant</b>.</Note>
     {String(error || "").match(/biz_/) && <Note icon="⚠️">Le fichier SQL 87 (Epsilon Business) n'est pas encore exécuté dans Supabase.</Note>}
     <Pills options={TABS.map(([k, l]) => [k, `${l} (${count(k)})`])} value={tab} onChange={setTab} />
     {!data && <Loading error={error} />}
