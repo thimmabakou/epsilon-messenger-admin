@@ -855,3 +855,8 @@ button, input, textarea { font-family: inherit; }
 .cl-jump input { width: 56px; border: 1px solid var(--border); border-radius: 8px; padding: 5px 6px; font-size: 13px; }
 .cl-jump button { border: 1px solid var(--border); border-radius: 8px; background: #f3edf6; padding: 5px 8px; cursor: pointer; font-size: 12px; }
 .user-row .u-main span + span { display: block; }
+.bv-list { margin: 4px 0 8px 18px; padding: 0; line-height: 1.55; font-size: 14px; }
+.bv-list li { margin-bottom: 3px; }
+.bv-ok { color: #0b7a3e; font-weight: 600; }
+.bv-bad { color: #b42318; font-weight: 600; }
+details > summary { cursor: pointer; font-weight: 600; margin: 6px 0; }
