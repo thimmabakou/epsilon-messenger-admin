@@ -24,11 +24,16 @@ export default function BizPayments() {
       q(supabase.from("biz_payments").select("*").order("created_at", { ascending: false }).limit(400)),
       q(supabase.from("biz_orgs").select("*").order("created_at", { ascending: false }).limit(500)),
     ]);
-    const seats = orgs.length ? q(supabase.from("biz_seats").select("org_id,active,is_owner").in("org_id", orgs.map((o) => o.id))) : [];
+    const ids = orgs.map((o) => o.id);
+    const seats = ids.length ? q(supabase.from("biz_seats").select("id,org_id,name,kind,active,is_owner,post_id").in("org_id", ids)) : [];
+    // Conseils de direction ouverts (succession du dirigeant) — absents si la partie 5 du fichier 87 n'est pas exécutée
+    const councils = ids.length ? await supabase.from("biz_council").select("*").eq("status", "ouvert").in("org_id", ids).then((r) => r.data || []) : [];
     const owners = [...new Set(orgs.map((o) => o.owner_id))];
     const [S, users] = await Promise.all([seats, owners.length ? q(supabase.from("profiles").select("id,first_name,last_name,phone").in("id", owners)) : []]);
     const U = Object.fromEntries(users.map((u) => [u.id, u]));
-    const O = Object.fromEntries(orgs.map((o) => [o.id, { ...o, owner: U[o.owner_id], seats: S.filter((x) => x.org_id === o.id && !x.is_owner && x.active).length }]));
+    const O = Object.fromEntries(orgs.map((o) => [o.id, { ...o, owner: U[o.owner_id], seats: S.filter((x) => x.org_id === o.id && x.kind === "poste" && x.active).length,
+      people: S.filter((x) => x.org_id === o.id && x.kind === "membre" && x.active).length,
+      council: councils.find((c) => c.org_id === o.id), seatName: (id) => S.find((x) => x.id === id)?.name || "—" }]));
     return { pays: pays.map((p) => ({ ...p, org: O[p.org_id] })), orgs: Object.values(O) };
   });
   const list = tab === "orgs" ? [] : (data?.pays || []).filter((p) => p.status === tab);
@@ -46,7 +51,7 @@ export default function BizPayments() {
     <ScreenTitle eyebrow="COMMERCE" title="Epsilon Business">
       {data && <button className="action-button neutral" onClick={() => printReport(tab === "orgs" ? {
         title: "Epsilon Business — entreprises", subtitle: `${data.orgs.length} entreprise(s)`, landscape: true,
-        blocks: [{ table: { cols: ["Créée le", "Entreprise", "Dirigeant", "Téléphone", "Sièges actifs", "Abonnement jusqu'au", "État"],
+        blocks: [{ table: { cols: ["Créée le", "Entreprise", "Créateur", "Téléphone", "Ordinateurs actifs", "Abonnement jusqu'au", "État"],
           rows: data.orgs.map((o) => [day(o.created_at), o.name, o.owner ? fullName(o.owner) : "—", o.owner?.phone, String(o.seats), o.paid_until ? day(o.paid_until) : "—", active(o) ? "Actif" : "Inactif"]) } }],
       } : {
         title: `Epsilon Business — paiements ${TABS.find((t) => t[0] === tab)?.[1]}`, subtitle: `${list.length} paiement(s)`, landscape: true,
@@ -65,7 +70,14 @@ export default function BizPayments() {
       <div className="mp-section">{data.orgs.map((o) => (
         <div key={o.id} className="music-row"><div className="music-main">
           <strong>{o.name}</strong>
-          <span className="field-hint">Dirigeant : {o.owner ? `${fullName(o.owner)} (${o.owner.phone || "—"})` : "—"} · {o.seats}/8 sièges actifs</span>
+          <span className="field-hint">Créateur du compte : {o.owner ? `${fullName(o.owner)} (${o.owner.phone || "—"})` : "—"} · {o.people} personne(s) · {o.seats}/8 ordinateurs</span>
+          {o.council && <span className="field-hint">⚖️ Conseil de direction ouvert le {dateOnly(o.council.opened_at)} — successeur proposé : <b>{o.seatName(o.council.candidate)}</b>
+            {" "}<button className="action-button neutral" onClick={() => window.confirm("Confirmer la succession SANS attendre 7 jours ? Seulement avec les pièces (acte de décès, procès-verbal du conseil).") && act(async () => {
+              const { data: r, error: e } = await supabase.rpc("eg_biz_council_apply", { p_council: o.council.id, p_force: true });
+              if (e) throw new Error(e.message);
+              if (r === "votes") throw new Error("Tous les membres n'ont pas encore reconnu le successeur.");
+              reload?.();
+            }, "✅ Succession confirmée : le successeur occupe le poste le plus élevé.")}>Confirmer sur pièces</button></span>}
           <span className="field-hint">{active(o) ? `✅ Abonnement actif jusqu'au ${dateOnly(o.paid_until)}` : o.paid_until ? `⛔ Expiré depuis le ${dateOnly(o.paid_until)}` : "⏳ Jamais payé"} · créée le {dateOnly(o.created_at)}</span>
         </div></div>))}</div>
     ))}
@@ -74,7 +86,7 @@ export default function BizPayments() {
         <div key={p.id} className="music-row" style={{ alignItems: "flex-start" }}>
           <div className="music-main">
             <strong>{p.org?.name || "Entreprise supprimée"}</strong>
-            <span className="field-hint">Dirigeant : {p.org?.owner ? `${fullName(p.org.owner)} (${p.org.owner.phone || "—"})` : "—"}</span>
+            <span className="field-hint">Créateur : {p.org?.owner ? `${fullName(p.org.owner)} (${p.org.owner.phone || "—"})` : "—"}</span>
             <span className="field-hint">{PLAN[p.plan] || p.plan} · <b>{fmt(p.amount_fcfa)} FCFA</b></span>
             <span className="field-hint">Code du dirigeant : <b style={{ fontSize: 15 }}>{p.pay_ref}</b> · déclaré le {dateTime(p.created_at)}</span>
             {p.org?.paid_until && <span className="field-hint">Abonnement actuel jusqu'au {dateOnly(p.org.paid_until)}</span>}
