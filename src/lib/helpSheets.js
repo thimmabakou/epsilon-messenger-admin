@@ -736,6 +736,23 @@ export const HELP_SHEETS = [
 
   // ───────────────────────────── HORS CONNEXION ─────────────────────────────
   {
+    id: "epsilon-business",
+    icon: "💼",
+    title: "Epsilon Business : l'entreprise, son organigramme et ses ordinateurs",
+    who: "Entreprises, commerçants, chaînes TV",
+    intro:
+      "Epsilon Business permet à une entreprise de faire travailler toute son équipe sur le même compte, chacun à son poste. Abonnement : 1 200 FCFA par mois (≈ 2 $) ou 12 000 FCFA par an (≈ 20 $, soit 4 $ d'économie). Il permet de connecter jusqu'à 8 ordinateurs (sièges) au compte de l'entreprise. Les clients voient un seul compte ; à l'intérieur, chaque siège a son nom et son poste. Bientôt : boîte de réception partagée, assistante IA, standard téléphonique (5 appels en même temps), comptabilité SYSCOHADA.",
+    steps: [
+      { t: "Créer son entreprise", d: "Paramètres → « 💼 Epsilon Business » → lire la présentation → écrire le nom de l'entreprise → « Créer mon entreprise ». Celui qui crée l'entreprise en est le dirigeant (poste « Directeur général », rang 1)." },
+      { t: "Payer l'abonnement", d: "Dans Epsilon Business : choisir Mensuel (1 200 FCFA) ou Annuel (12 000 FCFA), envoyer le montant par MTN MoMo ou Airtel Money au numéro affiché, puis recopier la référence du SMS de confirmation et toucher « Envoyer la référence ». L'équipe Epsilon vérifie (le code doit être identique à celui reçu par Epsilon) et l'abonnement s'active : 30 jours ou 1 an de plus. En cas de refus, le motif s'affiche." },
+      { t: "Construire l'organigramme", d: "Toucher « ＋ Ajouter un poste » : nom du poste (Directeur commercial, Secrétaire, DAF, DRH, Service client…), rang (2 = le plus haut après le dirigeant, 9 = le plus bas), à qui il est rattaché, ses pouvoirs (discussions clients, commandes et colis, appels, documents internes, comptabilité, équipe, réglages) et s'il s'agit d'un poste d'équipe (👥 : tous ses membres voient les mêmes discussions). Toucher un poste pour le modifier ou le supprimer." },
+      { t: "Qui décide", d: "Seul le dirigeant (poste le plus élevé) peut créer, renommer, changer le rang ou les pouvoirs d'un poste, et suspendre un siège. Les autres voient l'organigramme mais ne peuvent pas le modifier. Le poste du dirigeant reste toujours au rang 1." },
+      { t: "Ajouter un siège (un opérateur)", d: "Dans « Sièges » : « ＋ Ajouter un siège » → nom de l'opérateur (ex. Grâce) → son poste → Enregistrer. 8 sièges actifs au maximum ; il faut un abonnement à jour. Un siège n'a pas besoin de numéro de téléphone." },
+      { t: "Connecter l'ordinateur d'un siège", d: "Sur l'ordinateur : ouvrir Epsilon (QR code à gauche). Sur le téléphone du dirigeant : Epsilon Business → toucher 💻 à côté du siège → scanner le QR code → vérifier → « Valider ». L'ordinateur s'ouvre sur ce siège. On peut aussi passer par Paramètres → « 🔗 Connecter un ordinateur » et choisir « Ouvrir l'ordinateur sur : » le siège voulu (ou « Mon compte » pour le dirigeant). La première fois, le siège choisit son propre code secret de chiffrement." },
+      { t: "Suspendre / réactiver un siège", d: "Le dirigeant touche « Suspendre » : ce siège ne peut plus se reconnecter (par exemple un employé qui quitte l'entreprise). « Réactiver » le rend utilisable de nouveau (dans la limite de 8 sièges actifs)." },
+    ],
+  },
+  {
     id: "ordinateur-iphone",
     icon: "💻",
     title: "Epsilon sur ordinateur (Windows, macOS) et sur iPhone",
