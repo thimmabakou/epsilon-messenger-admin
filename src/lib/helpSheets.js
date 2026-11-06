@@ -808,7 +808,7 @@ export const HELP_SHEETS = [
     ],
     problems: [
       { q: "« Sans connexion, Epsilon affiche « Page Web non disponible ». »", a: "L'application est trop ancienne : la mettre à jour (bouton « Mettre à jour », ou epsilon-messenger-app.pages.dev/epsilon.apk) avec connexion, l'ouvrir une fois, puis réessayer sans connexion. Les versions récentes gardent une copie d'Epsilon dans le téléphone." },
-      { q: "« Je ne vois pas les messages d'une discussion hors connexion. »", a: "Cette discussion n'a pas encore été ouverte avec connexion sur ce téléphone. L'ouvrir une fois quand le réseau revient." },
+      { q: "« Je ne vois pas les messages d'une discussion hors connexion. »", a: "Epsilon garde automatiquement dans l'appareil (téléphone ou ordinateur) les 80 derniers messages et la fiche du contact des 25 discussions les plus récentes, quelques secondes après l'ouverture de la liste des discussions avec une bonne connexion (au plus toutes les 10 minutes ; pas en mode connexion faible). Une discussion plus ancienne : l'ouvrir une fois quand le réseau revient. Les messages restent chiffrés dans l'appareil." },
     ],
   },
 
