@@ -2,7 +2,7 @@
 // Le dirigeant paie par Mobile Money et donne la référence du SMS ; ici on recopie le code reçu sur le téléphone
 // d'Epsilon (il doit être identique), puis on valide (30 jours ou 1 an de plus) ou on refuse.
 import { certifState, bizCountryName } from "../lib/bizLegal.js";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase, q } from "../lib/supabase";
 import { useAdmin, useLoad, Loading } from "../lib/admin";
 import { dateOnly, dateTime, fmt, fullName } from "../lib/format";
@@ -10,7 +10,8 @@ import { Empty, Note, Pills, ScreenTitle } from "../components/common";
 import PayCodeCheck from "../components/PayCodeCheck";
 import { printReport, money, dayTime, day } from "../lib/printDoc";
 
-const TABS = [["en_attente", "En attente"], ["validee", "Validés"], ["refusee", "Refusés"], ["orgs", "Entreprises"]];
+const TABS = [["en_attente", "En attente"], ["validee", "Validés"], ["refusee", "Refusés"], ["orgs", "Entreprises"], ["bilan", "📊 Bilan"]];
+const USD_FCFA = 600; // même taux que les prix affichés (1 $ ≈ 600 FCFA)
 // Où vérifier les papiers en ligne, selon le pays de l'entreprise
 const VERIFY_AT = {
   fr: "https://annuaire-entreprises.data.gouv.fr", be: "https://kbopub.economie.fgov.be",
@@ -23,6 +24,13 @@ export default function BizPayments() {
   const { can, deny, act } = useAdmin();
   const allowed = can("shops.pay");
   const [tab, setTab] = useState("en_attente");
+  // Bilan mensuel : argent encaissé, coût réel de l'IA (facturé par Cloudflare), ce qui reste à Epsilon
+  const [fin, setFin] = useState(null);
+  const [finErr, setFinErr] = useState("");
+  useEffect(() => {
+    if (tab !== "bilan" || fin) return;
+    supabase.rpc("eg_biz_finance", { p_months: 12 }).then(({ data: d, error: e }) => (e ? setFinErr(e.message) : setFin(d || [])));
+  }, [tab, fin]);
   const [reject, setReject] = useState(null);
   const [check, setCheck] = useState(null);
 
@@ -46,8 +54,8 @@ export default function BizPayments() {
     const list = Object.values(O).sort((a, b) => (b.verify_requested_at && !b.verified_at ? 1 : 0) - (a.verify_requested_at && !a.verified_at ? 1 : 0));
     return { pays: pays.map((p) => ({ ...p, org: O[p.org_id] })), orgs: list };
   });
-  const list = tab === "orgs" ? [] : (data?.pays || []).filter((p) => p.status === tab);
-  const count = (k) => (k === "orgs" ? (data?.orgs || []).length : (data?.pays || []).filter((p) => p.status === k).length);
+  const list = tab === "orgs" || tab === "bilan" ? [] : (data?.pays || []).filter((p) => p.status === tab);
+  const count = (k) => (k === "bilan" ? (fin?.length ?? "…") : k === "orgs" ? (data?.orgs || []).length : (data?.pays || []).filter((p) => p.status === k).length);
   const rpc = async (args) => { const { error: e } = await supabase.rpc("eg_biz_pay_decide", args); if (e) throw new Error(e.message); };
   const confirmApprove = async (adminRef) => {
     const p = check;
@@ -75,7 +83,29 @@ export default function BizPayments() {
     {String(error || "").match(/biz_/) && <Note icon="⚠️">Le fichier SQL 87 (Epsilon Business) n'est pas encore exécuté dans Supabase.</Note>}
     <Pills options={TABS.map(([k, l]) => [k, `${l} (${count(k)})`])} value={tab} onChange={setTab} />
     {!data && <Loading error={error} />}
-    {data && tab !== "orgs" && list.length === 0 && <Empty icon="💼" text="Aucun paiement ici." />}
+    {tab === "bilan" && (<>
+      <Note icon="📊">Pour chaque mois : l'argent <b>encaissé</b> par Epsilon Business (paiements validés), le <b>coût réel de l'assistante IA</b> (facturé par Cloudflare, converti à 1 $ ≈ {USD_FCFA} FCFA) et <b>ce qui reste à Epsilon</b> pour ses autres charges (Supabase, Cloudflare, serveurs, SMS…). Le crédit IA non utilisé par les entreprises n'est pas dépensé : il reste dans la caisse d'Epsilon.</Note>
+      {finErr && <Note icon="⚠️">{/function|schema/.test(finErr) ? "Le fichier SQL 95 n'est pas encore exécuté dans Supabase." : finErr}</Note>}
+      {!fin && !finErr && <Loading />}
+      {fin && (
+        <div className="mp-section">
+          <table className="bv-table">
+            <thead><tr><th>Mois</th><th>Encaissé</th><th>Coût IA</th><th>Reste à Epsilon</th><th>Paiements</th><th>Réponses IA</th></tr></thead>
+            <tbody>{fin.map((r) => {
+              const ia = Math.round(Number(r.ia_usd) * USD_FCFA);
+              return <tr key={r.mois}><td>{r.mois}</td><td>{fmt(r.encaisse_fcfa)} FCFA</td><td>{fmt(ia)} FCFA</td><td><b>{fmt(r.encaisse_fcfa - ia)} FCFA</b></td><td>{r.paiements}</td><td>{fmt(r.ia_reponses)}</td></tr>;
+            })}</tbody>
+            <tfoot><tr><th>Total</th>
+              <th>{fmt(fin.reduce((t, r) => t + Number(r.encaisse_fcfa), 0))} FCFA</th>
+              <th>{fmt(Math.round(fin.reduce((t, r) => t + Number(r.ia_usd), 0) * USD_FCFA))} FCFA</th>
+              <th>{fmt(fin.reduce((t, r) => t + Number(r.encaisse_fcfa), 0) - Math.round(fin.reduce((t, r) => t + Number(r.ia_usd), 0) * USD_FCFA))} FCFA</th>
+              <th>{fin.reduce((t, r) => t + Number(r.paiements), 0)}</th><th>{fmt(fin.reduce((t, r) => t + Number(r.ia_reponses), 0))}</th></tr></tfoot>
+          </table>
+          <span className="field-hint">Le coût IA est calculé à partir de chaque réponse (modèle et longueur) ; la facture Cloudflare fait foi. L'abonnement Cloudflare Workers (5 $ par mois) et les autres charges ne sont pas comptés ici.</span>
+        </div>
+      )}
+    </>)}
+    {data && tab !== "orgs" && tab !== "bilan" && list.length === 0 && <Empty icon="💼" text="Aucun paiement ici." />}
     {data && tab === "orgs" && (data.orgs.length === 0 ? <Empty icon="💼" text="Aucune entreprise pour le moment." /> : (
       <div className="mp-section">{data.orgs.map((o) => (
         <div key={o.id} className="music-row"><div className="music-main">

@@ -860,3 +860,8 @@ button, input, textarea { font-family: inherit; }
 .bv-ok { color: #0b7a3e; font-weight: 600; }
 .bv-bad { color: #b42318; font-weight: 600; }
 details > summary { cursor: pointer; font-weight: 600; margin: 6px 0; }
+.bv-table { width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 8px; }
+.bv-table th, .bv-table td { padding: 8px 6px; border-bottom: 1px solid var(--line, #e5e5e5); text-align: right; white-space: nowrap; }
+.bv-table th:first-child, .bv-table td:first-child { text-align: left; }
+.bv-table tfoot th { border-top: 2px solid var(--line, #ccc); }
+.mp-section:has(.bv-table) { overflow-x: auto; }
