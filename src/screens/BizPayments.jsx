@@ -71,7 +71,7 @@ export default function BizPayments() {
           foot: ["", "", "", "", "Total", money(list.reduce((s, p) => s + Number(p.amount_fcfa || 0), 0)), "", "", ""] } }],
       })}>🖨️ Imprimer</button>}
     </ScreenTitle>
-    <Note icon="💼">Six formules : <b>Standard</b> 1 200 FCFA / 30 jours ou 12 000 FCFA / 365 jours (8 ordinateurs) ; <b>Pro IA</b> 7 000 FCFA / 30 jours ou 70 000 FCFA / 365 jours (12 ordinateurs, 50 % du prix en crédit IA) ; <b>Premium</b> 12 000 FCFA / 30 jours ou 108 000 FCFA / 365 jours (20 ordinateurs, 35 % en crédit IA). Attention : Standard annuel et Premium ont le même montant (12 000 FCFA) : vérifiez bien la formule demandée. Pour valider, <b>recopiez le code reçu dans le SMS</b> du téléphone d'Epsilon : il doit être identique à celui du dirigeant. Vérifiez aussi le <b>montant</b>.</Note>
+    <Note icon="💼">Six formules : <b>Standard</b> 1 200 FCFA / 30 jours ou 12 000 FCFA / 365 jours (8 ordinateurs) ; <b>Pro IA</b> 7 000 FCFA / 30 jours ou 70 000 FCFA / 365 jours (12 ordinateurs, 50 % du prix en crédit IA) ; <b>Premium</b> 12 000 FCFA / 30 jours ou 108 000 FCFA / 365 jours (20 ordinateurs ; crédit IA : 35 % au mois, 45 % à l'année). Attention : Standard annuel et Premium ont le même montant (12 000 FCFA) : vérifiez bien la formule demandée. Pour valider, <b>recopiez le code reçu dans le SMS</b> du téléphone d'Epsilon : il doit être identique à celui du dirigeant. Vérifiez aussi le <b>montant</b>.</Note>
     {String(error || "").match(/biz_/) && <Note icon="⚠️">Le fichier SQL 87 (Epsilon Business) n'est pas encore exécuté dans Supabase.</Note>}
     <Pills options={TABS.map(([k, l]) => [k, `${l} (${count(k)})`])} value={tab} onChange={setTab} />
     {!data && <Loading error={error} />}

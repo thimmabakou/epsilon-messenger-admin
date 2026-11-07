@@ -33,7 +33,7 @@ Les prix en vigueur sont toujours affichés dans l'application avant le paiement
 
 4. L'ASSISTANTE IA : UTILISATION SELON LA FORMULE
 • Le volume d'utilisation de l'assistante IA dépend de la formule souscrite. Selon la formule, il peut être limité par un crédit (restreint) ou proposé sans limite de volume, sous réserve d'un usage raisonnable (à volonté). Le détail de chaque formule est affiché dans l'application.
-• Pour les formules actuelles, l'assistante IA est limitée par un crédit renouvelé sur 30 jours glissants, égal à une part du prix mensuel de la formule : Standard 10 %, Pro IA 50 %, Premium 35 % (pour une formule annuelle : sur le prix annuel divisé par 12). Le crédit utilisé est visible à tout moment dans l'onglet « Clients » (jauge « Crédit IA »).
+• Pour les formules actuelles, l'assistante IA est limitée par un crédit renouvelé sur 30 jours glissants, égal à une part du prix mensuel de la formule : Standard 10 %, Pro IA 50 %, Premium mensuel 35 %, Premium annuel 45 % (pour une formule annuelle : sur le prix annuel divisé par 12). Le crédit utilisé est visible à tout moment dans l'onglet « Clients » (jauge « Crédit IA »).
 • Quand le crédit est épuisé, l'assistante cesse de répondre jusqu'à ce que du crédit se libère ; l'équipe de l'Entreprise continue de répondre normalement. Le crédit non utilisé n'est ni reporté, ni remboursé, ni convertible en argent.
 • Les boutons de questions fréquentes, le message d'accueil et le message d'absence ne consomment pas de crédit et restent illimités.
 • Epsilon peut faire évoluer le crédit, les limites et les modèles d'IA utilisés, en prévenant l'Entreprise au moins 30 jours à l'avance en cas de réduction.
