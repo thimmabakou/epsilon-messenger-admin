@@ -22,6 +22,7 @@ Epsilon Business permet à l'Entreprise : d'organiser son équipe (organigramme,
 • Pro IA mensuel : 7 000 FCFA pour 30 jours — jusqu'à 12 ordinateurs, crédit IA renforcé.
 • Pro IA annuel : 70 000 FCFA pour 365 jours — jusqu'à 12 ordinateurs, crédit IA renforcé (14 000 FCFA d'économie par rapport à 12 mois).
 • Premium : 12 000 FCFA (≈ 20 $) pour 30 jours — jusqu'à 20 ordinateurs et tous les outils de l'Entreprise.
+• Premium annuel : 108 000 FCFA pour 365 jours — jusqu'à 20 ordinateurs et tous les outils de l'Entreprise (25 % d'économie, soit 36 000 FCFA, par rapport à 12 mois).
 Les prix en vigueur sont toujours affichés dans l'application avant le paiement. Epsilon peut les modifier en prévenant l'Entreprise au moins 30 jours à l'avance ; la période déjà payée n'est jamais modifiée.
 
 3. PAIEMENT, RENOUVELLEMENT, RETARD
