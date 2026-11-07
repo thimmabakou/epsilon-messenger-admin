@@ -44,6 +44,7 @@ export const DOCUMENT_LINKS = [
   { icon: "🛡️", label: "Politique de confidentialité", doc: "confidentialite" },
   { icon: "📄", label: "Conditions d'utilisation", doc: "conditions" },
   { icon: "🛍️", label: "Politique marketplace", doc: "politique-marketplace" },
+  { icon: "💼", label: "Conditions Epsilon Business", doc: "conditions-business" },
   { icon: "❓", label: "FAQ", doc: "faq" },
   { icon: "🎧", label: "Contact support" },
 ];

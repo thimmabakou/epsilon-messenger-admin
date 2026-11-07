@@ -7,6 +7,62 @@ const EDITEUR = "[NOM LÉGAL DE L'ENTREPRISE], [forme juridique], RCCM [numéro]
 const CONTACT = "le Service client dans l'application (Paramètres → Service client) ou par e-mail à [ADRESSE E-MAIL DE CONTACT]";
 
 export const DOC_TEMPLATES = {
+  // ───────────────────────────── CONDITIONS EPSILON BUSINESS ─────────────────────────────
+  "conditions-business": `CONDITIONS PARTICULIÈRES D'EPSILON BUSINESS
+${MAJ}
+
+Les présentes conditions complètent les Conditions générales d'utilisation d'Epsilon. Elles s'appliquent à toute entreprise, association ou organisation (ci-après « l'Entreprise ») qui ouvre un compte Epsilon Business. Epsilon Business est édité par ${EDITEUR}.
+
+1. LE SERVICE
+Epsilon Business permet à l'Entreprise : d'organiser son équipe (organigramme, postes, rangs et pouvoirs) ; de connecter des ordinateurs et d'inviter des personnes ; de recevoir et de traiter les messages de ses clients dans une boîte de réception partagée ; d'utiliser des réponses automatiques et une assistante d'intelligence artificielle (IA) ; de présenter une fiche publique et des documents officiels ; de préparer un plan de succession. D'autres outils (messagerie interne, standard téléphonique, comptabilité) pourront être ajoutés.
+
+2. LES FORMULES ET LEUR PRIX
+• Standard mensuel : 1 200 FCFA (≈ 2 $) pour 30 jours — jusqu'à 8 ordinateurs.
+• Standard annuel : 12 000 FCFA (≈ 20 $) pour 365 jours — jusqu'à 8 ordinateurs.
+• Premium : 12 000 FCFA (≈ 20 $) pour 30 jours — jusqu'à 20 ordinateurs et tous les outils de l'Entreprise.
+Les prix en vigueur sont toujours affichés dans l'application avant le paiement. Epsilon peut les modifier en prévenant l'Entreprise au moins 30 jours à l'avance ; la période déjà payée n'est jamais modifiée.
+
+3. PAIEMENT, RENOUVELLEMENT, RETARD
+• Le paiement se fait par Mobile Money ; l'abonnement est activé après vérification du paiement par l'équipe Epsilon.
+• L'abonnement n'est pas renouvelé automatiquement : l'Entreprise paie la période suivante quand elle le souhaite. Un nouveau paiement s'ajoute à la période en cours.
+• Après la fin de l'abonnement, un délai de grâce de 3 jours est accordé. Ensuite, l'Entreprise ne peut plus ajouter ni réactiver d'ordinateurs ou de personnes, et ses clients ne peuvent plus lui écrire comme entreprise ; ses données sont conservées.
+• Remboursement : [À COMPLÉTER PAR LE PDG — par exemple : aucun remboursement d'une période commencée, sauf erreur d'Epsilon].
+
+4. L'ASSISTANTE IA : UTILISATION SELON LA FORMULE
+• Le volume d'utilisation de l'assistante IA dépend de la formule souscrite. Selon la formule, il peut être limité par un crédit (restreint) ou proposé sans limite de volume, sous réserve d'un usage raisonnable (à volonté). Le détail de chaque formule est affiché dans l'application.
+• Pour les formules actuelles, l'assistante IA est limitée par un crédit renouvelé sur 30 jours glissants, calculé sur le prix de la formule : la formule Premium donne un crédit 12 fois plus élevé que la formule Standard. Le crédit utilisé est visible à tout moment dans l'onglet « Clients » (jauge « Crédit IA »).
+• Quand le crédit est épuisé, l'assistante cesse de répondre jusqu'à ce que du crédit se libère ; l'équipe de l'Entreprise continue de répondre normalement. Le crédit non utilisé n'est ni reporté, ni remboursé, ni convertible en argent.
+• Les boutons de questions fréquentes, le message d'accueil et le message d'absence ne consomment pas de crédit et restent illimités.
+• Epsilon peut faire évoluer le crédit, les limites et les modèles d'IA utilisés, en prévenant l'Entreprise au moins 30 jours à l'avance en cas de réduction.
+
+5. CE QUE FAIT L'ASSISTANTE IA, ET SES LIMITES
+• L'assistante répond aux clients uniquement à partir des informations que l'Entreprise a saisies (fiche, activité, horaires, questions fréquentes). Elle ne prend aucune décision commerciale (prix, délai, remboursement, commande) et passe la main à l'équipe.
+• L'IA peut se tromper. L'Entreprise est responsable des informations qu'elle fournit et des engagements pris envers ses clients ; elle vérifie et corrige si besoin les réponses données.
+• Le client est informé dans la discussion qu'une assistante IA peut répondre et qu'elle lit sa question pour y répondre. L'assistante se tait dès qu'un membre de l'équipe prend la demande en charge.
+
+6. LES DISCUSSIONS AVEC LES CLIENTS
+• Les messages des clients sont lus par les membres de l'équipe à qui l'Entreprise a donné le pouvoir « Discussions clients ». Le client en est informé. Les messages restent chiffrés de bout en bout entre le client et l'équipe.
+• L'Entreprise s'engage à ne pas utiliser ces discussions pour du démarchage abusif (spam) et à respecter les Règles de communauté et la Politique de confidentialité.
+
+7. ÉQUIPE, POUVOIRS ET SUCCESSION
+• Les pouvoirs appartiennent au poste le plus élevé de l'organigramme (le dirigeant), et non à la personne qui a créé le compte. Le dirigeant est responsable de l'attribution des postes, des pouvoirs et des accès.
+• Le plan de succession (intérim, successeurs, règles du conseil de direction) est choisi par le dirigeant. Epsilon peut, sur présentation de pièces justificatives (par exemple un acte de décès), confirmer une succession sans attendre le délai prévu. Epsilon n'est pas juge des conflits internes à l'Entreprise.
+
+8. DOCUMENTS OFFICIELS ET BADGE DE CERTIFICATION
+• Le dépôt de documents officiels est facultatif. Le badge « ✔ Papiers vérifiés par Epsilon » n'est accordé qu'après vérification des documents exigés par la législation du pays de l'Entreprise.
+• L'Entreprise garantit que les documents déposés sont authentiques et à jour. Epsilon peut refuser ou retirer le badge à tout moment, et suspendre le compte en cas de document faux.
+• L'Entreprise choisit qui peut voir chaque document (tout le monde, l'équipe, la direction ou le dirigeant seul).
+
+9. SUSPENSION ET RÉSILIATION
+Epsilon peut suspendre ou fermer un compte Epsilon Business en cas de fraude, de faux documents, de non-respect des présentes conditions ou de la loi, après avoir, sauf urgence, prévenu l'Entreprise. L'Entreprise peut cesser d'utiliser Epsilon Business à tout moment ; [À COMPLÉTER PAR LE PDG : conservation et suppression des données après résiliation].
+
+10. RESPONSABILITÉ
+Epsilon fait ses meilleurs efforts pour assurer un service disponible et sûr, sans pouvoir garantir l'absence totale d'interruption. [À COMPLÉTER PAR UN JURISTE : plafond de responsabilité.]
+
+11. DROIT APPLICABLE
+Les présentes conditions sont soumises au droit de la République du Congo et à l'Acte uniforme OHADA lorsqu'il s'applique. [À COMPLÉTER PAR UN JURISTE : tribunal compétent.]
+Contact : ${CONTACT}.`,
+
   // ───────────────────────────── CONDITIONS D'UTILISATION ─────────────────────────────
   conditions: `CONDITIONS GÉNÉRALES D'UTILISATION D'EPSILON
 ${MAJ}
