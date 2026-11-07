@@ -798,6 +798,9 @@ export const HELP_SHEETS = [
       { t: "iPhone et iPad", d: "En attendant la version App Store : ouvrir epsilon-messenger-app.pages.dev dans Safari, toucher Partager (⬆) puis « Sur l'écran d'accueil ». L'icône Epsilon apparaît comme une application. L'affichage est le même que sur Android." },
       { t: "Ce qui ne marche pas partout", d: "Le mode « téléphone à téléphone » sans réseau n'existe que sur Android (ni ordinateur, ni iPhone). Tout le reste fonctionne." },
     ],
+    problems: [
+      { q: "« Epsilon n'a pas pu s'ouvrir » (page avec « Réessayer » et « Réparer »), ou l'écran reste blanc.", a: "Souvent une connexion trop lente : une partie de l'application n'est pas arrivée. 1) Vérifier Internet, puis « ↻ Réessayer ». 2) Si ça recommence : « 🛠 Réparer » — Epsilon efface sa copie de l'application gardée dans l'appareil et la retélécharge ; les messages, brouillons, documents et tableaux NE sont PAS effacés. 3) Sur ordinateur, on peut aussi appuyer sur Ctrl + R (Cmd + R sur Mac). La ligne « Détail : » en bas de la page dit la cause : la faire photographier et l'envoyer à l'équipe technique si le problème continue. Application très ancienne (écran blanc sans cette page) : désinstaller puis réinstaller depuis epsilon-messenger-app.pages.dev/telecharger.html." },
+    ],
   },
   {
     id: "hors-connexion",
