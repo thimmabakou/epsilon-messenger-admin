@@ -19,6 +19,8 @@ Epsilon Business permet à l'Entreprise : d'organiser son équipe (organigramme,
 2. LES FORMULES ET LEUR PRIX
 • Standard mensuel : 1 200 FCFA (≈ 2 $) pour 30 jours — jusqu'à 8 ordinateurs.
 • Standard annuel : 12 000 FCFA (≈ 20 $) pour 365 jours — jusqu'à 8 ordinateurs.
+• Pro IA mensuel : 7 000 FCFA pour 30 jours — jusqu'à 12 ordinateurs, crédit IA renforcé.
+• Pro IA annuel : 70 000 FCFA pour 365 jours — jusqu'à 12 ordinateurs, crédit IA renforcé (14 000 FCFA d'économie par rapport à 12 mois).
 • Premium : 12 000 FCFA (≈ 20 $) pour 30 jours — jusqu'à 20 ordinateurs et tous les outils de l'Entreprise.
 Les prix en vigueur sont toujours affichés dans l'application avant le paiement. Epsilon peut les modifier en prévenant l'Entreprise au moins 30 jours à l'avance ; la période déjà payée n'est jamais modifiée.
 
@@ -30,7 +32,7 @@ Les prix en vigueur sont toujours affichés dans l'application avant le paiement
 
 4. L'ASSISTANTE IA : UTILISATION SELON LA FORMULE
 • Le volume d'utilisation de l'assistante IA dépend de la formule souscrite. Selon la formule, il peut être limité par un crédit (restreint) ou proposé sans limite de volume, sous réserve d'un usage raisonnable (à volonté). Le détail de chaque formule est affiché dans l'application.
-• Pour les formules actuelles, l'assistante IA est limitée par un crédit renouvelé sur 30 jours glissants, calculé sur le prix de la formule : la formule Premium donne un crédit 12 fois plus élevé que la formule Standard. Le crédit utilisé est visible à tout moment dans l'onglet « Clients » (jauge « Crédit IA »).
+• Pour les formules actuelles, l'assistante IA est limitée par un crédit renouvelé sur 30 jours glissants, égal à une part du prix mensuel de la formule : Standard 10 %, Pro IA 50 %, Premium 35 % (pour une formule annuelle : sur le prix annuel divisé par 12). Le crédit utilisé est visible à tout moment dans l'onglet « Clients » (jauge « Crédit IA »).
 • Quand le crédit est épuisé, l'assistante cesse de répondre jusqu'à ce que du crédit se libère ; l'équipe de l'Entreprise continue de répondre normalement. Le crédit non utilisé n'est ni reporté, ni remboursé, ni convertible en argent.
 • Les boutons de questions fréquentes, le message d'accueil et le message d'absence ne consomment pas de crédit et restent illimités.
 • Epsilon peut faire évoluer le crédit, les limites et les modèles d'IA utilisés, en prévenant l'Entreprise au moins 30 jours à l'avance en cas de réduction.

@@ -17,7 +17,7 @@ const VERIFY_AT = {
   us: "Site du Secretary of State de l'État (« Business Search »)", ca: "https://ised-isde.canada.ca/cc/lgcy/fdrlCrpSrch.html (fédéral) ou registre de la province",
   cg: "ACPCE (Agence congolaise pour la création des entreprises)", ci: "CEPICI — https://cepici.gouv.ci", cd: "Guichet unique de création d'entreprise (GUCE)",
 };
-const PLAN = { premium: "Premium (20 $ / mois)", mensuel: "Mensuel (30 jours)", annuel: "Annuel (365 jours) ⭐" };
+const PLAN = { premium: "Premium (12 000 FCFA / 30 jours)", mensuel: "Standard mensuel (1 200 FCFA / 30 jours)", annuel: "Standard annuel (12 000 FCFA / 365 jours) ⭐", pro: "Pro IA mensuel (7 000 FCFA / 30 jours) 🤖", pro_annuel: "Pro IA annuel (70 000 FCFA / 365 jours) 🤖" };
 
 export default function BizPayments() {
   const { can, deny, act } = useAdmin();
@@ -71,7 +71,7 @@ export default function BizPayments() {
           foot: ["", "", "", "", "Total", money(list.reduce((s, p) => s + Number(p.amount_fcfa || 0), 0)), "", "", ""] } }],
       })}>🖨️ Imprimer</button>}
     </ScreenTitle>
-    <Note icon="💼">Trois formules : <b>Standard mensuel 1 200 FCFA</b> (≈ 2 $, 30 jours), <b>Standard annuel 12 000 FCFA</b> (≈ 20 $, 365 jours) — <b>8 ordinateurs</b> ; <b>Premium 12 000 FCFA par mois</b> (≈ 20 $, 30 jours) — <b>20 ordinateurs</b>. Attention : annuel et Premium ont le même montant, vérifiez bien la formule demandée. Pour valider, <b>recopiez le code reçu dans le SMS</b> du téléphone d'Epsilon : il doit être identique à celui du dirigeant. Vérifiez aussi le <b>montant</b>.</Note>
+    <Note icon="💼">Cinq formules : <b>Standard</b> 1 200 FCFA / 30 jours ou 12 000 FCFA / 365 jours (8 ordinateurs) ; <b>Pro IA</b> 7 000 FCFA / 30 jours ou 70 000 FCFA / 365 jours (12 ordinateurs, 50 % du prix en crédit IA) ; <b>Premium</b> 12 000 FCFA / 30 jours (20 ordinateurs, 35 % en crédit IA). Attention : Standard annuel et Premium ont le même montant (12 000 FCFA) : vérifiez bien la formule demandée. Pour valider, <b>recopiez le code reçu dans le SMS</b> du téléphone d'Epsilon : il doit être identique à celui du dirigeant. Vérifiez aussi le <b>montant</b>.</Note>
     {String(error || "").match(/biz_/) && <Note icon="⚠️">Le fichier SQL 87 (Epsilon Business) n'est pas encore exécuté dans Supabase.</Note>}
     <Pills options={TABS.map(([k, l]) => [k, `${l} (${count(k)})`])} value={tab} onChange={setTab} />
     {!data && <Loading error={error} />}
@@ -88,7 +88,7 @@ export default function BizPayments() {
               if (r === "votes") throw new Error("Tous les membres n'ont pas encore reconnu le successeur.");
               reload?.();
             }, "✅ Succession confirmée : le successeur occupe le poste le plus élevé.")}>Confirmer sur pièces</button></span>}
-          <span className="field-hint">{o.tier === "premium" ? "👑 Premium (20 ordinateurs)" : "Standard (8 ordinateurs)"}{o.activity ? ` · ${o.activity}` : ""}{o.verified_at ? " · ✔ Papiers vérifiés" : ""}</span>
+          <span className="field-hint">{o.tier === "premium" ? "👑 Premium (20 ordinateurs)" : o.tier === "pro" ? "🤖 Pro IA (12 ordinateurs)" : "Standard (8 ordinateurs)"}{o.activity ? ` · ${o.activity}` : ""}{o.verified_at ? " · ✔ Papiers vérifiés" : ""}</span>
           {o.verify_requested_at && !o.verified_at && (() => { const cs = certifState(o.country, o.docs); return (
             <span className="field-hint">🏅 <b>Badge demandé le {dateOnly(o.verify_requested_at)}</b> — pays : {bizCountryName(o.country) || "—"}.
               {" "}Documents exigés : {cs.list.filter((x) => x.req).map((x) => `${x.doc ? "✅" : "❌"} ${x.name}`).join(" · ")}.
