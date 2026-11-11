@@ -9,6 +9,7 @@ export const NAV_ITEMS = [
   { key: "shoppay", label: "Paiements boutiques", icon: "💳" },
   { key: "business", label: "Epsilon Business", icon: "💼" },
   { key: "bizverify", label: "Vérification des entreprises", icon: "🏅" },
+  { key: "rules", label: "Règles légales (pays)", icon: "📜" },
   { key: "escrow", label: "Paiements sécurisés", icon: "🔒" },
   { key: "music", label: "Musiques", icon: "🎵" },
   { key: "ringtones", label: "Sonneries", icon: "🔔" },
@@ -29,7 +30,7 @@ export const NAV_ITEMS = [
 // Permission nécessaire pour voir chaque écran (null = tout le monde, "PDG" = PDG seulement)
 export const SECTION_PERMS = {
   overview: null, users: "users.list", calls: "calls.view", marketplace: "market.manage", music: "PDG", ringtones: "PDG", channels: "PDG", ads: "PDG", support: "support.inbox", ia: "support.inbox",
-  shoppay: "shops.pay", business: "shops.pay", bizverify: "shops.pay", escrow: "money.escrow", reports: "mod.view", stats: "stats.view", documents: "docs.prepare", admins: "admins.manage", versions: "ver.prepare",
+  shoppay: "shops.pay", business: "shops.pay", bizverify: "shops.pay", rules: "rules.publish", escrow: "money.escrow", reports: "mod.view", stats: "stats.view", documents: "docs.prepare", admins: "admins.manage", versions: "ver.prepare",
   security: "PDG", settings: "settings.modules", requests: null, team: null,
 };
 
@@ -84,6 +85,7 @@ export const PERMISSION_GROUPS = [
     { key: "ver.prepare", label: "Préparer une version" },
     { key: "ver.test", label: "Envoyer une version aux testeurs" },
     { key: "ver.publish", label: "Publier une version pour tous", sensitive: true }] },
+  { title: "Règles légales des pays", items: [{ key: "rules.publish", label: "Publier les conventions, SMIG, barèmes et taxes", sensitive: true }] },
   { title: "Gestion des administrateurs", items: [{ key: "admins.manage", label: "Créer et gérer les autres administrateurs", sensitive: true }] },
   { title: "Paramètres", items: [
     { key: "settings.modules", label: "Gérer les modules" },

@@ -26,6 +26,7 @@ import Stats from "../screens/Stats";
 import Documents from "../screens/Documents";
 import Admins from "../screens/Admins";
 import Versions from "../screens/Versions";
+import Rules from "../screens/Rules";
 import Requests from "../screens/Requests";
 import Security from "../screens/Security";
 import Settings from "../screens/Settings";
@@ -33,7 +34,7 @@ import Team from "../screens/Team";
 import { teamUnread } from "../lib/team";
 import { printScreen } from "../lib/printDoc";
 
-const SCREENS = { overview: Overview, users: Users, calls: Calls, marketplace: Marketplace, shoppay: ShopPayments, business: BizPayments, bizverify: BizVerify, escrow: Escrow, music: Music, ringtones: Ringtones, channels: Channels, ads: Ads, support: Support, ia: EpsilonIA, reports: Reports, stats: Stats, documents: Documents, admins: Admins, versions: Versions, requests: Requests, security: Security, settings: Settings, team: Team };
+const SCREENS = { overview: Overview, users: Users, calls: Calls, marketplace: Marketplace, shoppay: ShopPayments, business: BizPayments, bizverify: BizVerify, rules: Rules, escrow: Escrow, music: Music, ringtones: Ringtones, channels: Channels, ads: Ads, support: Support, ia: EpsilonIA, reports: Reports, stats: Stats, documents: Documents, admins: Admins, versions: Versions, requests: Requests, security: Security, settings: Settings, team: Team };
 
 export default function AdminApp({ me, onLogout, reloadMe }) {
   const [section, setSection] = useState("overview");
