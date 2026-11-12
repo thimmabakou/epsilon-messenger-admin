@@ -798,8 +798,8 @@ button, input, textarea { font-family: inherit; }
 .send-sheet select { padding: 8px 10px; border-radius: 10px; border: 1px solid var(--border); background: transparent; color: inherit; font: inherit; }
 
 /* Epsilon IA */
-/* Réponses d'Epsilon IA : côté service client, donc en rose comme l'équipe (bord plus clair pour les reconnaître) */
-.conv-msg.team.ai { background: linear-gradient(135deg, var(--rose), var(--violet)); color: #fff; border: 1.5px dashed rgba(255, 255, 255, 0.7); }
+/* Couleurs du fil : utilisateur = fond blanc, équipe du service client = rose, Epsilon IA (réponse automatique) = vert */
+.conv-msg.team.ai { background: linear-gradient(135deg, #12a150, #0b7d5a); color: #fff; border: none; }
 .ia-list { display: flex; flex-direction: column; gap: 8px; }
 .ia-row { text-align: left; background: var(--white); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; cursor: pointer; color: var(--ink); font: inherit; width: 100%; }
 .ia-row.open { border-color: var(--violet); }
