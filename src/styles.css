@@ -872,3 +872,5 @@ details > summary { cursor: pointer; font-weight: 600; margin: 6px 0; }
 .rules-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
 .rules-grid label { display: flex; flex-direction: column; gap: 3px; font-size: 12px; color: var(--muted, #6b6070); min-width: 0; }
 .rules-grid input { width: 100%; box-sizing: border-box; }
+.rules-refs { margin: 6px 0 0; padding-left: 0; list-style: none; display: grid; gap: 3px; font-size: 12.5px; }
+.rules-refs a { color: var(--violet); overflow-wrap: anywhere; }

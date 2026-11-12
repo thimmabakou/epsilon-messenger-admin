@@ -45,7 +45,7 @@ export default function Rules() {
     if (!can("rules.publish")) return deny("rules.publish");
     setConfirm(false);
     setForm(r ? { code: r.code, kind: r.kind, title: r.title, effective: today(), source: r.source || "", data: r.data || {}, json: JSON.stringify(r.data || {}, null, 2), isNew: false }
-      : { code: `${country}.conv.`, kind: "conv", title: "", effective: today(), source: "", data: {}, json: "{\n  \"short\": \"\",\n  \"detail\": false\n}", isNew: true });
+      : { code: `${country}.conv.`, kind: "conv", title: "", effective: today(), source: "", data: {}, json: "{\n  \"short\": \"\",\n  \"detail\": false,\n  \"doc\": \"https://… (lien du texte PDF)\",\n  \"refs\": [{ \"l\": \"Journal officiel n° …\", \"u\": \"https://…\" }]\n}", isNew: true });
   };
   const publish = async () => {
     let d;
@@ -127,7 +127,15 @@ export default function Rules() {
             <h2 style={{ fontSize: 16, margin: "8px 0 2px" }}>{r.title}</h2>
             <span className="field-hint">Version {r.version} · en vigueur depuis le {frDate(r.effective)} · {r.code}</span>
             {r.source && <div className="field-hint" style={{ marginTop: 4 }}>Source : {r.source}</div>}
+            {/* Le texte officiel et les sites où il a été trouvé (Journal officiel, patronat, ministère…) */}
+            {Array.isArray(r.data?.refs) && r.data.refs.length > 0 && (
+              <ul className="rules-refs">
+                {r.data.refs.map((x) => <li key={x.u}><a href={x.u} target="_blank" rel="noreferrer">🔗 {x.l}</a></li>)}
+              </ul>
+            )}
             <div className="mp-actions">
+              {r.data?.doc ? <a className="action-button primary" href={r.data.doc} target="_blank" rel="noreferrer">📄 Ouvrir le texte (PDF)</a>
+                : <span className="field-hint">📄 Texte PDF pas encore déposé : voir les liens ci-dessus</span>}
               <button className="action-button neutral" onClick={() => setOpen(open === r.code ? null : r.code)}>{open === r.code ? "Masquer" : "Voir le détail"}</button>
               <button className="action-button primary" onClick={() => start(r)}>＋ Nouvelle version</button>
             </div>
