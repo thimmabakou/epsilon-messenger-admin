@@ -1062,6 +1062,12 @@ export const HELP_SHEETS = [
       { t: "Exporter et publier", d: "« ⤓ Exporter » : choisir HD 720p (conseillé) ou Full HD 1080p, Fichier léger ou Meilleure image, puis « Fabriquer la vidéo ». Ensuite « ⬇ Télécharger le MP4 », ou « 📤 Publier sur la chaîne » : 🎛️ Régie (pour le direct), 🔁 Programme (avec son genre) ou 📢 Publicité. Publier est réservé au responsable et à la régie, 1 Go au plus." },
     ],
     tips: [
+      "Fondu au noir de fin : il s'applique toujours à la DERNIÈRE scène, même si on a ajouté, déplacé ou coupé des scènes après l'avoir coché (avant, le fondu pouvait rester au milieu de la vidéo et la case paraissait décochée).",
+      "Import : une vidéo dont l'image n'est pas lisible par le navigateur (par exemple certains fichiers HEVC / H.265) ou un fichier abîmé est refusé avec le message « ne peut pas être lu » — avant, il donnait une scène noire. Les vidéos sans durée écrite (certains .webm, enregistrements d'écran) sont maintenant acceptées avec leur vraie durée.",
+      "Export : quand le fichier est prêt, toucher à côté de la fenêtre ne la ferme plus (on ne perd plus un export de plusieurs minutes) ; il faut toucher « Retour au montage ».",
+      "Export : si l'appareil ne peut pas enregistrer le son, le MP4 est fabriqué sans piste son au lieu d'un fichier que certains lecteurs refusaient.",
+      "Supprimer un projet efface aussi ses vidéos, photos et sons de l'appareil (sauf ceux utilisés par un autre projet) : la mémoire du navigateur ne se remplit plus pour rien.",
+      "En haut, « ⚠️ Non enregistré (mémoire de l'appareil pleine ?) » remplace « ✓ Enregistré » si le projet n'a pas pu être gardé sur l'appareil : libérer de la place ou supprimer d'anciens projets, et garder la page ouverte jusqu'à l'export.",
       "L'export se fait en temps réel : il dure à peu près la durée de la vidéo. Garder la page ouverte et affichée ; s'il faut changer d'onglet ou si le téléphone se verrouille, l'export se met en pause et reprend tout seul en revenant sur la page.",
       "Le projet est enregistré automatiquement sur l'appareil : on peut fermer la page et reprendre plus tard (📁 Mes projets). Il n'est pas partagé avec les autres appareils.",
       "Raccourcis sur ordinateur : Espace = lecture, Suppr = supprimer la scène ou le texte choisi, Ctrl+Z = annuler.",
