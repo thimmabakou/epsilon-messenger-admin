@@ -1066,6 +1066,33 @@ export const HELP_SHEETS = [
       { q: "« Mes fichiers ont disparu du projet. »", a: "Le projet est lié à l'appareil (et au navigateur) où il a été fait. Sur un autre appareil, il faut réimporter les fichiers." },
     ],
   },
+  {
+    id: "compta-fiabilite",
+    icon: "🔒",
+    title: "Comptabilité : clôture, livre-journal, export et calculs exacts",
+    who: "Entreprises Epsilon Business (dirigeant, comptable, caissier)",
+    intro:
+      "La comptabilité Epsilon a été renforcée : clôture de l'exercice avec report automatique des soldes (à-nouveaux), exercice clôturé verrouillé, numéros d'écritures et de factures sans doublon ni trou, factures dans l'ordre des dates, livre-journal imprimable, export de toutes les écritures (format FEC, lisible par un tableur et par les autres logiciels comptables), balance à 8 colonnes, excédent brut d'exploitation, et calculs au centime près identiques sur l'écran et sur le serveur. Ces fonctions demandent que le fichier SQL 120 (7 parties) soit installé.",
+    steps: [
+      { t: "Clôturer un exercice", d: "Epsilon Business → Comptabilité → choisir l'exercice terminé (par exemple 2025) → onglet « Écritures » → cadre « 🔒 Clôture de l'exercice » → « Clôturer l'exercice ». Conditions : l'année doit être terminée, l'exercice précédent doit être clôturé (s'il a des écritures) et il ne doit rester aucun brouillon. Peuvent clôturer : le dirigeant, ou le poste qui valide les écritures (et ses supérieurs)." },
+      { t: "Ce que fait la clôture", d: "Elle calcule le résultat (bénéfice ou perte) et crée toute seule l'écriture des à-nouveaux au 1er janvier de l'année suivante, dans le journal « À-nouveaux » : chaque compte de bilan (classes 1 à 5) est reporté avec son solde, et le résultat va au compte « Résultat en instance d'affectation » (SYSCOHADA : 1301 bénéfice, 1309 perte ; France : 120 / 129 ; Belgique : 140 / 141). Les comptes de charges et de produits repartent de zéro." },
+      { t: "Exercice verrouillé", d: "Après la clôture, l'exercice porte le badge « 🔒 Clôturé » : plus aucune écriture, facture ou paie ne peut être enregistrée à une date de cet exercice (message « exercice clôturé »). C'est la règle d'intangibilité des écritures." },
+      { t: "Rouvrir en cas d'erreur", d: "Seul le dirigeant peut rouvrir, et seulement le DERNIER exercice clôturé : bouton « Rouvrir l'exercice ». On corrige (par contre-passation), puis on clôture de nouveau : l'écriture des à-nouveaux est recalculée toute seule, sans doublon." },
+      { t: "Balance à 8 colonnes", d: "Onglet « Balance » : dès qu'il y a des à-nouveaux, la balance montre les soldes d'ouverture, les mouvements de l'exercice et les soldes de clôture (débit et crédit pour chacun). Les trois paires de totaux doivent être égales." },
+      { t: "Livre-journal et export", d: "Onglet « Écritures » : « 🖨️ Livre-journal » imprime toutes les écritures validées dans l'ordre des numéros (ou les enregistre en PDF). « ⬇️ Exporter les écritures (FEC / tableur) » télécharge un fichier texte de 18 colonnes (format du fichier des écritures comptables) qui s'ouvre dans Excel et s'importe dans les autres logiciels comptables ; utile pour l'expert-comptable ou un contrôle." },
+      { t: "Compte de résultat", d: "Il affiche maintenant l'excédent brut d'exploitation (valeur ajoutée moins charges de personnel), les reprises de provisions, et range les dotations et reprises financières dans le résultat financier, comme le veut le SYSCOHADA révisé." },
+      { t: "Factures : ordre et calculs", d: "Une facture, un avoir ou un reçu ne peut plus être émis à une date antérieure à la dernière pièce émise (message « date antérieure à la dernière facture ») : les numéros suivent toujours les dates. Les montants (lignes, remises, taxes) sont calculés au centime près, exactement comme le serveur. Les centimes additionnels sont calculés sur le MONTANT de la TVA (5 % de la TVA au Congo, 10 % au Cameroun). Les anciennes factures ne changent pas." },
+      { t: "Paie", d: "Les montants tapés avec une virgule ou des espaces (« 12 500,50 ») sont bien lus. Une paie avec un net à payer négatif est refusée. L'écriture de paie sépare les indemnités (compte 663) et la part patronale des taxes (compte 442), et elle est refusée si elle n'est pas équilibrée." },
+    ],
+    tips: [
+      "Si le client voit « Installez le fichier SQL 120 » : les 7 parties du fichier 120 n'ont pas encore été exécutées dans Supabase.",
+      "Une écriture automatique (facture, paie) non équilibrée est maintenant refusée au lieu d'être enregistrée fausse.",
+      "Factures récurrentes : si l'émission automatique est impossible (exercice clôturé, date antérieure), la facture reste en brouillon au lieu de tout bloquer.",
+      "Franchise de TVA (France, Belgique) : si l'entreprise a choisi « pas de taxe », la mention légale s'ajoute toute seule sur la facture.",
+      "Le montant en lettres a été corrigé (« trois mille », « quatre-vingt mille »).",
+      "Les états restent des états de gestion : la liasse fiscale officielle (DSF) doit être établie par un comptable agréé.",
+    ],
+  },
 ];
 
 // Texte simple d'une fiche (pour la copier et l'envoyer à un client)
