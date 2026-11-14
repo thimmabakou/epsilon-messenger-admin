@@ -627,6 +627,7 @@ export const HELP_SHEETS = [
       { t: "Suivi et renouvellement", d: "Sur sa chaîne, le responsable voit sa formule, les jours restants et les minutes déjà consommées. L'application le prévient avant la fin. Sans renouvellement, la chaîne n'est plus visible, mais ses vidéos ne sont pas effacées." },
     ],
     tips: [
+      "Direct à plusieurs caméras — une caméra par APPAREIL (fichier SQL 122) : avant, deux appareils connectés au MÊME compte (par exemple l'ordinateur de la régie avec sa webcam et un téléphone) se partageaient un seul numéro de caméra : la webcam ne s'affichait pas comme une caméra à part, et la régie mettait à l'antenne l'image de l'un pendant que l'autre recevait « vous êtes à l'antenne ». Maintenant chaque appareil a son propre numéro, même avec le même compte. Si le problème revient : vérifier que le fichier 122 (2 parties) est exécuté et que tous les appareils ont la dernière version.",
       "Télécommande : le volume choisi et « son coupé » restent appliqués quand le programme change, pendant les pubs et pendant un direct (avant, le son revenait tout seul au programme suivant).",
       "Fin d'un programme : l'image enchaîne directement sur la suite (avant, la dernière seconde reculait et se rejouait juste avant la pub).",
       "Pendant une page de pub, la ligne sous l'écran annonce le programme suivant avec son heure exacte (ex. « Page de publicité · À 20:00 : Journal »).",
