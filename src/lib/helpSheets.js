@@ -852,6 +852,7 @@ export const HELP_SHEETS = [
     ],
     tips: [
       "Standard — ligne libérée des deux côtés : à la fin d'un appel du standard, la ligne est libérée aussi depuis le téléphone du standardiste. Avant, si l'application du client se fermait ou perdait le réseau en plein appel, la ligne restait « occupée » jusqu'à 3 heures (avec une seule ligne, le standard paraissait bloqué). Si un client dit « toutes les lignes sont occupées » alors que personne n'est en ligne : demander aux standardistes de mettre l'application à jour.",
+      "Standard — ordre de sonnerie (fichier SQL 121) : l'appel sonne d'abord chez le standardiste du PLUS BAS échelon (accueil, secrétariat, service client) ; s'il ne répond pas ou est occupé, l'appel monte d'un échelon, et le dirigeant (rang 1) n'est appelé qu'en dernier. Pour que le DG ne reçoive jamais d'appel direct, ne pas cocher « standardiste » sur son poste : la réception le joindra par mise en attente et transfert. Le poste qui reçoit un appel transféré peut, lui aussi, mettre en attente et transférer (par exemple renvoyer vers la réception ou vers le DG).",
       "Standard — il suit les POSTES de l'entreprise, pas des titres imposés : n'importe quel poste peut recevoir un numéro et être coché « standardiste », que l'entreprise ait 2 postes ou 200, avec ou sans DG ou DRH.",
       "Une discussion jamais ouverte sur ce téléphone n'a pas de messages gardés : il faut l'ouvrir une fois avec connexion.",
       "Les photos déjà vues (profils, logos) restent visibles ; les vidéos demandent une connexion.",
