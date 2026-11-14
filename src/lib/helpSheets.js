@@ -851,6 +851,8 @@ export const HELP_SHEETS = [
       { t: "Quand la connexion revient", d: "Le bandeau disparaît, les nouveaux messages arrivent et les discussions se mettent à jour, sans rien toucher." },
     ],
     tips: [
+      "Standard — ligne libérée des deux côtés : à la fin d'un appel du standard, la ligne est libérée aussi depuis le téléphone du standardiste. Avant, si l'application du client se fermait ou perdait le réseau en plein appel, la ligne restait « occupée » jusqu'à 3 heures (avec une seule ligne, le standard paraissait bloqué). Si un client dit « toutes les lignes sont occupées » alors que personne n'est en ligne : demander aux standardistes de mettre l'application à jour.",
+      "Standard — il suit les POSTES de l'entreprise, pas des titres imposés : n'importe quel poste peut recevoir un numéro et être coché « standardiste », que l'entreprise ait 2 postes ou 200, avec ou sans DG ou DRH.",
       "Une discussion jamais ouverte sur ce téléphone n'a pas de messages gardés : il faut l'ouvrir une fois avec connexion.",
       "Les photos déjà vues (profils, logos) restent visibles ; les vidéos demandent une connexion.",
       "Les messages gardés restent dans le téléphone seulement : ils restent privés.",
