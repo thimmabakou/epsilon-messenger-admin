@@ -1182,6 +1182,7 @@ export const HELP_SHEETS = [
     ],
     tips: [
       "Message « Installez d'abord le fichier SQL 123 » : les 3 parties du fichier 123 n'ont pas encore été exécutées dans Supabase.",
+      "Le fichier SQL 124 est nécessaire en plus du 123 : sans lui, l'enregistrement d'un élève pouvait échouer (la classe s'affichait avec « 0 élève » et la recherche ne trouvait rien). En cas d'échec, le message d'erreur s'affiche maintenant juste au-dessus du bouton « Enregistrer », avec le détail technique à transmettre au Service client.",
       "Une classe qui a encore des élèves ne peut pas être supprimée : changer d'abord ces élèves de classe.",
       "Pointage par empreinte digitale : le capteur d'empreinte d'un téléphone ne peut pas reconnaître les élèves (Android le réserve au propriétaire du téléphone). Le pointage se fera avec une carte à code QR scannée par le téléphone de l'école, puis, plus tard, avec un lecteur d'empreinte USB branché sur ce téléphone.",
     ],
