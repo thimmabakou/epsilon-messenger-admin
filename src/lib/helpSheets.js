@@ -1165,6 +1165,27 @@ export const HELP_SHEETS = [
       { q: "« Installez le fichier SQL 107 / 108 / 111 / 120. »", a: "La fonction n'est pas encore installée sur le serveur. C'est du côté d'Epsilon : prévenir le PDG pour qu'il exécute le fichier indiqué." },
     ],
   },
+  {
+    id: "ecole",
+    icon: "🎓",
+    title: "École : classes, élèves et parents",
+    who: "Écoles inscrites sur Epsilon Business (secteur « Éducation ») : fondateur, directeur, secrétariat",
+    intro:
+      "L'onglet « École » d'Epsilon Business tient le registre de l'école : les classes de chaque année scolaire et les élèves, avec leurs parents. C'est la première étape du logiciel scolaire ; viendront ensuite les frais de scolarité par élève, les arrivées et absences avec avis aux parents, les notes et bulletins, puis l'emploi du temps. Il demande le fichier SQL 123 (3 parties).",
+    steps: [
+      { t: "Faire apparaître l'onglet", d: "Epsilon Business → Entreprise → secteur d'activité « Éducation ». L'onglet « 🎓 École » apparaît pour le dirigeant, les postes de rang 2 et 3, et tout poste qui a le pouvoir « Scolarité (école : classes, élèves) » (Organisation → le poste → Pouvoirs)." },
+      { t: "Créer les classes de l'année", d: "École → Classes → « ＋ Nouvelle classe » : nom (ex. CM2 A), niveau (liste des niveaux du Congo, de la petite section à la terminale), frais de scolarité de l'année, titulaire. L'année scolaire se choisit en haut à droite ; elle va de septembre à août. L'année suivante est déjà proposée pour préparer la rentrée." },
+      { t: "Inscrire un élève", d: "École → Élèves → « ＋ Nouvel élève » : nom, prénom(s), sexe, classe, date et lieu de naissance, adresse. Le matricule peut rester vide : Epsilon le donne tout seul (ex. 2026-0001). Deux élèves ne peuvent pas avoir le même matricule." },
+      { t: "Les parents", d: "Jusqu'à 3 parents ou tuteurs par élève (père, mère, tuteur), avec nom et téléphone. Si le numéro est celui d'un compte Epsilon, la fiche affiche « ✓ sur Epsilon » : ce parent pourra recevoir les avis d'arrivée et de paiement dans les étapes suivantes. Un parent qui n'a pas encore Epsilon est reconnu dès qu'il s'inscrit avec ce numéro et qu'on enregistre de nouveau la fiche." },
+      { t: "Chercher et trier", d: "La recherche trouve un élève par son nom, son matricule, le nom ou le téléphone d'un parent. Le filtre montre une classe, les élèves sans classe ou les élèves partis." },
+      { t: "Élève qui quitte l'école", d: "Ouvrir sa fiche → cocher « Élève parti ». Il reste dans le registre (filtre « Partis ») mais n'est plus compté dans les classes. « Supprimer » l'efface définitivement (à réserver aux erreurs de saisie)." },
+    ],
+    tips: [
+      "Message « Installez d'abord le fichier SQL 123 » : les 3 parties du fichier 123 n'ont pas encore été exécutées dans Supabase.",
+      "Une classe qui a encore des élèves ne peut pas être supprimée : changer d'abord ces élèves de classe.",
+      "Pointage par empreinte digitale : le capteur d'empreinte d'un téléphone ne peut pas reconnaître les élèves (Android le réserve au propriétaire du téléphone). Le pointage se fera avec une carte à code QR scannée par le téléphone de l'école, puis, plus tard, avec un lecteur d'empreinte USB branché sur ce téléphone.",
+    ],
+  },
 ];
 
 // Texte simple d'une fiche (pour la copier et l'envoyer à un client)
