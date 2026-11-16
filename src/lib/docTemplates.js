@@ -17,12 +17,15 @@ Les présentes conditions complètent les Conditions générales d'utilisation d
 Epsilon Business permet à l'Entreprise : d'organiser son équipe (organigramme, postes, rangs et pouvoirs) ; de connecter des ordinateurs et d'inviter des personnes ; de recevoir et de traiter les messages de ses clients dans une boîte de réception partagée ; d'utiliser des réponses automatiques et une assistante d'intelligence artificielle (IA) ; de présenter une fiche publique et des documents officiels ; de préparer un plan de succession. D'autres outils (messagerie interne, standard téléphonique, comptabilité) pourront être ajoutés.
 
 2. LES FORMULES ET LEUR PRIX
-• Standard mensuel : 1 200 FCFA (≈ 2 $) pour 30 jours — jusqu'à 8 ordinateurs.
-• Standard annuel : 12 000 FCFA (≈ 20 $) pour 365 jours — jusqu'à 8 ordinateurs.
-• Pro IA mensuel : 7 000 FCFA pour 30 jours — jusqu'à 12 ordinateurs, crédit IA renforcé.
-• Pro IA annuel : 70 000 FCFA pour 365 jours — jusqu'à 12 ordinateurs, crédit IA renforcé (14 000 FCFA d'économie par rapport à 12 mois).
-• Premium : 12 000 FCFA (≈ 20 $) pour 30 jours — jusqu'à 20 ordinateurs et tous les outils de l'Entreprise.
-• Premium annuel : 108 000 FCFA pour 365 jours — jusqu'à 20 ordinateurs et tous les outils de l'Entreprise (25 % d'économie, soit 36 000 FCFA, par rapport à 12 mois).
+Prix au mois (30 jours), au trimestre (91 jours, 5 % d'économie) et à l'année (365 jours, 15 % d'économie) :
+• Découverte : 2 000 FCFA par mois — 1 ordinateur, 1 Go d'espace, gestion seule (sans assistante IA).
+• Standard : 7 000 FCFA par mois, 20 000 FCFA par trimestre, 70 000 FCFA par an — jusqu'à 4 ordinateurs, 2 Go, gestion seule (sans assistante IA).
+• Bronze : 10 000 FCFA par mois, 28 500 FCFA par trimestre, 100 000 FCFA par an — jusqu'à 8 ordinateurs, 5 Go, assistante IA.
+• Argent : 15 000 FCFA par mois, 42 500 FCFA par trimestre, 150 000 FCFA par an — jusqu'à 12 ordinateurs, 15 Go, assistante IA.
+• Or : 25 000 FCFA par mois, 71 000 FCFA par trimestre, 250 000 FCFA par an — jusqu'à 20 ordinateurs, 40 Go, assistante IA.
+• Bronze 5 ans : 500 000 FCFA payés une fois pour 5 ans (1 826 jours) — jusqu'à 8 ordinateurs, 5 Go ; l'assistante IA n'est pas comprise (elle se recharge à part).
+L'espace (en Go) correspond à la place occupée par les dossiers de l'Entreprise (photos, factures, bulletins, enregistrements…).
+Les anciennes formules (Standard 1 200 FCFA, Pro IA, Premium) restent valables jusqu'à la fin de la période déjà payée.
 Les prix en vigueur sont toujours affichés dans l'application avant le paiement. Epsilon peut les modifier en prévenant l'Entreprise au moins 30 jours à l'avance ; la période déjà payée n'est jamais modifiée.
 
 3. PAIEMENT, RENOUVELLEMENT, RETARD
@@ -33,7 +36,7 @@ Les prix en vigueur sont toujours affichés dans l'application avant le paiement
 
 4. L'ASSISTANTE IA : UTILISATION SELON LA FORMULE
 • Le volume d'utilisation de l'assistante IA dépend de la formule souscrite. Selon la formule, il peut être limité par un crédit (restreint) ou proposé sans limite de volume, sous réserve d'un usage raisonnable (à volonté). Le détail de chaque formule est affiché dans l'application.
-• Pour les formules actuelles, l'assistante IA est limitée par un crédit renouvelé sur 30 jours glissants, égal à une part du prix mensuel de la formule : Standard 10 %, Pro IA 50 %, Premium mensuel 35 %, Premium annuel 45 % (pour une formule annuelle : sur le prix annuel divisé par 12). Le crédit utilisé est visible à tout moment dans l'onglet « Clients » (jauge « Crédit IA »).
+• L'assistante IA est comprise dans les formules Bronze, Argent et Or. Elle est limitée par un crédit renouvelé sur 30 jours glissants, égal à 20 % du prix de la formule ramené à 30 jours (pour un trimestre ou une année : le prix divisé par le nombre de périodes de 30 jours). Les formules Découverte, Standard et Bronze 5 ans ne comprennent pas l'assistante IA. Anciennes formules, jusqu'à leur échéance : Standard 10 %, Pro IA 50 %, Premium 35 % (45 % à l'année). Le crédit utilisé est visible à tout moment dans l'onglet « Clients » (jauge « Crédit IA »).
 • Quand le crédit est épuisé, l'assistante cesse de répondre jusqu'à ce que du crédit se libère ; l'équipe de l'Entreprise continue de répondre normalement. Le crédit non utilisé n'est ni reporté, ni remboursé, ni convertible en argent.
 • Les boutons de questions fréquentes, le message d'accueil et le message d'absence ne consomment pas de crédit et restent illimités.
 • Epsilon peut faire évoluer le crédit, les limites et les modèles d'IA utilisés, en prévenant l'Entreprise au moins 30 jours à l'avance en cas de réduction.

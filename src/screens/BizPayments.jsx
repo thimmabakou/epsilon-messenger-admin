@@ -18,7 +18,13 @@ const VERIFY_AT = {
   us: "Site du Secretary of State de l'État (« Business Search »)", ca: "https://ised-isde.canada.ca/cc/lgcy/fdrlCrpSrch.html (fédéral) ou registre de la province",
   cg: "ACPCE (Agence congolaise pour la création des entreprises)", ci: "CEPICI — https://cepici.gouv.ci", cd: "Guichet unique de création d'entreprise (GUCE)",
 };
-const PLAN = { premium: "Premium (12 000 FCFA / 30 jours)", mensuel: "Standard mensuel (1 200 FCFA / 30 jours)", annuel: "Standard annuel (12 000 FCFA / 365 jours) ⭐", pro: "Pro IA mensuel (7 000 FCFA / 30 jours) 🤖", pro_annuel: "Pro IA annuel (70 000 FCFA / 365 jours) 🤖", premium_annuel: "Premium annuel (108 000 FCFA / 365 jours) 👑" };
+const PLAN = {
+  dec_m: "Découverte (2 000 FCFA / 30 jours, 1 ordinateur)", std_m: "Standard mensuel (7 000 FCFA / 30 jours, 4 ordinateurs)", std_t: "Standard trimestre (20 000 FCFA / 91 jours)", std_a: "Standard annuel (70 000 FCFA / 365 jours)",
+  brz_m: "Bronze mensuel (10 000 FCFA / 30 jours, 8 ordinateurs, IA) 🥉", brz_t: "Bronze trimestre (28 500 FCFA / 91 jours) 🥉", brz_a: "Bronze annuel (100 000 FCFA / 365 jours) 🥉",
+  arg_m: "Argent mensuel (15 000 FCFA / 30 jours, 12 ordinateurs, IA) 🥈", arg_t: "Argent trimestre (42 500 FCFA / 91 jours) 🥈", arg_a: "Argent annuel (150 000 FCFA / 365 jours) 🥈",
+  or_m: "Or mensuel (25 000 FCFA / 30 jours, 20 ordinateurs, IA) 🥇", or_t: "Or trimestre (71 000 FCFA / 91 jours) 🥇", or_a: "Or annuel (250 000 FCFA / 365 jours) 🥇",
+  brz_5: "Bronze 5 ans (500 000 FCFA / 5 ans, 8 ordinateurs, sans IA) — PDG seulement",
+  premium: "Ancien Premium (12 000 FCFA / 30 jours)", mensuel: "Ancien Standard mensuel (1 200 FCFA / 30 jours)", annuel: "Ancien Standard annuel (12 000 FCFA / 365 jours)", pro: "Ancien Pro IA mensuel (7 000 FCFA / 30 jours)", pro_annuel: "Ancien Pro IA annuel (70 000 FCFA / 365 jours)", premium_annuel: "Ancien Premium annuel (108 000 FCFA / 365 jours)" };
 
 export default function BizPayments() {
   const { can, deny, act } = useAdmin();
@@ -79,7 +85,7 @@ export default function BizPayments() {
           foot: ["", "", "", "", "Total", money(list.reduce((s, p) => s + Number(p.amount_fcfa || 0), 0)), "", "", ""] } }],
       })}>🖨️ Imprimer</button>}
     </ScreenTitle>
-    <Note icon="💼">Six formules : <b>Standard</b> 1 200 FCFA / 30 jours ou 12 000 FCFA / 365 jours (8 ordinateurs) ; <b>Pro IA</b> 7 000 FCFA / 30 jours ou 70 000 FCFA / 365 jours (12 ordinateurs, 50 % du prix en crédit IA) ; <b>Premium</b> 12 000 FCFA / 30 jours ou 108 000 FCFA / 365 jours (20 ordinateurs ; crédit IA : 35 % au mois, 45 % à l'année). Attention : Standard annuel et Premium ont le même montant (12 000 FCFA) : vérifiez bien la formule demandée. Pour valider, <b>recopiez le code reçu dans le SMS</b> du téléphone d'Epsilon : il doit être identique à celui du dirigeant. Vérifiez aussi le <b>montant</b>.</Note>
+    <Note icon="💼">Formules (novembre 2026), au mois / au trimestre (−5 %) / à l'année (−15 %) : <b>Découverte</b> 2 000 FCFA (1 ordinateur, mois seulement) ; <b>Standard</b> 7 000 / 20 000 / 70 000 (4 ordinateurs, sans IA) ; <b>Bronze</b> 10 000 / 28 500 / 100 000 (8, IA) ; <b>Argent</b> 15 000 / 42 500 / 150 000 (12, IA) ; <b>Or</b> 25 000 / 71 000 / 250 000 (20, IA) ; <b>Bronze 5 ans</b> 500 000 FCFA (8, sans IA) — <b>seul le PDG peut valider ce paiement</b>. Les anciennes formules restent valables jusqu'à leur échéance. Attention : plusieurs formules ont des montants proches : vérifiez bien la formule demandée. Pour valider, <b>recopiez le code reçu dans le SMS</b> du téléphone d'Epsilon : il doit être identique à celui du dirigeant. Vérifiez aussi le <b>montant</b>.</Note>
     {String(error || "").match(/biz_/) && <Note icon="⚠️">Le fichier SQL 87 (Epsilon Business) n'est pas encore exécuté dans Supabase.</Note>}
     <Pills options={TABS.map(([k, l]) => [k, `${l} (${count(k)})`])} value={tab} onChange={setTab} />
     {!data && <Loading error={error} />}
