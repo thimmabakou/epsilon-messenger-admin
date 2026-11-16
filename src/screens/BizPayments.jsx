@@ -10,7 +10,7 @@ import { Empty, Note, Pills, ScreenTitle } from "../components/common";
 import PayCodeCheck from "../components/PayCodeCheck";
 import { printReport, money, dayTime, day } from "../lib/printDoc";
 
-const TABS = [["en_attente", "En attente"], ["validee", "Validés"], ["refusee", "Refusés"], ["orgs", "Entreprises"], ["bilan", "📊 Bilan"]];
+const TABS = [["en_attente", "En attente"], ["validee", "Validés"], ["refusee", "Refusés"], ["orgs", "Entreprises"], ["bilan", "📊 Bilan"], ["sms", "📱 SMS des écoles"]];
 const USD_FCFA = 600; // même taux que les prix affichés (1 $ ≈ 600 FCFA)
 // Où vérifier les papiers en ligne, selon le pays de l'entreprise
 const VERIFY_AT = {
@@ -55,7 +55,7 @@ export default function BizPayments() {
     return { pays: pays.map((p) => ({ ...p, org: O[p.org_id] })), orgs: list };
   });
   const list = tab === "orgs" || tab === "bilan" ? [] : (data?.pays || []).filter((p) => p.status === tab);
-  const count = (k) => (k === "bilan" ? (fin?.length ?? "…") : k === "orgs" ? (data?.orgs || []).length : (data?.pays || []).filter((p) => p.status === k).length);
+  const count = (k) => (k === "sms" ? "…" : k === "bilan" ? (fin?.length ?? "…") : k === "orgs" ? (data?.orgs || []).length : (data?.pays || []).filter((p) => p.status === k).length);
   const rpc = async (args) => { const { error: e } = await supabase.rpc("eg_biz_pay_decide", args); if (e) throw new Error(e.message); };
   const confirmApprove = async (adminRef) => {
     const p = check;
@@ -83,6 +83,7 @@ export default function BizPayments() {
     {String(error || "").match(/biz_/) && <Note icon="⚠️">Le fichier SQL 87 (Epsilon Business) n'est pas encore exécuté dans Supabase.</Note>}
     <Pills options={TABS.map(([k, l]) => [k, `${l} (${count(k)})`])} value={tab} onChange={setTab} />
     {!data && <Loading error={error} />}
+    {tab === "sms" && <SchoolSms act={act} />}
     {tab === "bilan" && (<>
       <Note icon="📊">Pour chaque mois : l'argent <b>encaissé</b> par Epsilon Business (paiements validés), le <b>coût réel de l'assistante IA</b> (facturé par Cloudflare, converti à 1 $ ≈ {USD_FCFA} FCFA) et <b>ce qui reste à Epsilon</b> pour ses autres charges (Supabase, Cloudflare, serveurs, SMS…). Le crédit IA non utilisé par les entreprises n'est pas dépensé : il reste dans la caisse d'Epsilon.</Note>
       {finErr && <Note icon="⚠️">{/function|schema/.test(finErr) ? "Le fichier SQL 95 n'est pas encore exécuté dans Supabase." : finErr}</Note>}
@@ -182,6 +183,36 @@ export default function BizPayments() {
           </div>
         </div>
       </div>
+    )}
+  </>);
+}
+
+// SMS des écoles (fichier SQL 134) : compteur de chaque école ; recharge après paiement reçu (Mobile Money)
+function SchoolSms({ act }) {
+  const [rows, setRows] = useState(null);
+  const [err, setErr] = useState("");
+  const [add, setAdd] = useState({});
+  const load = () => q(supabase.rpc("eg_admin_school_sms")).then((r) => setRows(r || []), (e) => setErr(e.message || String(e)));
+  useEffect(() => { load(); }, []);
+  return (<>
+    <Note icon="📱">Chaque école a un compteur de SMS (50 offerts pendant l'essai). Un SMS part seulement vers un parent qui n'a pas Epsilon (bulletins, paiements, absences, selon ses réglages). L'école paie la recharge (Mobile Money) ; après vérification du paiement, ajoutez ici le nombre de SMS achetés. Les SMS sont envoyés par Brevo : il faut des crédits SMS sur le compte Brevo d'Epsilon (achetés à part, ils n'expirent pas) et le secret Cloudflare SMS_SENDER (nom d'expéditeur, 11 lettres au plus, ex. EPSILON). Un nombre négatif retire des SMS (correction).</Note>
+    {err && <Note icon="⚠️">{/function|schema/.test(err) ? "Le fichier SQL 134 (3 parties) n'est pas encore exécuté dans Supabase." : err}</Note>}
+    {!rows && !err && <Loading />}
+    {rows && rows.length === 0 && <Empty icon="🎓" text="Aucune école (secteur Éducation) pour le moment." />}
+    {rows && rows.length > 0 && (
+      <table className="activity-table"><tbody>
+        {rows.map((o) => (
+          <tr key={o.org}>
+            <td><b>{o.name}</b><div style={{ fontSize: 12, color: "var(--muted)" }}>{o.used} utilisé(s) sur {o.credits}</div></td>
+            <td style={{ whiteSpace: "nowrap" }}><b style={{ color: o.credits - o.used > 0 ? "#0b7a3e" : "#b42318" }}>{Math.max(0, o.credits - o.used)} restant(s)</b></td>
+            <td style={{ whiteSpace: "nowrap" }}>
+              <input style={{ width: 80 }} inputMode="numeric" placeholder="SMS" value={add[o.org] || ""} onChange={(e) => setAdd({ ...add, [o.org]: e.target.value.replace(/[^\d-]/g, "") })} />
+              <button className="action-button" style={{ marginLeft: 6 }} disabled={!Number(add[o.org])}
+                onClick={() => act(async () => { await q(supabase.rpc("eg_admin_school_sms_add", { p_org: o.org, p_n: Number(add[o.org]) })); setAdd({ ...add, [o.org]: "" }); load(); }, `✅ Compteur de ${o.name} rechargé.`)}>＋ Recharger</button>
+            </td>
+          </tr>
+        ))}
+      </tbody></table>
     )}
   </>);
 }
