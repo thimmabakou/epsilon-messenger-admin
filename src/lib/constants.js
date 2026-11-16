@@ -10,6 +10,7 @@ export const NAV_ITEMS = [
   { key: "business", label: "Epsilon Business", icon: "💼" },
   { key: "bizverify", label: "Vérification des entreprises", icon: "🏅" },
   { key: "rules", label: "Règles légales (pays)", icon: "📜" },
+  { key: "calendar", label: "Calendrier international", icon: "📅" },
   { key: "escrow", label: "Paiements sécurisés", icon: "🔒" },
   { key: "music", label: "Musiques", icon: "🎵" },
   { key: "ringtones", label: "Sonneries", icon: "🔔" },
@@ -30,7 +31,7 @@ export const NAV_ITEMS = [
 // Permission nécessaire pour voir chaque écran (null = tout le monde, "PDG" = PDG seulement)
 export const SECTION_PERMS = {
   overview: null, users: "users.list", calls: "calls.view", marketplace: "market.manage", music: "PDG", ringtones: "PDG", channels: "PDG", ads: "PDG", support: "support.inbox", ia: "support.inbox",
-  shoppay: "shops.pay", business: "shops.pay", bizverify: "shops.pay", rules: "rules.publish", escrow: "money.escrow", reports: "mod.view", stats: "stats.view", documents: "docs.prepare", admins: "admins.manage", versions: "ver.prepare",
+  shoppay: "shops.pay", business: "shops.pay", bizverify: "shops.pay", rules: "rules.publish", calendar: null, escrow: "money.escrow", reports: "mod.view", stats: "stats.view", documents: "docs.prepare", admins: "admins.manage", versions: "ver.prepare",
   security: "PDG", settings: "settings.modules", requests: null, team: null,
 };
 
