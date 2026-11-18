@@ -45,7 +45,7 @@ export const EXETA_GUIDE_SHEET = {
     { t: "Epsilon IA dans Exeta", d: "Sans quitter Exeta : sur téléphone, le bouton rond Epsilon « IA » en bas à droite ; sur ordinateur, l'icône Epsilon IA du menu de gauche. Poser la question (ex. « comment figer la première ligne ? »), lire la réponse, refermer : on retrouve le classeur tel quel." },
   ],
   tips: [
-    "Exeta Congo, pas Excel : le nom du logiciel est écrit en haut à gauche (logo « Exeta / CONGO »), et le drapeau de la République du Congo est affiché dans le bandeau vert, après le nom du classeur, pour ne pas confondre avec la RDC.",
+    "Exeta Congo, pas Excel : le nom du logiciel est écrit en haut à gauche (logo « Exeta / CONGO »), et le drapeau de la République du Congo est affiché dans le bandeau vert, juste après le logo et avant le nom du classeur, pour ne pas confondre avec la RDC.",
     "Erreurs et leur sens : #DIV/0! division par zéro ; #NOM? fonction mal écrite ou texte sans guillemets ; #VALEUR! du texte dans un calcul ; #REF! case ou feuille supprimée ; #N/A valeur introuvable (recherche) ; #NOMBRE! nombre impossible ; #CYCLE! la formule utilise sa propre case ; #PROPAGATION! le résultat ne peut pas déborder ; #CALC! résultat vide (FILTRE sans résultat). Exeta l'explique en bas quand on choisit la case. Astuce : =SIERREUR(formule;0).",
     "Limites : 5 000 lignes et 104 colonnes par feuille, 99 feuilles par classeur.",
     "Les classeurs créés avant la nouvelle version s'ouvrent sans changement.",
