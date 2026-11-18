@@ -4,6 +4,8 @@
 // Epsilon IA (l'assistante du Service client) répond à partir de ces fiches : après une modification, refabriquer
 // sa copie dans le dépôt de l'application avec  node scripts/ia-docs.mjs ../epsilon-messenger-admin
 
+import { EXETA_SHEETS } from "./helpExeta.js";
+
 export const TV_PRICE_PER_MIN = 1.2; // FCFA par minute regardée (1 spectateur × 1 minute), validé par le PDG le 11/10/2026
 
 export const HELP_SHEETS = [
@@ -1210,6 +1212,7 @@ export const HELP_SHEETS = [
       "Empreinte digitale : le capteur d'un téléphone ne peut pas reconnaître les élèves (Android le réserve au propriétaire). D'où la carte QR ; un lecteur d'empreinte USB pourra s'ajouter plus tard.",
     ],
   },
+  ...EXETA_SHEETS,
 ];
 
 // Texte simple d'une fiche (pour la copier et l'envoyer à un client)
