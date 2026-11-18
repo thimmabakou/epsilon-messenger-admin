@@ -1,11 +1,11 @@
-// Fiches d'aide d'Exeta Congo — FABRIQUÉES AUTOMATIQUEMENT à partir du code de l'application
+// Fiches d'aide d'Exetat Congo — FABRIQUÉES AUTOMATIQUEMENT à partir du code de l'application
 // (liste des fonctions et des raccourcis). Ne pas modifier à la main : relancer le générateur.
 export const EXETA_FUNCTIONS_SHEET = {
   "id": "exeta-fonctions",
   "icon": "🧮",
-  "title": "Exeta : les 147 fonctions, expliquées",
-  "who": "Toute personne qui utilise Exeta (Epsilon Business → onglet « Exeta »)",
-  "intro": "Liste complète des 147 fonctions d'Exeta, par catégorie, avec leurs arguments et une explication simple. Les noms français (SOMME) et anglais (SUM) marchent tous les deux. Les arguments se séparent par « ; » (ou « , »). Entre crochets [ ] : argument facultatif. ★ = fonction propre à Exeta (n'existe pas dans Excel). Dans Exeta : Formules → bibliothèque, ou taper « = » puis le début du nom : Exeta propose la suite et montre les arguments.",
+  "title": "Exetat : les 147 fonctions, expliquées",
+  "who": "Toute personne qui utilise Exetat (Epsilon Business → onglet « Exetat »)",
+  "intro": "Liste complète des 147 fonctions d'Exetat, par catégorie, avec leurs arguments et une explication simple. Les noms français (SOMME) et anglais (SUM) marchent tous les deux. Les arguments se séparent par « ; » (ou « , »). Entre crochets [ ] : argument facultatif. ★ = fonction propre à Exetat (n'existe pas dans Excel). Dans Exetat : Formules → bibliothèque, ou taper « = » puis le début du nom : Exetat propose la suite et montre les arguments.",
   "steps": [
     {
       "t": "Maths (29 fonctions)",
@@ -44,22 +44,22 @@ export const EXETA_FUNCTIONS_SHEET = {
       "d": "ESTVIDE(valeur) [anglais ISBLANK] : La case est vide ? ; ESTNUM(valeur) [anglais ISNUMBER] : C'est un nombre ? ; ESTTEXTE(valeur) [anglais ISTEXT] : C'est du texte ? ; ESTERREUR(valeur) [anglais ISERROR] : C'est une erreur ? ; ESTNA(valeur) [anglais ISNA] : C'est #N/A ? ; ESTPAIR(nombre) [anglais ISEVEN] : Nombre pair ? ; ESTIMPAIR(nombre) [anglais ISODD] : Nombre impair ?."
     },
     {
-      "t": "★ Exeta (7 fonctions)",
+      "t": "★ Exetat (7 fonctions)",
       "d": "NB.UNIQUE(plage) : ★ Nombre de valeurs différentes ; ENLETTRES(montant; [\"francs CFA\"]) [anglais INWORDS] : ★ Montant en toutes lettres (factures, chèques) ; EUR.FCFA(montant_en_euros) : ★ Euros → FCFA (1 € = 655,957 FCFA, parité fixe) ; FCFA.EUR(montant_en_FCFA) : ★ FCFA → euros (parité fixe) ; NB.JOURS.OUVRES.PAYS(début; fin; [\"cg\"|\"ci\"|…]) : ★ Jours ouvrés sans les jours fériés du pays (cg, ci, cm, sn…) ; VARIATION(ancien; nouveau) [anglais PCT.CHANGE] : ★ Évolution en % entre deux valeurs ; ARRONDI_FCFA(montant; [multiple: 5]) : ★ Arrondit un prix (ex. aux 5 ou 25 FCFA)."
     }
   ],
   "tips": [
     "Critères des fonctions .SI : \">100\", \"<>payé\", \"Mar*\" (commence par Mar), \"*pain*\" (contient pain), \"\" (vide).",
-    "Dates : numéros de série comme Excel ; écrire 18/11/2026 dans une case suffit, Exeta la reconnaît.",
+    "Dates : numéros de série comme Excel ; écrire 18/11/2026 dans une case suffit, Exetat la reconnaît.",
     "Tableaux dynamiques : le résultat déborde sur les cases vides voisines ; A1# = tout le résultat débordé de A1."
   ]
 };
 export const EXETA_KEYS_SHEET = {
   "id": "exeta-raccourcis",
   "icon": "⌨️",
-  "title": "Exeta : les 204 raccourcis clavier",
-  "who": "Personnes qui utilisent Exeta sur ordinateur ou tablette avec clavier",
-  "intro": "Liste complète des 204 raccourcis d'Exeta, classés en 8 catégories (même liste que l'onglet « ⌨️ Raccourcis » d'Exeta, avec recherche et bouton « Essayer »). Ctrl = ⌘ sur Mac ; Maj = Shift. Le téléphone n'a pas de touche Ctrl : sur téléphone, tout se fait avec les boutons du ruban, la barre d'actions de la sélection et l'appui long.",
+  "title": "Exetat : les 204 raccourcis clavier",
+  "who": "Personnes qui utilisent Exetat sur ordinateur ou tablette avec clavier",
+  "intro": "Liste complète des 204 raccourcis d'Exetat, classés en 8 catégories (même liste que l'onglet « ⌨️ Raccourcis » d'Exetat, avec recherche et bouton « Essayer »). Ctrl = ⌘ sur Mac ; Maj = Shift. Le téléphone n'a pas de touche Ctrl : sur téléphone, tout se fait avec les boutons du ruban, la barre d'actions de la sélection et l'appui long.",
   "steps": [
     {
       "t": "Se déplacer (27 raccourcis)",
@@ -87,7 +87,7 @@ export const EXETA_KEYS_SHEET = {
     },
     {
       "t": "Fichier et feuilles (18 raccourcis)",
-      "d": "Maj+F11 = Nouvelle feuille ; Alt+Maj+F1 = Nouvelle feuille ; Ctrl+Alt+N = Nouvelle feuille ; Ctrl+Alt+Maj+S = Renommer la feuille ; Ctrl+Alt+Maj+Suppr = Supprimer la feuille ; Ctrl+S = Enregistrer maintenant ; F12 = Enregistrer sous… ; Ctrl+Maj+S = Enregistrer sous… ; Ctrl+Alt+Maj+P = Enregistrer en PDF ; Ctrl+Alt+Maj+W = Enregistrer en Word (.docx) ; Ctrl+Alt+Maj+Q = Enregistrer le fichier Exeta (.exeta) ; Ctrl+P = Imprimer / PDF ; Ctrl+Maj+P = Imprimer / PDF ; Ctrl+Alt+X = Exporter en Excel (.xlsx) ; Ctrl+Alt+Maj+X = Exporter en CSV ; Ctrl+O = Ouvrir un fichier Excel / CSV ; F11 = Insérer un graphique ; Alt+F1 = Insérer un graphique."
+      "d": "Maj+F11 = Nouvelle feuille ; Alt+Maj+F1 = Nouvelle feuille ; Ctrl+Alt+N = Nouvelle feuille ; Ctrl+Alt+Maj+S = Renommer la feuille ; Ctrl+Alt+Maj+Suppr = Supprimer la feuille ; Ctrl+S = Enregistrer maintenant ; F12 = Enregistrer sous… ; Ctrl+Maj+S = Enregistrer sous… ; Ctrl+Alt+Maj+P = Enregistrer en PDF ; Ctrl+Alt+Maj+W = Enregistrer en Word (.docx) ; Ctrl+Alt+Maj+Q = Enregistrer le fichier Exetat (.exetat) ; Ctrl+P = Imprimer / PDF ; Ctrl+Maj+P = Imprimer / PDF ; Ctrl+Alt+X = Exporter en Excel (.xlsx) ; Ctrl+Alt+Maj+X = Exporter en CSV ; Ctrl+O = Ouvrir un fichier Excel / CSV ; F11 = Insérer un graphique ; Alt+F1 = Insérer un graphique."
     },
     {
       "t": "Affichage et ruban (22 raccourcis)",
@@ -95,7 +95,7 @@ export const EXETA_KEYS_SHEET = {
     }
   ],
   "tips": [
-    "Le navigateur garde quelques raccourcis d'Excel (Ctrl+N, Ctrl+T, Ctrl+W, Ctrl+Page↑/↓) : Exeta propose une autre combinaison (ex. Ctrl+Alt+Page↓ pour la feuille suivante).",
+    "Le navigateur garde quelques raccourcis d'Excel (Ctrl+N, Ctrl+T, Ctrl+W, Ctrl+Page↑/↓) : Exetat propose une autre combinaison (ex. Ctrl+Alt+Page↓ pour la feuille suivante).",
     "Clavier français (AZERTY) : les raccourcis avec des symboles marchent avec la touche ou avec son chiffre (ex. Ctrl+Maj+$ ou Ctrl+Maj+4 pour le format FCFA)."
   ]
 };
