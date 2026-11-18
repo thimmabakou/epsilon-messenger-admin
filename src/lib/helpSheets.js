@@ -455,6 +455,7 @@ export const HELP_SHEETS = [
       { t: "Autoriser l'accès aux contacts", d: "À la première ouverture, Android demande l'autorisation : toucher « Autoriser ». Si elle a été refusée : Paramètres du téléphone → Applications → Epsilon → Autorisations → Contacts → Autoriser." },
       { t: "Voir ses contacts", d: "Discussions → bouton de nouvelle discussion : en haut, « … contacts sur Epsilon », puis la liste. Les contacts pas encore inscrits sont plus bas, avec « Inviter »." },
       { t: "Un nouveau contact enregistré dans le téléphone", d: "Fermer et rouvrir Epsilon, ou toucher « Actualiser mes contacts ». Il apparaît s'il est inscrit sur Epsilon avec CE numéro." },
+      { t: "Message rouge « serveur (… numéros) » à l'actualisation", d: "Certains téléphones (ex. Honor, Huawei) gardent dans le répertoire des noms avec des caractères abîmés (moitié d'émoji, caractères invisibles). Depuis le 18/11/2026, Epsilon les nettoie et, si un contact reste illisible, il est simplement laissé de côté : les autres s'affichent quand même. Si le message rouge revient, faire une capture : le texte après « : » indique la vraie cause (connexion, session…) et l'envoyer à l'équipe technique." },
       { t: "Ajouter un contact à la main", d: "« Ajouter un contact » : nom + numéro (choisir le pays devant le numéro). Le message dit tout de suite si la personne est sur Epsilon ou non." },
     ],
     tips: [
