@@ -3,6 +3,7 @@
 // d'Epsilon (il doit être identique), puis on valide (30 jours ou 1 an de plus) ou on refuse.
 import { certifState, bizCountryName } from "../lib/bizLegal.js";
 import { useEffect, useState } from "react";
+import { SECTORS } from "../lib/bizSectors.js";
 import { supabase, q } from "../lib/supabase";
 import { useAdmin, useLoad, Loading } from "../lib/admin";
 import { dateOnly, dateTime, fmt, fullName } from "../lib/format";
@@ -116,7 +117,11 @@ export default function BizPayments() {
     {data && tab === "orgs" && (data.orgs.length === 0 ? <Empty icon="💼" text="Aucune entreprise pour le moment." /> : (
       <div className="mp-section">{data.orgs.map((o) => (
         <div key={o.id} className="music-row"><div className="music-main">
-          <strong>{o.name}</strong>
+          <strong>{o.name}{o.flagship ? " ⭐ (entreprise phare : tous les onglets)" : ""}</strong>
+          <span className="field-hint">Secteur (bloqué pour l'entreprise ; seul le site administrateur le change — SQL 142) :{" "}
+            <select value={o.sector || ""} onChange={(e) => { const v = e.target.value; if (window.confirm(`Changer le secteur de « ${o.name} » en « ${SECTORS[v] || "—"} » ? (L'onglet École n'apparaît que pour « École, formation ».)`)) act(async () => { const { error: e2 } = await supabase.rpc("eg_admin_biz_sector", { p_org: o.id, p_sector: v }); if (e2) throw new Error(e2.message); reload?.(); }, "✅ Secteur changé."); }}>
+              <option value="">—</option>{Object.entries(SECTORS).map(([k, l]) => <option key={k} value={k}>{l}</option>)}
+            </select></span>
           <span className="field-hint">Créateur du compte : {o.owner ? `${fullName(o.owner)} (${o.owner.phone || "—"})` : "—"} · {o.people} personne(s) · {o.seats}/8 ordinateurs</span>
           {o.council && <span className="field-hint">⚖️ Conseil de direction ouvert le {dateOnly(o.council.opened_at)} — successeur proposé : <b>{o.seatName(o.council.candidate)}</b>
             {" "}<button className="action-button neutral" onClick={() => window.confirm("Confirmer la succession SANS attendre 7 jours ? Seulement avec les pièces (acte de décès, procès-verbal du conseil).") && act(async () => {
